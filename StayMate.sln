@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.14.36623.8 d17.14
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "StayMate", "StayMate\StayMate.csproj", "{CF02D8CC-EF42-4E0A-A1CC-C3365FEC30B1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{CF02D8CC-EF42-4E0A-A1CC-C3365FEC30B1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CF02D8CC-EF42-4E0A-A1CC-C3365FEC30B1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CF02D8CC-EF42-4E0A-A1CC-C3365FEC30B1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CF02D8CC-EF42-4E0A-A1CC-C3365FEC30B1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {66AA8AAA-1522-41C3-B0FD-3C976D8F0ECC}
+	EndGlobalSection
+EndGlobal

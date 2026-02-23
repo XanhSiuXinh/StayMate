@@ -1,0 +1,424 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Work Bridge - Check Point 2 Presentation</title>
+    <style>
+        :root {
+            --primary: #2563eb; /* Main Blue */
+            --secondary: #1e293b; /* Dark Blue/Black */
+            --accent: #f59e0b; /* Amber Accent */
+            --bg: #f8fafc;
+            --text: #334155;
+            --white: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            overflow: hidden; /* Hide scrollbars for slide effect */
+            height: 100vh;
+            width: 100vw;
+        }
+
+        /* Slide Container */
+        .slider {
+            position: relative;
+            width: 100%;
+            height: 100%;
+        }
+
+        .slide {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            opacity: 0;
+            transition: opacity 0.6s ease-in-out, transform 0.6s ease;
+            transform: scale(0.95);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 40px;
+            pointer-events: none;
+        }
+
+        .slide.active {
+            opacity: 1;
+            transform: scale(1);
+            pointer-events: all;
+            z-index: 10;
+        }
+
+        /* Content Box */
+        .content-box {
+            background: var(--white);
+            width: 90%;
+            max-width: 1200px;
+            height: 85%;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            padding: 50px;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-y: auto;
+        }
+
+        /* Typography */
+        h1 { font-size: 3rem; color: var(--primary); margin-bottom: 20px; }
+        h2 { font-size: 2rem; color: var(--secondary); margin-bottom: 30px; border-bottom: 3px solid var(--accent); display: inline-block; padding-bottom: 5px; }
+        h3 { font-size: 1.5rem; color: var(--primary); margin-top: 20px; margin-bottom: 15px; }
+        p { font-size: 1.1rem; line-height: 1.6; margin-bottom: 15px; }
+        ul { margin-left: 25px; margin-bottom: 20px; }
+        li { margin-bottom: 10px; font-size: 1.1rem; }
+
+        /* Grids */
+        .grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 40px; }
+        .grid-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 30px; }
+        
+        /* Cards */
+        .card {
+            background: #f1f5f9;
+            padding: 20px;
+            border-radius: 12px;
+            border-left: 5px solid var(--primary);
+        }
+        .card.warning { border-left-color: #ef4444; }
+        .card.success { border-left-color: #22c55e; }
+
+        /* Charts */
+        .chart-container { margin-top: 20px; }
+        .bar-group { margin-bottom: 15px; }
+        .bar-label { display: flex; justify-content: space-between; margin-bottom: 5px; font-weight: bold; }
+        .bar-bg { background: #e2e8f0; height: 25px; border-radius: 12px; overflow: hidden; }
+        .bar-fill { height: 100%; background: var(--primary); width: 0; transition: width 1.5s ease-out; display: flex; align-items: center; justify-content: flex-end; padding-right: 10px; color: white; font-size: 0.9rem; }
+        .bar-fill.red { background: #ef4444; }
+        .bar-fill.green { background: #22c55e; }
+        .bar-fill.orange { background: var(--accent); }
+
+        /* Controls */
+        .nav-controls {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 20px;
+            z-index: 100;
+            background: rgba(255,255,255,0.8);
+            padding: 10px 20px;
+            border-radius: 30px;
+            backdrop-filter: blur(5px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+
+        .btn {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: bold;
+            transition: background 0.3s;
+        }
+
+        .btn:hover { background: var(--secondary); }
+        .btn:disabled { background: #cbd5e1; cursor: not-allowed; }
+
+        .progress {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            height: 5px;
+            background: var(--accent);
+            width: 0%;
+            transition: width 0.3s;
+        }
+
+        /* Styling helpers */
+        .hero {
+            text-align: center;
+            justify-content: center;
+            align-items: center;
+            background: linear-gradient(135deg, #f0f9ff 0%, #cbebff 100%);
+        }
+        
+        .role-badge {
+            display: inline-block;
+            background: var(--secondary);
+            color: white;
+            padding: 5px 15px;
+            border-radius: 15px;
+            font-size: 0.9rem;
+            margin-bottom: 10px;
+        }
+
+        .highlight { color: var(--primary); font-weight: bold; }
+        .big-number { font-size: 2.5rem; font-weight: bold; color: var(--primary); }
+
+    </style>
+</head>
+<body>
+
+    <div class="slider">
+        <div class="slide active">
+            <div class="content-box hero" style="align-items: center; justify-content: center;">
+                <div style="margin-bottom: 20px;">
+                    <span style="font-size: 4rem;">🌉</span>
+                </div>
+                <h1>WORK BRIDGE</h1>
+                <h2 style="border:none;">Verified Part-time Job Connection Platform</h2>
+                <p style="font-size: 1.5rem; margin-top: 20px;">CHECK POINT 2: Market Analysis & Product Fit</p>
+                <div style="margin-top: 40px; display: flex; gap: 20px; justify-content: center;">
+                    <div class="card">Course: EXE101</div>
+                    <div class="card">Team: [Your Team Name]</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-box">
+                <span class="role-badge">Analyst: Tiên</span>
+                <h2>1. Macro Context (PESTEL)</h2>
+                <p>Why is this market worth entering <strong>right now</strong>?</p>
+                
+                <div class="grid-3">
+                    <div class="card">
+                        <h3>⚖️ Political & Legal</h3>
+                        <p>Project 844 supports Startups. Stricter regulations on casual labor -> Need for a transparent platform.</p>
+                    </div>
+                    <div class="card">
+                        <h3>💰 Economic</h3>
+                        <p>Rising inflation -> Students are forced to find part-time jobs (Essential need, not just a hobby).</p>
+                    </div>
+                    <div class="card">
+                        <h3>📱 Social & Tech</h3>
+                        <p>Gen Z prioritizes "Flexibility". Shift from web portals to Apps/Social Media habits.</p>
+                    </div>
+                </div>
+                
+                <div class="card success" style="margin-top: 30px;">
+                    <h3>✨ Golden Opportunity:</h3>
+                    <p>The market lacks a platform that is <strong>"Safe like TopCV"</strong> but <strong>"Fast & Flexible like Facebook Groups"</strong> specifically for students.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-box">
+                <span class="role-badge">Analyst: Trân</span>
+                <h2>2. Market Size</h2>
+                
+                <div class="grid-2">
+                    <div>
+                        <div class="card" style="margin-bottom: 20px; background: #e0f2fe;">
+                            <h3>TAM (Total Addressable Market)</h3>
+                            <p>Total online recruitment market revenue in Vietnam.</p>
+                            <p class="big-number">$XX Million</p>
+                        </div>
+                        <div class="card" style="margin-bottom: 20px; background: #bae6fd;">
+                            <h3>SAM (Serviceable Available Market)</h3>
+                            <p>Part-time/Intern market for students in major cities (HN, HCM, DN).</p>
+                            <p class="big-number">~2.5M Students</p>
+                        </div>
+                        <div class="card" style="background: #7dd3fc;">
+                            <h3>SOM (Serviceable Obtainable Market)</h3>
+                            <p>5% of Students in [Your Region] in Year 1.</p>
+                            <p class="big-number">125,000 Users</p>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>Why is SOM realistic?</h3>
+                        <ul>
+                            <li>Direct acquisition strategy via University Unions/Clubs (Zero cost marketing).</li>
+                            <li>Based on survey (Q8): High "Willingness to use" rate.</li>
+                            <li>Focus on F&B and Tutor niches (Survey Q7) - Always in high demand.</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-box">
+                <span class="role-badge">Analyst: Hào</span>
+                <h2>3. Customer Persona & Pain Points</h2>
+                <p>Data from survey of >100 students & In-depth Expert Interviews.</p>
+
+                <div class="grid-2">
+                    <div>
+                        <h3>📊 Survey Insights (Q2 & Q5)</h3>
+                        <div class="chart-container">
+                            <div class="bar-group">
+                                <div class="bar-label"><span>Problem: Scams / Vague Info</span><span>65%</span></div>
+                                <div class="bar-bg"><div class="bar-fill red" style="width: 65%;">Top 1 Pain Point</div></div>
+                            </div>
+                            <div class="bar-group">
+                                <div class="bar-label"><span>Problem: No Response (Ghosting)</span><span>45%</span></div>
+                                <div class="bar-bg"><div class="bar-fill orange" style="width: 45%;">Wasted Time</div></div>
+                            </div>
+                             <div class="bar-group">
+                                <div class="bar-label"><span>Time to find job: > 2 weeks</span><span>55%</span></div>
+                                <div class="bar-bg"><div class="bar-fill" style="width: 55%;">Inefficient</div></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div>
+                        <h3>🎯 Persona (Students Year 1-2)</h3>
+                        <div class="card">
+                            <ul>
+                                <li><strong>Needs (Q1):</strong> Extra income & Experience (Freshmen/Sophomores).</li>
+                                <li><strong>Behavior (Q3):</strong> Mostly use Facebook Groups (High risk).</li>
+                                <li><strong>Desires (Q4):</strong> Prioritize "Flexible Schedule" and "Proximity to Home/School".</li>
+                            </ul>
+                        </div>
+                        <div class="card warning" style="margin-top: 20px;">
+                            <strong>Conclusion:</strong> Students are trading "Safety" for "Speed" on Facebook. <br>-> Work Bridge solves both.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-box">
+                <span class="role-badge">Analyst: Thành</span>
+                <h2>4. Competitors & Market Structure</h2>
+                
+                <table style="width:100%; border-collapse: collapse; margin-top: 20px;">
+                    <tr style="background: var(--secondary); color: white;">
+                        <th style="padding: 15px; border-radius: 10px 0 0 0;">Criteria</th>
+                        <th style="padding: 15px;">Facebook Groups</th>
+                        <th style="padding: 15px;">TopCV / VietnamWorks</th>
+                        <th style="padding: 15px; background: var(--primary); border-radius: 0 10px 0 0;">WORK BRIDGE</th>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 15px; font-weight: bold;">Trust & Safety (Verified)</td>
+                        <td style="padding: 15px; color: red;">Low (Spam, Scams)</td>
+                        <td style="padding: 15px; color: green;">High</td>
+                        <td style="padding: 15px; color: green; font-weight:bold; background: #eff6ff;">High (100% Verified)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 15px; font-weight: bold;">Flexibility (Part-time)</td>
+                        <td style="padding: 15px; color: green;">Very High</td>
+                        <td style="padding: 15px; color: orange;">Low (Full-time focus)</td>
+                        <td style="padding: 15px; color: green; font-weight:bold; background: #eff6ff;">Optimized (Smart Schedule)</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid #ddd;">
+                        <td style="padding: 15px; font-weight: bold;">Matching Speed</td>
+                        <td style="padding: 15px;">Medium (Wait for approval)</td>
+                        <td style="padding: 15px;">Slow (Formal process)</td>
+                        <td style="padding: 15px; color: var(--primary); font-weight:bold; background: #eff6ff;">Fast (Fast Match)</td>
+                    </tr>
+                </table>
+
+                <div class="card" style="margin-top: 30px; text-align: center;">
+                    <h3>Market Gap</h3>
+                    <p>There is no platform dedicated to <strong>Part-time jobs</strong> that also guarantees <strong>Verification (Safety)</strong>.</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-box">
+                <span class="role-badge">Analyst: Đại</span>
+                <h2>5. Value Proposition</h2>
+                <p>How Work Bridge solves the Market Pain:</p>
+
+                <div class="grid-2">
+                    <div class="card success">
+                        <h3>🔒 Pain: Fear of Scams -> Gain: Verified Jobs</h3>
+                        <p>Most requested feature (Survey Q6). All jobs are verified with Business Registration/ID.</p>
+                    </div>
+                    <div class="card" style="border-left-color: var(--accent);">
+                        <h3>📅 Pain: Messy Schedule -> Gain: Smart Schedule</h3>
+                        <p>Algorithm automatically matches student's free time with shop shifts (Solves Priority #1 in Q4).</p>
+                    </div>
+                </div>
+
+                <div style="margin-top: 40px; text-align: center;">
+                    <h3>Product-Market Fit</h3>
+                    <p style="font-size: 1.2rem;">
+                        We don't just sell "Jobs", we sell <strong>"Peace of Mind & Convenience"</strong>.<br>
+                        <strong>Business Model:</strong> Freemium for Students (Q10: Willing to pay < 20k or free), Monetize Employers who need urgent staff.
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <div class="slide">
+            <div class="content-box hero">
+                <h1>Thank You!</h1>
+                <h2 style="border:none;">Q & A</h2>
+                <p>Team Work Bridge is ready for your questions.</p>
+                <div style="margin-top: 30px;">
+                    <p><strong>Link Demo/Prototype:</strong> [Insert Link]</p>
+                    <p><strong>Contact:</strong> workbridge@example.com</p>
+                </div>
+            </div>
+        </div>
+
+        <div class="progress"></div>
+    </div>
+
+    <div class="nav-controls">
+        <button class="btn" id="prevBtn" onclick="changeSlide(-1)">❮ Prev</button>
+        <span id="slide-indicator" style="align-self: center; font-weight: bold; color: var(--primary);">1 / 7</span>
+        <button class="btn" id="nextBtn" onclick="changeSlide(1)">Next ❯</button>
+    </div>
+
+    <script>
+        let currentSlide = 0;
+        const slides = document.querySelectorAll('.slide');
+        const progressBar = document.querySelector('.progress');
+        const indicator = document.getElementById('slide-indicator');
+
+        function updateSlide() {
+            slides.forEach((slide, index) => {
+                slide.classList.remove('active');
+                if (index === currentSlide) {
+                    slide.classList.add('active');
+                }
+            });
+
+            // Update Progress Bar
+            const progress = ((currentSlide + 1) / slides.length) * 100;
+            progressBar.style.width = `${progress}%`;
+
+            // Update Indicator
+            indicator.innerText = `${currentSlide + 1} / ${slides.length}`;
+
+            // Button states
+            document.getElementById('prevBtn').disabled = currentSlide === 0;
+            document.getElementById('nextBtn').disabled = currentSlide === slides.length - 1;
+        }
+
+        function changeSlide(direction) {
+            currentSlide += direction;
+            if (currentSlide < 0) currentSlide = 0;
+            if (currentSlide >= slides.length) currentSlide = slides.length - 1;
+            updateSlide();
+        }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowRight' || e.key === ' ') changeSlide(1);
+            if (e.key === 'ArrowLeft') changeSlide(-1);
+        });
+
+        // Initialize
+        updateSlide();
+    </script>
+</body>
+</html>
