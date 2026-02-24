@@ -31,3 +31,17 @@ public class UpdateUserProfileDto
     public string? Occupation { get; set; }
     public string? School { get; set; }
 }
+
+public class UserPhotoDto
+{
+    public int PhotoId { get; set; }
+    public string PhotoUrl { get; set; } = string.Empty;
+    public int? DisplayOrder { get; set; }
+    public bool? IsProfilePhoto { get; set; }
+}
+
+public class AddUserPhotoDto
+{
+    [Required]
+    public string PhotoUrl { get; set; } = string.Empty;
+}

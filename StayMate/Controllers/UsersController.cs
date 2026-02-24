@@ -65,4 +65,144 @@ public class UsersController : ControllerBase
         await _context.SaveChangesAsync();
         return Ok(new { message = "Profile updated successfully.", user });
     }
+
+    [HttpPost("profile/avatar")]
+    [Authorize]
+    public async Task<IActionResult> UploadAvatar(IFormFile file)
+    {
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var user = await _context.Users.FindAsync(userId);
+        
+        if (user == null) return NotFound("User not found.");
+
+        if (file == null || file.Length == 0) return BadRequest(new { message = "Vui lòng chọn một file ảnh." });
+
+        var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "avatars");
+        if (!Directory.Exists(uploadsPath))
+        {
+            Directory.CreateDirectory(uploadsPath);
+        }
+
+        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+        var filePath = Path.Combine(uploadsPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        var request = HttpContext.Request;
+        var baseUrl = $"{request.Scheme}://{request.Host}";
+        var avatarUrl = $"{baseUrl}/uploads/avatars/{fileName}";
+
+        user.AvatarUrl = avatarUrl;
+        user.UpdatedAt = DateTime.Now;
+
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = "Cập nhật ảnh đại diện thành công.", avatarUrl });
+    }
+
+    [HttpGet("photos")]
+    [Authorize]
+    public async Task<ActionResult<IEnumerable<UserPhotoDto>>> GetUserPhotos()
+    {
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var photos = await _context.UserPhotos.Where(p => p.UserId == userId).ToListAsync();
+        return Ok(photos.Select(p => new UserPhotoDto
+        {
+            PhotoId = p.PhotoId,
+            PhotoUrl = p.PhotoUrl,
+            DisplayOrder = p.DisplayOrder,
+            IsProfilePhoto = p.IsProfilePhoto
+        }));
+    }
+
+    [HttpPost("photos")]
+    [Authorize]
+    public async Task<IActionResult> AddUserPhoto(IFormFile file)
+    {
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var photoCount = await _context.UserPhotos.CountAsync(p => p.UserId == userId);
+
+        if (photoCount >= 6) return BadRequest(new { message = "Bạn chỉ có thể thêm tối đa 6 ảnh." });
+
+        if (file == null || file.Length == 0) return BadRequest(new { message = "Vui lòng chọn một file ảnh." });
+
+        var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "profiles");
+        if (!Directory.Exists(uploadsPath))
+        {
+            Directory.CreateDirectory(uploadsPath);
+        }
+
+        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+        var filePath = Path.Combine(uploadsPath, fileName);
+
+        using (var stream = new FileStream(filePath, FileMode.Create))
+        {
+            await file.CopyToAsync(stream);
+        }
+
+        var request = HttpContext.Request;
+        var baseUrl = $"{request.Scheme}://{request.Host}";
+        var photoUrl = $"{baseUrl}/uploads/profiles/{fileName}";
+
+        var newPhoto = new UserPhoto
+        {
+            UserId = userId,
+            PhotoUrl = photoUrl,
+            DisplayOrder = photoCount + 1,
+            IsProfilePhoto = false,
+            UploadedAt = DateTime.Now
+        };
+
+        _context.UserPhotos.Add(newPhoto);
+        await _context.SaveChangesAsync();
+        
+        return Ok(new 
+        { 
+            message = "Thêm ảnh thành công.", 
+            photo = new UserPhotoDto 
+            { 
+                PhotoId = newPhoto.PhotoId, 
+                PhotoUrl = newPhoto.PhotoUrl, 
+                DisplayOrder = newPhoto.DisplayOrder, 
+                IsProfilePhoto = newPhoto.IsProfilePhoto 
+            }
+        });
+    }
+
+    [HttpDelete("photos/{id}")]
+    [Authorize]
+    public async Task<IActionResult> DeleteUserPhoto(int id)
+    {
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+        var photo = await _context.UserPhotos.FirstOrDefaultAsync(p => p.PhotoId == id && p.UserId == userId);
+        
+        if (photo == null) return NotFound(new { message = "Không tìm thấy ảnh." });
+
+        _context.UserPhotos.Remove(photo);
+        await _context.SaveChangesAsync();
+        
+        return Ok(new { message = "Xóa ảnh thành công." });
+    }
+
+    [HttpGet("profile/status")]
+    [Authorize]
+    public async Task<IActionResult> GetProfileStatus()
+    {
+        var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+
+        var hasLifestyle = await _context.LifestylePreferences
+            .AnyAsync(lp => lp.UserId == userId);
+
+        var user = await _context.Users.FindAsync(userId);
+        bool hasBasicProfile = user != null && !string.IsNullOrEmpty(user.Bio);
+
+        return Ok(new
+        {
+            hasMatchingProfile = hasLifestyle,
+            hasBasicProfile = hasBasicProfile
+        });
+    }
 }

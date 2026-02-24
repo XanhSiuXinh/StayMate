@@ -34,6 +34,7 @@ namespace StayMate.DTOs
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string? AvatarUrl { get; set; }
+        public bool IsNewUser { get; set; }
     }
 
     public class GoogleLoginDto

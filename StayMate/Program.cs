@@ -57,6 +57,9 @@ else
 // 3. Use CORS before Authorization
 app.UseCors("AllowReactApp");
 
+// Serve static files (like uploaded images)
+app.UseStaticFiles();
+
 app.UseAuthorization();
 
 app.MapControllers();

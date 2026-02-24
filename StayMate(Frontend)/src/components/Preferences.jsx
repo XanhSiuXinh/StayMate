@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Loader2, Save, Moon, Sun, Wind, VolumeX, Coffee, Home, Clock, Cat } from 'lucide-react';
+import { Loader2, Save, Moon, Sun, Wind, VolumeX, Coffee, Home, Clock, Cat, Image as ImageIcon, Plus, Trash2 } from 'lucide-react';
 
 const Preferences = () => {
     const { token } = useAuth();
@@ -22,6 +22,10 @@ const Preferences = () => {
     // States for Interests
     const [allInterests, setAllInterests] = useState([]);
     const [selectedInterestIds, setSelectedInterestIds] = useState([]);
+
+    // States for Photos
+    const [userPhotos, setUserPhotos] = useState([]);
+    const fileInputRef = useRef(null);
 
     // Global states
     const [loading, setLoading] = useState(true);
@@ -50,6 +54,15 @@ const Preferences = () => {
             if (userInterestsRes.ok) {
                 const userInterestsData = await userInterestsRes.json();
                 setSelectedInterestIds(userInterestsData.map(i => i.interestId));
+            }
+
+            // Fetch User Photos
+            const photosRes = await fetch('http://localhost:5015/api/users/photos', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (photosRes.ok) {
+                const photosData = await photosRes.json();
+                setUserPhotos(photosData);
             }
 
             // Fetch Lifestyle Preferences
@@ -130,6 +143,79 @@ const Preferences = () => {
             setError(err.message);
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleAddPhotoClick = () => {
+        if (userPhotos.length >= 6) {
+            setError('Bạn chỉ có thể thêm tối đa 6 ảnh.');
+            setTimeout(() => setError(null), 3000);
+            return;
+        }
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        // Optionally, check file type/size here
+
+        const formData = new FormData();
+        formData.append('file', file);
+
+        try {
+            const res = await fetch('http://localhost:5015/api/users/photos', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: formData
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setUserPhotos([...userPhotos, data.photo]);
+                setSuccessMessage('Thêm ảnh thành công!');
+                setTimeout(() => setSuccessMessage(''), 3000);
+            } else {
+                setError(data.message || 'Lỗi khi thêm ảnh.');
+                setTimeout(() => setError(null), 3000);
+            }
+        } catch (err) {
+            setError('Lỗi kết nối.');
+            setTimeout(() => setError(null), 3000);
+        } finally {
+            // Reset input so the same file could be selected again if needed
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
+        }
+    };
+
+    const handleDeletePhoto = async (photoId) => {
+        if (!window.confirm("Bạn có chắc chắn muốn xóa ảnh này?")) return;
+
+        try {
+            const res = await fetch(`http://localhost:5015/api/users/photos/${photoId}`, {
+                method: 'DELETE',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            });
+            if (res.ok) {
+                setUserPhotos(userPhotos.filter(p => p.photoId !== photoId));
+                setSuccessMessage('Xóa ảnh thành công!');
+                setTimeout(() => setSuccessMessage(''), 3000);
+            } else {
+                const data = await res.json();
+                setError(data.message || 'Lỗi khi xóa ảnh.');
+                setTimeout(() => setError(null), 3000);
+            }
+        } catch (err) {
+            setError('Lỗi kết nối.');
+            setTimeout(() => setError(null), 3000);
         }
     };
 
@@ -290,6 +376,50 @@ const Preferences = () => {
                         })}
                     </div>
                 )}
+            </div>
+
+            {/* Photos Section */}
+            <div className="pt-6 border-t border-gray-100">
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
+                            <ImageIcon className="text-primary" /> Ảnh Tập Thể / Cá Nhân
+                        </h2>
+                        <p className="text-sm text-gray-500 mt-1">Thêm ảnh để người khác dễ dàng hình dung về bạn (tối đa 6 ảnh).</p>
+                    </div>
+                </div>
+
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
+                    {userPhotos.map((photo) => (
+                        <div key={photo.photoId} className="relative group aspect-square bg-gray-100 rounded-xl overflow-hidden border border-gray-200">
+                            <img src={photo.photoUrl} alt="User" className="w-full h-full object-cover" />
+                            <button
+                                onClick={() => handleDeletePhoto(photo.photoId)}
+                                className="absolute top-2 right-2 p-1.5 bg-red-500 text-white rounded-full opacity-0 group-hover:opacity-100 transition-opacity hover:bg-red-600 shadow-sm"
+                            >
+                                <Trash2 size={16} />
+                            </button>
+                        </div>
+                    ))}
+                    {userPhotos.length < 6 && (
+                        <button
+                            onClick={handleAddPhotoClick}
+                            className="aspect-square bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center text-gray-500 hover:text-primary hover:border-primary hover:bg-blue-50/50 transition-all"
+                        >
+                            <Plus size={24} className="mb-2" />
+                            <span className="text-sm font-medium">Thêm ảnh</span>
+                        </button>
+                    )}
+                </div>
+
+                {/* Hidden File Input */}
+                <input
+                    type="file"
+                    ref={fileInputRef}
+                    onChange={handleFileChange}
+                    accept="image/*"
+                    className="hidden"
+                />
             </div>
 
             <div className="flex justify-end pt-6 border-t border-gray-100 mt-6">

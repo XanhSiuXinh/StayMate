@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { User, Mail, Calendar, Briefcase, GraduationCap, Phone, Edit2, Save, X, Loader2, Award, Home, Activity } from 'lucide-react';
 import Preferences from './Preferences';
@@ -13,6 +13,8 @@ const Profile = () => {
     const [error, setError] = useState('');
     const [success, setSuccess] = useState('');
     const [activeTab, setActiveTab] = useState('about');
+    const fileInputRef = useRef(null);
+    const [uploadingAvatar, setUploadingAvatar] = useState(false);
 
     useEffect(() => {
         fetchProfile();
@@ -81,11 +83,47 @@ const Profile = () => {
 
     const handleAvatarClick = () => {
         if (!isEditing) return;
-        const newUrl = window.prompt('Nhập đường dẫn hình ảnh của bạn (URL):', formData.avatarUrl || profile.avatarUrl || '');
-        if (newUrl !== null) {
-            setFormData(prev => ({ ...prev, avatarUrl: newUrl }));
-            // Preview instantly
-            setProfile(prev => ({ ...prev, avatarUrl: newUrl }));
+        if (fileInputRef.current) {
+            fileInputRef.current.click();
+        }
+    };
+
+    const handleAvatarFileChange = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        const uploadFormData = new FormData();
+        uploadFormData.append('file', file);
+
+        try {
+            setUploadingAvatar(true);
+            const res = await fetch('http://localhost:5015/api/users/profile/avatar', {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                },
+                body: uploadFormData
+            });
+            const data = await res.json();
+            if (res.ok) {
+                setFormData(prev => ({ ...prev, avatarUrl: data.avatarUrl }));
+                setProfile(prev => ({ ...prev, avatarUrl: data.avatarUrl }));
+                setSuccess('Đổi ảnh đại diện thành công!');
+                setTimeout(() => setSuccess(''), 3000);
+                // Also update the context so navbar updates
+                updateUser({ fullName: formData.fullName, avatarUrl: data.avatarUrl });
+            } else {
+                setError(data.message || 'Lỗi khi đổi ảnh đại diện.');
+                setTimeout(() => setError(''), 3000);
+            }
+        } catch (err) {
+            setError('Lỗi kết nối.');
+            setTimeout(() => setError(''), 3000);
+        } finally {
+            setUploadingAvatar(false);
+            if (fileInputRef.current) {
+                fileInputRef.current.value = "";
+            }
         }
     };
 
@@ -115,10 +153,22 @@ const Profile = () => {
                                     onClick={handleAvatarClick}
                                     className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
                                 >
-                                    <span className="text-white text-sm font-medium">Đổi Ảnh</span>
+                                    {uploadingAvatar ? (
+                                        <Loader2 className="w-5 h-5 text-white animate-spin" />
+                                    ) : (
+                                        <span className="text-white text-sm font-medium">Đổi Ảnh</span>
+                                    )}
                                 </div>
                             )}
                         </div>
+
+                        <input
+                            type="file"
+                            ref={fileInputRef}
+                            onChange={handleAvatarFileChange}
+                            accept="image/*"
+                            className="hidden"
+                        />
 
                         <h2 className="text-2xl font-bold text-gray-900 mb-1 text-center">{profile?.fullName}</h2>
 

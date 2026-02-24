@@ -46,8 +46,8 @@ const Navbar = () => {
                                 Messages
                             </Link>
                             <Link
-                                to="#"
-                                className="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors"
+                                to="/saved"
+                                className={`text-sm font-bold transition-colors ${isActive('/saved') ? 'text-primary' : 'text-gray-500 hover:text-gray-900'}`}
                             >
                                 Saved
                             </Link>

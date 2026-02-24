@@ -31,7 +31,7 @@ export const AuthProvider = ({ children }) => {
         // Lưu vào localStorage
         localStorage.setItem('authToken', token);
         localStorage.setItem('authUser', JSON.stringify({ email, fullName, avatarUrl }));
-        setAuthModalView(null);
+        // Không tự đóng modal ở đây – để Register/Login tự quyết định dựa vào isNewUser
     };
 
     // Update user info function

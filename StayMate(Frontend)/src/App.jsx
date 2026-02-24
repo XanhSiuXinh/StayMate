@@ -11,6 +11,7 @@ import Layout from './components/layout/Layout';
 import Discover from './components/Discover';
 import Messages from './components/Messages';
 import Preferences from './components/Preferences';
+import Saved from './components/Saved';
 
 function App() {
     const { isAuthenticated, authModalView } = useAuth();
@@ -70,6 +71,14 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <Preferences />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/saved"
+                    element={
+                        <ProtectedRoute>
+                            <Saved />
                         </ProtectedRoute>
                     }
                 />

@@ -60,7 +60,8 @@ namespace StayMate.Controllers
                 Token = token,
                 Email = user.Email,
                 FullName = user.FullName,
-                AvatarUrl = user.AvatarUrl
+                AvatarUrl = user.AvatarUrl,
+                IsNewUser = true
             });
         }
 
@@ -92,7 +93,8 @@ namespace StayMate.Controllers
                 Token = token,
                 Email = user.Email,
                 FullName = user.FullName,
-                AvatarUrl = user.AvatarUrl
+                AvatarUrl = user.AvatarUrl,
+                IsNewUser = false
             });
         }
 
@@ -109,11 +111,14 @@ namespace StayMate.Controllers
                         Audience = new[] { _configuration["Google:ClientId"] }
                     });
 
+                bool isNewUser = false;
+
                 // Tìm hoặc tạo user
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == payload.Email);
 
                 if (user == null)
                 {
+                    isNewUser = true;
                     // Tạo user mới từ Google account
                     user = new User
                     {
@@ -135,8 +140,8 @@ namespace StayMate.Controllers
                 }
                 else
                 {
-                    // Đồng bộ Avatar khi đăng nhập bằng Google nếu nó khác hoặc trống
-                    if (!string.IsNullOrEmpty(payload.Picture) && user.AvatarUrl != payload.Picture)
+                    // Chỉ đồng bộ Avatar từ Google nếu tài khoản chưa có avatar nào
+                    if (string.IsNullOrEmpty(user.AvatarUrl) && !string.IsNullOrEmpty(payload.Picture))
                     {
                         user.AvatarUrl = payload.Picture;
                         await _context.SaveChangesAsync();
@@ -151,7 +156,8 @@ namespace StayMate.Controllers
                     Token = token,
                     Email = user.Email,
                     FullName = user.FullName,
-                    AvatarUrl = user.AvatarUrl
+                    AvatarUrl = user.AvatarUrl,
+                    IsNewUser = isNewUser
                 });
             }
             catch (Exception ex)
