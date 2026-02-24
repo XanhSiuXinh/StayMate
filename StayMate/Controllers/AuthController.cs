@@ -59,7 +59,8 @@ namespace StayMate.Controllers
             { 
                 Token = token,
                 Email = user.Email,
-                FullName = user.FullName
+                FullName = user.FullName,
+                AvatarUrl = user.AvatarUrl
             });
         }
 
@@ -90,7 +91,8 @@ namespace StayMate.Controllers
             {
                 Token = token,
                 Email = user.Email,
-                FullName = user.FullName
+                FullName = user.FullName,
+                AvatarUrl = user.AvatarUrl
             });
         }
 
@@ -131,6 +133,15 @@ namespace StayMate.Controllers
                     _context.Users.Add(user);
                     await _context.SaveChangesAsync();
                 }
+                else
+                {
+                    // Đồng bộ Avatar khi đăng nhập bằng Google nếu nó khác hoặc trống
+                    if (!string.IsNullOrEmpty(payload.Picture) && user.AvatarUrl != payload.Picture)
+                    {
+                        user.AvatarUrl = payload.Picture;
+                        await _context.SaveChangesAsync();
+                    }
+                }
 
                 // Tạo JWT token
                 var token = CreateToken(user);
@@ -139,7 +150,8 @@ namespace StayMate.Controllers
                 {
                     Token = token,
                     Email = user.Email,
-                    FullName = user.FullName
+                    FullName = user.FullName,
+                    AvatarUrl = user.AvatarUrl
                 });
             }
             catch (Exception ex)

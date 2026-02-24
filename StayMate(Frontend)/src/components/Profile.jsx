@@ -4,7 +4,7 @@ import { User, Mail, Calendar, Briefcase, GraduationCap, Phone, Edit2, Save, X, 
 import Preferences from './Preferences';
 
 const Profile = () => {
-    const { token, logout } = useAuth();
+    const { token, logout, updateUser } = useAuth();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(false);
@@ -61,6 +61,7 @@ const Profile = () => {
                 setProfile(data.user || formData);
                 setSuccess('Cập nhật hồ sơ thành công!');
                 setIsEditing(false);
+                updateUser({ fullName: formData.fullName, avatarUrl: formData.avatarUrl });
             } else {
                 setError(data.message || 'Cập nhật thất bại');
             }
@@ -76,6 +77,16 @@ const Profile = () => {
             ...formData,
             [e.target.name]: e.target.value
         });
+    };
+
+    const handleAvatarClick = () => {
+        if (!isEditing) return;
+        const newUrl = window.prompt('Nhập đường dẫn hình ảnh của bạn (URL):', formData.avatarUrl || profile.avatarUrl || '');
+        if (newUrl !== null) {
+            setFormData(prev => ({ ...prev, avatarUrl: newUrl }));
+            // Preview instantly
+            setProfile(prev => ({ ...prev, avatarUrl: newUrl }));
+        }
     };
 
     if (loading) {
@@ -100,7 +111,10 @@ const Profile = () => {
                                 className="w-full h-full rounded-full object-cover border-4 border-white shadow-md transition-transform group-hover:scale-105"
                             />
                             {isEditing && (
-                                <div className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer">
+                                <div
+                                    onClick={handleAvatarClick}
+                                    className="absolute inset-0 bg-black/40 rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity cursor-pointer"
+                                >
                                     <span className="text-white text-sm font-medium">Đổi Ảnh</span>
                                 </div>
                             )}
@@ -175,24 +189,22 @@ const Profile = () => {
                                 onClick={() => setActiveTab('lifestyle')}
                                 className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${activeTab === 'lifestyle' ? 'text-primary border-b-2 border-primary bg-blue-50/50' : 'text-gray-500 hover:text-gray-700'}`}
                             >
-                                <Activity size={18} /> Lối Sống & Sở Thích
+                                <Activity size={18} /> Hồ Sơ Ghép Đôi
                             </button>
                         </div>
 
                         <div className="p-8 flex-1">
-                            <div className="flex justify-between items-center mb-8">
-                                <div>
-                                    <h1 className="text-2xl font-bold text-gray-900">
-                                        {activeTab === 'about' && 'Hồ Sơ Của Tôi'}
-                                        {activeTab === 'lifestyle' && 'Hồ Sơ Ghép Đôi'}
-                                    </h1>
-                                    <p className="text-gray-500">
-                                        {activeTab === 'about' && 'Quản lý không gian thông tin cá nhân của bạn.'}
-                                        {activeTab === 'lifestyle' && 'Cập nhật tài liệu sở thích và lối sống để hỗ trợ việc ghép đôi.'}
-                                    </p>
-                                </div>
-                                {activeTab === 'about' && (
-                                    !isEditing ? (
+                            {activeTab === 'about' && (
+                                <div className="flex justify-between items-center mb-8">
+                                    <div>
+                                        <h1 className="text-2xl font-bold text-gray-900">
+                                            Hồ Sơ Của Tôi
+                                        </h1>
+                                        <p className="text-gray-500">
+                                            Quản lý không gian thông tin cá nhân của bạn.
+                                        </p>
+                                    </div>
+                                    {!isEditing ? (
                                         <button
                                             onClick={() => setIsEditing(true)}
                                             className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm font-medium text-sm"
@@ -216,9 +228,9 @@ const Profile = () => {
                                                 Lưu Thay Đổi
                                             </button>
                                         </div>
-                                    )
-                                )}
-                            </div>
+                                    )}
+                                </div>
+                            )}
 
                             {error && <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg text-sm border border-red-100 flex items-center gap-2"><X size={16} />{error}</div>}
                             {success && <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-lg text-sm border border-green-100 flex items-center gap-2"><Award size={16} />{success}</div>}

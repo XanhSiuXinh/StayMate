@@ -22,16 +22,25 @@ export const AuthProvider = ({ children }) => {
 
     // Login function
     const login = (authData) => {
-        const { token, email, fullName } = authData;
+        const { token, email, fullName, avatarUrl } = authData;
 
         // Lưu vào state
         setToken(token);
-        setUser({ email, fullName });
+        setUser({ email, fullName, avatarUrl });
 
         // Lưu vào localStorage
         localStorage.setItem('authToken', token);
-        localStorage.setItem('authUser', JSON.stringify({ email, fullName }));
+        localStorage.setItem('authUser', JSON.stringify({ email, fullName, avatarUrl }));
         setAuthModalView(null);
+    };
+
+    // Update user info function
+    const updateUser = (updatedInfo) => {
+        setUser(prev => {
+            const newUser = { ...prev, ...updatedInfo };
+            localStorage.setItem('authUser', JSON.stringify(newUser));
+            return newUser;
+        });
     };
 
     // Logout function
@@ -50,6 +59,7 @@ export const AuthProvider = ({ children }) => {
         token,
         login,
         logout,
+        updateUser,
         isAuthenticated: !!token,
         loading,
         authModalView,

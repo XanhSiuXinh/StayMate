@@ -19,15 +19,13 @@ const Preferences = () => {
         guestFrequency: 'Thỉnh thoảng',
         cookingFrequency: 'Thường xuyên'
     });
-    const [lifestyleLoading, setLifestyleLoading] = useState(false);
-
     // States for Interests
     const [allInterests, setAllInterests] = useState([]);
     const [selectedInterestIds, setSelectedInterestIds] = useState([]);
-    const [interestsLoading, setInterestsLoading] = useState(false);
 
     // Global states
     const [loading, setLoading] = useState(true);
+    const [saving, setSaving] = useState(false);
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
 
@@ -99,12 +97,12 @@ const Preferences = () => {
         );
     };
 
-    const saveLifestyle = async () => {
-        setLifestyleLoading(true);
+    const handleSave = async () => {
+        setSaving(true);
         setError(null);
         setSuccessMessage('');
         try {
-            const res = await fetch('http://localhost:5015/api/preferences/lifestyle', {
+            const p1 = fetch('http://localhost:5015/api/preferences/lifestyle', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -113,22 +111,7 @@ const Preferences = () => {
                 body: JSON.stringify(lifestyle)
             });
 
-            if (!res.ok) throw new Error('Lỗi khi lưu lối sống');
-            setSuccessMessage('Đã lưu lối sống thành công!');
-            setTimeout(() => setSuccessMessage(''), 3000);
-        } catch (err) {
-            setError(err.message);
-        } finally {
-            setLifestyleLoading(false);
-        }
-    };
-
-    const saveInterests = async () => {
-        setInterestsLoading(true);
-        setError(null);
-        setSuccessMessage('');
-        try {
-            const res = await fetch('http://localhost:5015/api/preferences/user-interests', {
+            const p2 = fetch('http://localhost:5015/api/preferences/user-interests', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json',
@@ -137,13 +120,16 @@ const Preferences = () => {
                 body: JSON.stringify({ interestIds: selectedInterestIds })
             });
 
-            if (!res.ok) throw new Error('Lỗi khi lưu sở thích');
-            setSuccessMessage('Đã lưu sở thích thành công!');
+            const [res1, res2] = await Promise.all([p1, p2]);
+
+            if (!res1.ok || !res2.ok) throw new Error('Lỗi khi lưu thông tin');
+
+            setSuccessMessage('Đã lưu thành công!');
             setTimeout(() => setSuccessMessage(''), 3000);
         } catch (err) {
             setError(err.message);
         } finally {
-            setInterestsLoading(false);
+            setSaving(false);
         }
     };
 
@@ -176,14 +162,6 @@ const Preferences = () => {
                     <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                         <Home className="text-primary" /> Thói Quen & Lối Sống
                     </h2>
-                    <button
-                        onClick={saveLifestyle}
-                        disabled={lifestyleLoading}
-                        className="flex items-center gap-2 px-4 py-2 bg-primary text-white font-medium rounded-xl hover:bg-blue-600 transition-colors disabled:opacity-50"
-                    >
-                        {lifestyleLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                        Lưu Lối Sống
-                    </button>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -289,14 +267,6 @@ const Preferences = () => {
                     <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
                         <Coffee className="text-primary" /> Sở Thích Cá Nhân
                     </h2>
-                    <button
-                        onClick={saveInterests}
-                        disabled={interestsLoading}
-                        className="flex items-center gap-2 px-4 py-2 bg-primary text-white font-medium rounded-xl hover:bg-blue-600 transition-colors disabled:opacity-50"
-                    >
-                        {interestsLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
-                        Lưu Sở Thích
-                    </button>
                 </div>
 
                 {allInterests.length === 0 ? (
@@ -320,6 +290,17 @@ const Preferences = () => {
                         })}
                     </div>
                 )}
+            </div>
+
+            <div className="flex justify-end pt-6 border-t border-gray-100 mt-6">
+                <button
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="flex items-center gap-2 px-6 py-2 bg-primary text-white font-medium rounded-xl hover:bg-blue-600 transition-colors shadow-sm disabled:opacity-50"
+                >
+                    {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
+                    Lưu Thay Đổi
+                </button>
             </div>
 
         </div>
