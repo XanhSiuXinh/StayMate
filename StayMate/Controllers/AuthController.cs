@@ -29,7 +29,7 @@ namespace StayMate.Controllers
             // 1. Check if user exists
             if (await _context.Users.AnyAsync(u => u.Email == request.Email))
             {
-                return BadRequest("Email already exists.");
+                return BadRequest(new { message = "Email already exists." });
             }
 
             // 2. Hash password
@@ -69,19 +69,19 @@ namespace StayMate.Controllers
             var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == request.Email);
             if (user == null)
             {
-                return BadRequest("User not found.");
+                return BadRequest(new { message = "User not found." });
             }
 
        
             var parts = user.PasswordHash.Split('.');
-            if (parts.Length != 2) return BadRequest("Invalid password format in DB.");
+            if (parts.Length != 2) return BadRequest(new { message = "Invalid password format in DB." });
 
             var salt = Convert.FromBase64String(parts[0]);
             var storedHash = Convert.FromBase64String(parts[1]);
 
             if (!VerifyPasswordHash(request.Password, storedHash, salt))
             {
-                return BadRequest("Wrong password.");
+                return BadRequest(new { message = "Wrong password." });
             }
 
             var token = CreateToken(user);
@@ -144,7 +144,7 @@ namespace StayMate.Controllers
             }
             catch (Exception ex)
             {
-                return BadRequest($"Invalid Google token: {ex.Message}");
+                return BadRequest(new { message = $"Invalid Google token: {ex.Message}" });
             }
         }
 

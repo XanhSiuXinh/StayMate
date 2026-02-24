@@ -8,6 +8,9 @@ import PostRoom from './components/PostRoom';
 import RoomDetail from './components/RoomDetail';
 import ProtectedRoute from './components/ProtectedRoute';
 import Layout from './components/layout/Layout';
+import Discover from './components/Discover';
+import Messages from './components/Messages';
+import Preferences from './components/Preferences';
 
 function App() {
     const { isAuthenticated } = useAuth();
@@ -28,11 +31,7 @@ function App() {
                 {/* Protected Routes */}
                 <Route
                     path="/"
-                    element={
-                        <ProtectedRoute>
-                            <HomePage />
-                        </ProtectedRoute>
-                    }
+                    element={<HomePage />}
                 />
                 <Route
                     path="/profile"
@@ -58,7 +57,30 @@ function App() {
                         </ProtectedRoute>
                     }
                 />
-
+                <Route
+                    path="/discover"
+                    element={
+                        <ProtectedRoute>
+                            <Discover />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/messages"
+                    element={
+                        <ProtectedRoute>
+                            <Messages />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/preferences"
+                    element={
+                        <ProtectedRoute>
+                            <Preferences />
+                        </ProtectedRoute>
+                    }
+                />
                 {/* Fallback */}
                 <Route path="*" element={<Navigate to="/" replace />} />
             </Routes>

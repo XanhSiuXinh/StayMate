@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LogOut, Home, User, Plus, Menu, X } from 'lucide-react';
+import { LogOut, Home, User, Plus, Menu, X, Settings } from 'lucide-react';
 import { useState } from 'react';
 
 const Navbar = () => {
@@ -34,21 +34,31 @@ const Navbar = () => {
                     {isAuthenticated ? (
                         <div className="hidden md:flex items-center gap-6">
                             <Link
-                                to="/"
-                                className={`text-sm font-medium transition-colors ${isActive('/') ? 'text-primary' : 'text-gray-600 hover:text-gray-900'}`}
+                                to="/discover"
+                                className={`text-sm font-bold transition-colors ${isActive('/discover') ? 'text-primary' : 'text-gray-500 hover:text-gray-900'}`}
                             >
-                                Find Rooms
+                                Discover
                             </Link>
                             <Link
-                                to="/post-room"
-                                className={`text-sm font-medium transition-colors ${isActive('/post-room') ? 'text-primary' : 'text-gray-600 hover:text-gray-900'}`}
+                                to="/messages"
+                                className={`text-sm font-bold transition-colors ${isActive('/messages') ? 'text-primary' : 'text-gray-500 hover:text-gray-900'}`}
                             >
-                                Post a Room
+                                Messages
+                            </Link>
+                            <Link
+                                to="#"
+                                className="text-sm font-bold text-gray-500 hover:text-gray-900 transition-colors"
+                            >
+                                Saved
                             </Link>
 
                             <div className="h-6 w-px bg-gray-200 mx-2"></div>
 
-                            <div className="flex items-center gap-3">
+                            <div className="flex items-center gap-4">
+                                <Link to="/preferences" className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors bg-gray-100/50">
+                                    <Settings size={20} />
+                                </Link>
+
                                 <Link
                                     to="/profile"
                                     className="flex items-center gap-2 pl-2 pr-4 py-1.5 rounded-full hover:bg-gray-50 border border-transparent hover:border-gray-200 transition-all group"
@@ -137,6 +147,13 @@ const Navbar = () => {
                                     onClick={() => setIsMenuOpen(false)}
                                 >
                                     Profile Settings
+                                </Link>
+                                <Link
+                                    to="/preferences"
+                                    className="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium flex items-center gap-2"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <Settings size={18} /> Matching Preferences
                                 </Link>
                                 <div className="border-t border-gray-100 my-2"></div>
                                 <button
