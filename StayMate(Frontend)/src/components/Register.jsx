@@ -1,12 +1,10 @@
 import { useState } from 'react';
-import { Mail, Lock, User, Calendar, Loader2, ArrowRight } from 'lucide-react';
-import { useNavigate, Link } from 'react-router-dom';
+import { Mail, Lock, User, Calendar, Loader2, ArrowRight, X } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 
 const Register = () => {
-    const navigate = useNavigate();
-    const { login } = useAuth();
+    const { login, openAuthModal, closeAuthModal } = useAuth();
     const [formData, setFormData] = useState({
         fullName: '',
         email: '',
@@ -39,7 +37,7 @@ const Register = () => {
             }
 
             login(data);
-            navigate('/');
+            closeAuthModal();
 
         } catch (err) {
             setError(err.message || 'Registration failed. Please try again.');
@@ -63,7 +61,7 @@ const Register = () => {
             }
 
             login(data);
-            navigate('/');
+            closeAuthModal();
         } catch (err) {
             setError('Google login failed: ' + err.message);
         }
@@ -74,8 +72,14 @@ const Register = () => {
     };
 
     return (
-        <div className="min-h-[90vh] flex items-center justify-center p-4">
-            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 md:p-10 w-full max-w-lg animate-in fade-in zoom-in-95 duration-300">
+        <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-gray-900/50 backdrop-blur-sm animate-in fade-in duration-200">
+            <div className="bg-white rounded-2xl shadow-xl border border-gray-100 p-8 md:p-10 w-full max-w-lg animate-in fade-in zoom-in-95 duration-300 relative max-h-[95vh] overflow-y-auto">
+                <button
+                    onClick={closeAuthModal}
+                    className="absolute top-4 right-4 text-gray-400 hover:text-gray-900 hover:bg-gray-100 p-2 rounded-full transition-colors"
+                >
+                    <X size={20} />
+                </button>
                 <div className="text-center mb-8">
                     <h2 className="text-3xl font-bold text-gray-900 mb-2">Create Account</h2>
                     <p className="text-gray-500">Join StayMate to find your perfect room.</p>
@@ -187,9 +191,12 @@ const Register = () => {
 
                 <p className="mt-8 text-center text-gray-600 text-sm">
                     Already have an account?{' '}
-                    <Link to="/login" className="text-primary font-bold hover:underline">
+                    <button
+                        onClick={() => openAuthModal('login')}
+                        className="text-primary font-bold hover:underline"
+                    >
                         Sign In
-                    </Link>
+                    </button>
                 </p>
             </div>
         </div>

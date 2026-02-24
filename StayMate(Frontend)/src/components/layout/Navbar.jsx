@@ -4,14 +4,14 @@ import { LogOut, Home, User, Plus, Menu, X, Settings } from 'lucide-react';
 import { useState } from 'react';
 
 const Navbar = () => {
-    const { user, logout, isAuthenticated } = useAuth();
+    const { user, logout, isAuthenticated, openAuthModal } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
 
     const handleLogout = () => {
         logout();
-        navigate('/login');
+        navigate('/');
     };
 
     const isActive = (path) => location.pathname === path;
@@ -84,18 +84,18 @@ const Navbar = () => {
                         </div>
                     ) : (
                         <div className="hidden md:flex items-center gap-4">
-                            <Link
-                                to="/login"
-                                className="text-gray-600 hover:text-gray-900 font-medium text-sm px-4 py-2 hover:bg-gray-50 rounded-lg transition-colors"
+                            <button
+                                onClick={() => openAuthModal('login')}
+                                className="text-gray-600 hover:text-gray-900 font-medium text-sm px-4 py-2 hover:bg-gray-50 rounded-lg transition-colors cursor-pointer"
                             >
                                 Log In
-                            </Link>
-                            <Link
-                                to="/register"
-                                className="bg-primary text-white font-medium text-sm px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors shadow-sm hover:shadow-md"
+                            </button>
+                            <button
+                                onClick={() => openAuthModal('register')}
+                                className="bg-primary text-white font-medium text-sm px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors shadow-sm hover:shadow-md cursor-pointer"
                             >
                                 Sign Up
-                            </Link>
+                            </button>
                         </div>
                     )}
 
@@ -165,20 +165,24 @@ const Navbar = () => {
                             </>
                         ) : (
                             <>
-                                <Link
-                                    to="/login"
-                                    className="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium"
-                                    onClick={() => setIsMenuOpen(false)}
+                                <button
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        openAuthModal('login');
+                                    }}
+                                    className="w-full text-left px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium"
                                 >
                                     Log In
-                                </Link>
-                                <Link
-                                    to="/register"
-                                    className="block px-3 py-2 text-primary font-bold hover:bg-blue-50 rounded-lg"
-                                    onClick={() => setIsMenuOpen(false)}
+                                </button>
+                                <button
+                                    onClick={() => {
+                                        setIsMenuOpen(false);
+                                        openAuthModal('register');
+                                    }}
+                                    className="w-full text-left px-3 py-2 text-primary font-bold hover:bg-blue-50 rounded-lg"
                                 >
                                     Sign Up
-                                </Link>
+                                </button>
                             </>
                         )}
                     </div>

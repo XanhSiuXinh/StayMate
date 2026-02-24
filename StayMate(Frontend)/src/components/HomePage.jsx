@@ -2,9 +2,11 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Search, MapPin, ArrowRight } from 'lucide-react';
 import RoomList from './RoomList';
+import { useAuth } from '../context/AuthContext';
 
 const HomePage = () => {
     const navigate = useNavigate();
+    const { isAuthenticated, openAuthModal } = useAuth();
     const [searchTerm, setSearchTerm] = useState('');
 
     return (
@@ -98,8 +100,8 @@ const HomePage = () => {
                     </p>
                     <div className="flex flex-col sm:flex-row gap-4 justify-center">
                         <button
-                            onClick={() => navigate('/register')}
-                            className="px-8 py-3.5 bg-primary text-white font-bold rounded-xl hover:bg-blue-600 transition-all shadow-lg hover:shadow-primary/50"
+                            onClick={() => isAuthenticated ? navigate('/discover') : openAuthModal('register')}
+                            className="px-8 py-3.5 bg-primary text-white font-bold rounded-xl hover:bg-blue-600 transition-all shadow-lg hover:shadow-primary/50 cursor-pointer"
                         >
                             Tham Gia Ngay
                         </button>

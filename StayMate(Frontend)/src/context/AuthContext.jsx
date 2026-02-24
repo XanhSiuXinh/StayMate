@@ -6,6 +6,7 @@ export const AuthProvider = ({ children }) => {
     const [user, setUser] = useState(null);
     const [token, setToken] = useState(null);
     const [loading, setLoading] = useState(true);
+    const [authModalView, setAuthModalView] = useState(null); // 'login', 'register', or null
 
     // Load token từ localStorage khi app khởi động
     useEffect(() => {
@@ -30,6 +31,7 @@ export const AuthProvider = ({ children }) => {
         // Lưu vào localStorage
         localStorage.setItem('authToken', token);
         localStorage.setItem('authUser', JSON.stringify({ email, fullName }));
+        setAuthModalView(null);
     };
 
     // Logout function
@@ -40,13 +42,19 @@ export const AuthProvider = ({ children }) => {
         localStorage.removeItem('authUser');
     };
 
+    const openAuthModal = (view) => setAuthModalView(view);
+    const closeAuthModal = () => setAuthModalView(null);
+
     const value = {
         user,
         token,
         login,
         logout,
         isAuthenticated: !!token,
-        loading
+        loading,
+        authModalView,
+        openAuthModal,
+        closeAuthModal
     };
 
     return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;

@@ -13,21 +13,13 @@ import Messages from './components/Messages';
 import Preferences from './components/Preferences';
 
 function App() {
-    const { isAuthenticated } = useAuth();
+    const { isAuthenticated, authModalView } = useAuth();
 
     return (
         <Layout>
+            {authModalView === 'login' && <Login />}
+            {authModalView === 'register' && <Register />}
             <Routes>
-                {/* Public Routes */}
-                <Route
-                    path="/login"
-                    element={isAuthenticated ? <Navigate to="/" replace /> : <Login />}
-                />
-                <Route
-                    path="/register"
-                    element={isAuthenticated ? <Navigate to="/" replace /> : <Register />}
-                />
-
                 {/* Protected Routes */}
                 <Route
                     path="/"
