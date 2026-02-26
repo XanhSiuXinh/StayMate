@@ -14,11 +14,11 @@ const RoomCard = ({ room }) => {
 
     return (
         <div
-            className="group bg-white rounded-2xl overflow-hidden border border-gray-100 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col h-full"
+            className="group bg-white dark:bg-gray-800 rounded-2xl overflow-hidden border border-gray-100 dark:border-gray-700 shadow-sm hover:shadow-xl hover:-translate-y-1 transition-all duration-300 cursor-pointer flex flex-col h-full"
             onClick={() => navigate(`/rooms/${room.roomId}`)}
         >
             {/* Image Container */}
-            <div className="relative aspect-[4/3] overflow-hidden bg-gray-100">
+            <div className="relative aspect-[4/3] overflow-hidden bg-gray-100 dark:bg-gray-800">
                 <img
                     src={room.photoUrls?.[0] || `https://source.unsplash.com/random/800x600?room,interior&sig=${room.roomId}`}
                     alt={room.title}
@@ -29,12 +29,12 @@ const RoomCard = ({ room }) => {
                 {/* Badges */}
                 <div className="absolute top-3 left-3 flex gap-2">
                     {isNew(room.createdAt) && (
-                        <span className="bg-blue-600 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-sm uppercase tracking-wider">
+                        <span className="bg-blue-600 dark:bg-blue-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-sm uppercase tracking-wider">
                             New
                         </span>
                     )}
-                    <span className="bg-white/90 backdrop-blur-md text-gray-800 text-[10px] font-bold px-2 py-1 rounded-full shadow-sm flex items-center gap-1">
-                        <User size={10} className="text-primary" /> Verified
+                    <span className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md text-gray-800 dark:text-gray-200 text-[10px] font-bold px-2 py-1 rounded-full shadow-sm flex items-center gap-1">
+                        <User size={10} className="text-primary dark:text-blue-400" /> Verified
                     </span>
                 </div>
 
@@ -52,42 +52,42 @@ const RoomCard = ({ room }) => {
             {/* Content */}
             <div className="p-5 flex flex-col flex-1">
                 <div className="flex items-start justify-between gap-2 mb-2">
-                    <h3 className="font-bold text-gray-900 text-lg leading-tight line-clamp-1 group-hover:text-primary transition-colors">
+                    <h3 className="font-bold text-gray-900 dark:text-white text-lg leading-tight line-clamp-1 group-hover:text-primary dark:group-hover:text-blue-400 transition-colors">
                         {room.title}
                     </h3>
                 </div>
 
-                <div className="flex items-center gap-1.5 text-gray-500 text-sm mb-4">
-                    <MapPin size={14} className="text-primary/70 shrink-0" />
+                <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 text-sm mb-4">
+                    <MapPin size={14} className="text-primary/70 dark:text-blue-400/70 shrink-0" />
                     <span className="truncate">{room.district}, {room.city}</span>
                 </div>
 
                 {/* Features */}
                 <div className="grid grid-cols-2 gap-2 mb-4">
-                    <div className="bg-gray-50 rounded-lg px-2 py-1.5 flex items-center gap-2 text-xs text-gray-600">
-                        <Maximize size={12} className="text-gray-400" />
+                    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg px-2 py-1.5 flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
+                        <Maximize size={12} className="text-gray-400 dark:text-gray-500" />
                         <span className="font-medium">{room.areaSqm}m²</span>
                     </div>
-                    <div className="bg-gray-50 rounded-lg px-2 py-1.5 flex items-center gap-2 text-xs text-gray-600">
-                        <Home size={12} className="text-gray-400" />
+                    <div className="bg-gray-50 dark:bg-gray-700/50 rounded-lg px-2 py-1.5 flex items-center gap-2 text-xs text-gray-600 dark:text-gray-300">
+                        <Home size={12} className="text-gray-400 dark:text-gray-500" />
                         <span className="font-medium">Available</span>
                     </div>
                 </div>
 
-                <div className="mt-auto pt-4 border-t border-gray-100 flex items-center justify-between">
+                <div className="mt-auto pt-4 border-t border-gray-100 dark:border-gray-700 flex items-center justify-between">
                     <div className="flex items-center gap-2">
                         <img
                             src={room.hostAvatar || `https://ui-avatars.com/api/?name=${room.hostName || 'Host'}&background=random`}
                             alt={room.hostName}
-                            className="w-7 h-7 rounded-full object-cover border border-gray-200"
+                            className="w-7 h-7 rounded-full object-cover border border-gray-200 dark:border-gray-600"
                         />
                         <div className="flex flex-col">
-                            <span className="text-xs font-semibold text-gray-700 leading-none">{room.hostName}</span>
-                            <span className="text-[10px] text-gray-400 mt-0.5">Host</span>
+                            <span className="text-xs font-semibold text-gray-700 dark:text-gray-300 leading-none">{room.hostName}</span>
+                            <span className="text-[10px] text-gray-400 dark:text-gray-500 mt-0.5">Host</span>
                         </div>
                     </div>
 
-                    <button className="text-xs font-medium text-primary hover:text-blue-700 transition-colors flex items-center gap-1">
+                    <button className="text-xs font-medium text-primary dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300 transition-colors flex items-center gap-1">
                         Details <ArrowRight size={12} />
                     </button>
                 </div>

@@ -220,8 +220,8 @@ const Preferences = () => {
 
     if (loading) {
         return (
-            <div className="flex justify-center items-center py-12">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
+            <div className="flex justify-center items-center py-12 transition-colors">
+                <Loader2 className="w-8 h-8 animate-spin text-primary dark:text-blue-400" />
             </div>
         );
     }
@@ -230,13 +230,13 @@ const Preferences = () => {
         <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
 
             {error && (
-                <div className="bg-red-50 text-red-600 p-4 rounded-xl mb-6 font-medium">
+                <div className="bg-red-50 dark:bg-red-500/10 text-red-600 dark:text-red-400 p-4 rounded-xl mb-6 font-medium border border-transparent dark:border-red-500/20">
                     {error}
                 </div>
             )}
 
             {successMessage && (
-                <div className="bg-green-50 text-green-600 p-4 rounded-xl mb-6 font-medium">
+                <div className="bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 p-4 rounded-xl mb-6 font-medium border border-transparent dark:border-green-500/20">
                     {successMessage}
                 </div>
             )}
@@ -244,15 +244,15 @@ const Preferences = () => {
             {/* Lifestyle Section */}
             <div>
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                        <Home className="text-primary" /> Habits & Lifestyle
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <Home className="text-primary dark:text-blue-400" /> Habits & Lifestyle
                     </h2>
                 </div>
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1"><Sun size={14} /> Wake up time (Approximate)</label>
-                        <select name="wakeUpTime" value={lifestyle.wakeUpTime} onChange={handleLifestyleChange} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 outline-none">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1"><Sun size={14} /> Wake up time (Approximate)</label>
+                        <select name="wakeUpTime" value={lifestyle.wakeUpTime} onChange={handleLifestyleChange} className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/20 outline-none transition-colors">
                             <option value="">Select time...</option>
                             <option value="Early (Before 7 AM)">Early (Before 7 AM)</option>
                             <option value="Normal (7 AM - 9 AM)">Normal (7 AM - 9 AM)</option>
@@ -260,8 +260,8 @@ const Preferences = () => {
                         </select>
                     </div>
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1"><Moon size={14} /> Sleep time (Approximate)</label>
-                        <select name="sleepTime" value={lifestyle.sleepTime} onChange={handleLifestyleChange} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 outline-none">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1"><Moon size={14} /> Sleep time (Approximate)</label>
+                        <select name="sleepTime" value={lifestyle.sleepTime} onChange={handleLifestyleChange} className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/20 outline-none transition-colors">
                             <option value="">Select time...</option>
                             <option value="Early (Before 11 PM)">Early (Before 11 PM)</option>
                             <option value="Normal (11 PM - 1 AM)">Normal (11 PM - 1 AM)</option>
@@ -270,24 +270,24 @@ const Preferences = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1"><Wind size={14} /> Cleanliness level (1-5)</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1"><Wind size={14} /> Cleanliness level (1-5)</label>
                         <input type="range" min="1" max="5" name="cleanlinessLevel" value={lifestyle.cleanlinessLevel} onChange={handleLifestyleChange} className="w-full mt-2" />
-                        <div className="flex justify-between text-xs text-gray-400 mt-1">
+                        <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-1">
                             <span>Messy</span><span>Extremely clean</span>
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1 flex items-center gap-1"><VolumeX size={14} /> Noise level (1-5)</label>
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1 flex items-center gap-1"><VolumeX size={14} /> Noise level (1-5)</label>
                         <input type="range" min="1" max="5" name="noiseLevel" value={lifestyle.noiseLevel} onChange={handleLifestyleChange} className="w-full mt-2" />
-                        <div className="flex justify-between text-xs text-gray-400 mt-1">
+                        <div className="flex justify-between text-xs text-gray-400 dark:text-gray-500 mt-1">
                             <span>Quiet</span><span>Lively/Noisy</span>
                         </div>
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Cooking frequency</label>
-                        <select name="cookingFrequency" value={lifestyle.cookingFrequency} onChange={handleLifestyleChange} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 outline-none">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Cooking frequency</label>
+                        <select name="cookingFrequency" value={lifestyle.cookingFrequency} onChange={handleLifestyleChange} className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/20 outline-none transition-colors">
                             <option value="Never">Never</option>
                             <option value="Occasionally">Occasionally</option>
                             <option value="Regularly">Regularly (Every day)</option>
@@ -295,8 +295,8 @@ const Preferences = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Bringing guests</label>
-                        <select name="guestFrequency" value={lifestyle.guestFrequency} onChange={handleLifestyleChange} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 outline-none">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Bringing guests</label>
+                        <select name="guestFrequency" value={lifestyle.guestFrequency} onChange={handleLifestyleChange} className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/20 outline-none transition-colors">
                             <option value="Never">Never</option>
                             <option value="Rarely">Rarely</option>
                             <option value="Occasionally">Occasionally</option>
@@ -305,8 +305,8 @@ const Preferences = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Smoking</label>
-                        <select name="smokingStatus" value={lifestyle.smokingStatus} onChange={handleLifestyleChange} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 outline-none">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Smoking</label>
+                        <select name="smokingStatus" value={lifestyle.smokingStatus} onChange={handleLifestyleChange} className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/20 outline-none transition-colors">
                             <option value="Non-smoking">Non-smoking</option>
                             <option value="Smoke outside/balcony">Smoke outside/balcony</option>
                             <option value="Smoke in room">Smoke in room</option>
@@ -314,8 +314,8 @@ const Preferences = () => {
                     </div>
 
                     <div>
-                        <label className="block text-sm font-medium text-gray-700 mb-1">Drinking</label>
-                        <select name="drinkingStatus" value={lifestyle.drinkingStatus} onChange={handleLifestyleChange} className="w-full bg-gray-50 border border-gray-200 rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 outline-none">
+                        <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">Drinking</label>
+                        <select name="drinkingStatus" value={lifestyle.drinkingStatus} onChange={handleLifestyleChange} className="w-full bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl px-4 py-2.5 focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/20 outline-none transition-colors">
                             <option value="Never">Never</option>
                             <option value="Occasionally">Occasionally</option>
                             <option value="Regularly">Regularly</option>
@@ -323,14 +323,14 @@ const Preferences = () => {
                     </div>
 
                     <div className="flex items-center gap-3">
-                        <input type="checkbox" id="workFromHome" name="workFromHome" checked={lifestyle.workFromHome} onChange={handleLifestyleChange} className="w-5 h-5 rounded text-primary border-gray-300 focus:ring-primary" />
-                        <label htmlFor="workFromHome" className="text-sm font-medium text-gray-700">Work/Study from home frequently (WFH)</label>
+                        <input type="checkbox" id="workFromHome" name="workFromHome" checked={lifestyle.workFromHome} onChange={handleLifestyleChange} className="w-5 h-5 rounded text-primary border-gray-300 dark:border-gray-600 focus:ring-primary dark:bg-gray-800" />
+                        <label htmlFor="workFromHome" className="text-sm font-medium text-gray-700 dark:text-gray-300">Work/Study from home frequently (WFH)</label>
                     </div>
 
-                    <div className="col-span-1 md:col-span-2 flex flex-wrap gap-4 items-center bg-gray-50 p-4 rounded-xl border border-gray-100">
+                    <div className="col-span-1 md:col-span-2 flex flex-wrap gap-4 items-center bg-gray-50 dark:bg-gray-700/20 p-4 rounded-xl border border-gray-100 dark:border-gray-700/50">
                         <div className="flex items-center gap-3">
-                            <input type="checkbox" id="hasPets" name="hasPets" checked={lifestyle.hasPets} onChange={handleLifestyleChange} className="w-5 h-5 rounded text-primary border-gray-300 focus:ring-primary" />
-                            <label htmlFor="hasPets" className="text-sm font-medium text-gray-700 flex items-center gap-1"><Cat size={16} /> Have pets</label>
+                            <input type="checkbox" id="hasPets" name="hasPets" checked={lifestyle.hasPets} onChange={handleLifestyleChange} className="w-5 h-5 rounded text-primary border-gray-300 dark:border-gray-600 focus:ring-primary dark:bg-gray-800" />
+                            <label htmlFor="hasPets" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1"><Cat size={16} /> Have pets</label>
                         </div>
                         {lifestyle.hasPets && (
                             <input
@@ -339,7 +339,7 @@ const Preferences = () => {
                                 placeholder="Pet type (Dog, Cat...)"
                                 value={lifestyle.petType}
                                 onChange={handleLifestyleChange}
-                                className="flex-1 bg-white border border-gray-200 rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary/20 outline-none"
+                                className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/20 outline-none transition-colors"
                             />
                         )}
                     </div>
@@ -347,50 +347,40 @@ const Preferences = () => {
             </div>
 
             {/* Interests Section */}
-            <div className="pt-6 border-t border-gray-100">
+            <div className="pt-6 border-t border-gray-100 dark:border-gray-700">
                 <div className="flex items-center justify-between mb-6">
-                    <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                        <Coffee className="text-primary" /> Personal Interests
+                    <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                        <Coffee className="text-primary dark:text-blue-400" /> Personal Interests
                     </h2>
                 </div>
 
                 {allInterests.length === 0 ? (
-                    <p className="text-gray-500 text-sm">No interests found from system.</p>
+                    <p className="text-gray-500 dark:text-gray-400 text-sm">No interests found from system.</p>
                 ) : (
                     <div className="flex flex-wrap gap-3">
-                        {allInterests.map(interest => {
-                            const isSelected = selectedInterestIds.includes(interest.interestId);
-                            return (
-                                <button
-                                    key={interest.interestId}
-                                    onClick={() => toggleInterest(interest.interestId)}
-                                    className={`px-4 py-2 rounded-full text-sm font-medium transition-all ${isSelected
-                                        ? 'bg-blue-100 border-2 border-primary text-primary shadow-sm'
-                                        : 'bg-white border-2 border-gray-100 text-gray-600 hover:border-gray-300'
-                                        }`}
-                                >
-                                    {interest.iconUrl} {interest.interestName}
-                                </button>
-                            );
-                        })}
+                        <div className="hidden">
+                            {allInterests.map(interest => (
+                                <span key={interest.interestId}>{interest.interestName}</span>
+                            ))}
+                        </div>
                     </div>
                 )}
             </div>
 
             {/* Photos Section */}
-            <div className="pt-6 border-t border-gray-100">
+            <div className="pt-6 border-t border-gray-100 dark:border-gray-700">
                 <div className="flex items-center justify-between mb-6">
                     <div>
-                        <h2 className="text-xl font-bold text-gray-900 flex items-center gap-2">
-                            <ImageIcon className="text-primary" /> Photos
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <ImageIcon className="text-primary dark:text-blue-400" /> Photos
                         </h2>
-                        <p className="text-sm text-gray-500 mt-1">Add photos to help others envision you (up to 6 photos).</p>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Add photos to help others envision you (up to 6 photos).</p>
                     </div>
                 </div>
 
                 <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-6 gap-4">
                     {userPhotos.map((photo) => (
-                        <div key={photo.photoId} className="relative group aspect-square bg-gray-100 rounded-xl overflow-hidden border border-gray-200">
+                        <div key={photo.photoId} className="relative group aspect-square bg-gray-100 dark:bg-gray-800 rounded-xl overflow-hidden border border-gray-200 dark:border-gray-700">
                             <img src={photo.photoUrl} alt="User" className="w-full h-full object-cover" />
                             <button
                                 onClick={() => handleDeletePhoto(photo.photoId)}
@@ -403,7 +393,7 @@ const Preferences = () => {
                     {userPhotos.length < 6 && (
                         <button
                             onClick={handleAddPhotoClick}
-                            className="aspect-square bg-gray-50 border-2 border-dashed border-gray-300 rounded-xl flex flex-col items-center justify-center text-gray-500 hover:text-primary hover:border-primary hover:bg-blue-50/50 transition-all"
+                            className="aspect-square bg-gray-50 dark:bg-gray-800 border-2 border-dashed border-gray-300 dark:border-gray-600 rounded-xl flex flex-col items-center justify-center text-gray-500 dark:text-gray-400 hover:text-primary dark:hover:text-blue-400 hover:border-primary dark:hover:border-blue-400 hover:bg-blue-50/50 dark:hover:bg-blue-500/10 transition-all"
                         >
                             <Plus size={24} className="mb-2" />
                             <span className="text-sm font-medium">Add Photo</span>
@@ -421,11 +411,11 @@ const Preferences = () => {
                 />
             </div>
 
-            <div className="flex justify-end pt-6 border-t border-gray-100 mt-6">
+            <div className="flex justify-end pt-6 border-t border-gray-100 dark:border-gray-700 mt-6">
                 <button
                     onClick={handleSave}
                     disabled={saving}
-                    className="flex items-center gap-2 px-6 py-2 bg-primary text-white font-medium rounded-xl hover:bg-blue-600 transition-colors shadow-sm disabled:opacity-50"
+                    className="flex items-center gap-2 px-6 py-2 bg-primary dark:bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors shadow-sm disabled:opacity-50"
                 >
                     {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                     Save Changes

@@ -93,9 +93,9 @@ const Discover = () => {
 
     if (loading) {
         return (
-            <div className="flex-1 min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-gray-50 gap-4">
-                <Loader2 className="w-10 h-10 animate-spin text-primary" />
-                <p className="text-gray-500 font-medium">Checking your profile...</p>
+            <div className="flex-1 min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 gap-4 transition-colors">
+                <Loader2 className="w-10 h-10 animate-spin text-primary dark:text-blue-400" />
+                <p className="text-gray-500 dark:text-gray-400 font-medium">Checking your profile...</p>
             </div>
         );
     }
@@ -103,40 +103,40 @@ const Discover = () => {
     // GATE: Nếu chưa có hồ sơ ghép đôi thì hiện màn hình mời tạo hồ sơ
     if (!hasMatchingProfile) {
         return (
-            <div className="flex-1 min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 p-6">
-                <div className="max-w-lg w-full bg-white rounded-3xl shadow-xl overflow-hidden">
+            <div className="flex-1 min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6 transition-colors">
+                <div className="max-w-lg w-full bg-white dark:bg-gray-800 rounded-3xl shadow-xl overflow-hidden transition-colors">
                     {/* Decorative header */}
                     <div className="h-2 bg-gradient-to-r from-primary via-blue-400 to-purple-400" />
 
                     <div className="p-10 text-center">
                         {/* Animated Icon */}
                         <div className="relative w-24 h-24 mx-auto mb-8">
-                            <div className="absolute inset-0 bg-blue-100 rounded-full animate-ping opacity-30" />
-                            <div className="relative w-24 h-24 bg-gradient-to-br from-primary to-blue-400 rounded-full flex items-center justify-center shadow-lg shadow-blue-200">
+                            <div className="absolute inset-0 bg-blue-100 dark:bg-blue-900/50 rounded-full animate-ping opacity-30" />
+                            <div className="relative w-24 h-24 bg-gradient-to-br from-primary to-blue-400 dark:from-blue-600 dark:to-blue-400 rounded-full flex items-center justify-center shadow-lg shadow-blue-200 dark:shadow-none">
                                 <UserCircle2 className="text-white" size={44} />
                             </div>
                         </div>
 
-                        <h2 className="text-2xl font-bold text-gray-900 mb-3">
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-3">
                             You don't have a matching profile yet!
                         </h2>
-                        <p className="text-gray-500 leading-relaxed mb-8">
+                        <p className="text-gray-500 dark:text-gray-400 leading-relaxed mb-8">
                             To view and match with compatible roommates, you need to create a matching profile first. It only takes a few minutes!
                         </p>
 
                         {/* Steps preview */}
                         <div className="grid grid-cols-3 gap-4 mb-10 text-sm">
                             <div className="flex flex-col items-center gap-2">
-                                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary font-bold text-lg">1</div>
-                                <span className="text-gray-500">Fill your info</span>
+                                <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 font-bold text-lg border border-transparent dark:border-blue-500/20">1</div>
+                                <span className="text-gray-500 dark:text-gray-400">Fill your info</span>
                             </div>
                             <div className="flex flex-col items-center gap-2">
-                                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary font-bold text-lg">2</div>
-                                <span className="text-gray-500">Add preferences</span>
+                                <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 font-bold text-lg border border-transparent dark:border-blue-500/20">2</div>
+                                <span className="text-gray-500 dark:text-gray-400">Add preferences</span>
                             </div>
                             <div className="flex flex-col items-center gap-2">
-                                <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary font-bold text-lg">3</div>
-                                <span className="text-gray-500">Start matching!</span>
+                                <div className="w-10 h-10 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-primary dark:text-blue-400 font-bold text-lg border border-transparent dark:border-blue-500/20">3</div>
+                                <span className="text-gray-500 dark:text-gray-400">Start matching!</span>
                             </div>
                         </div>
 
@@ -155,15 +155,15 @@ const Discover = () => {
 
     if (!currentProfile) {
         return (
-            <div className="flex-1 min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50">
-                <p className="text-gray-500 font-medium tracking-wide">No more profiles to discover at this time. 🔍</p>
+            <div className="flex-1 min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 dark:bg-gray-900 transition-colors">
+                <p className="text-gray-500 dark:text-gray-400 font-medium tracking-wide">No more profiles to discover at this time. 🔍</p>
             </div>
         );
     }
 
 
     return (
-        <div className="flex-1 min-h-[calc(100vh-64px)] bg-gray-50 flex py-8 relative px-4">
+        <div className="flex-1 min-h-[calc(100vh-64px)] bg-gray-50 dark:bg-gray-900 flex py-8 relative px-4 transition-colors">
 
             <div className="max-w-md w-full mx-auto flex flex-col items-center">
 
@@ -228,21 +228,21 @@ const Discover = () => {
                 <div className="flex items-center justify-center gap-6 mt-8">
                     <button
                         onClick={() => handleSwipe('Pass')}
-                        className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-red-500 shadow-xl hover:scale-105 hover:shadow-2xl hover:-translate-y-1 transition-all border border-gray-100"
+                        className="w-16 h-16 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center text-red-500 dark:text-red-400 shadow-xl hover:scale-105 hover:shadow-2xl hover:-translate-y-1 transition-all border border-gray-100 dark:border-gray-700 hover:bg-red-50 dark:hover:bg-red-500/20"
                     >
                         <X size={32} strokeWidth={2.5} />
                     </button>
 
                     <button
                         onClick={() => setShowInfo(true)}
-                        className="w-14 h-14 bg-primary rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 hover:shadow-2xl hover:-translate-y-1 transition-all"
+                        className="w-14 h-14 bg-primary dark:bg-blue-600 rounded-full flex items-center justify-center text-white shadow-xl hover:scale-105 hover:shadow-2xl hover:-translate-y-1 transition-all"
                     >
                         <Info size={24} strokeWidth={2.5} />
                     </button>
 
                     <button
                         onClick={() => handleSwipe('Like')}
-                        className="w-16 h-16 bg-white rounded-full flex items-center justify-center text-green-500 shadow-xl hover:scale-105 hover:shadow-2xl hover:-translate-y-1 transition-all border border-gray-100"
+                        className="w-16 h-16 bg-white dark:bg-gray-800 rounded-full flex items-center justify-center text-green-500 dark:text-green-400 shadow-xl hover:scale-105 hover:shadow-2xl hover:-translate-y-1 transition-all border border-gray-100 dark:border-gray-700 hover:bg-green-50 dark:hover:bg-green-500/20"
                     >
                         <Heart size={32} strokeWidth={2.5} />
                     </button>
@@ -252,12 +252,12 @@ const Discover = () => {
                 <div className="mt-6 flex items-center gap-4">
                     <button
                         onClick={() => navigate('/profile')}
-                        className="flex items-center gap-2 text-sm text-gray-400 hover:text-primary transition-colors font-medium group"
+                        className="flex items-center gap-2 text-sm text-gray-400 hover:text-primary dark:hover:text-blue-400 transition-colors font-medium group"
                     >
                         <UserCircle2 size={18} className="group-hover:scale-110 transition-transform" />
                         View your profile
                     </button>
-                    <span className="text-gray-200">|</span>
+                    <span className="text-gray-200 dark:text-gray-700">|</span>
                     <button
                         onClick={async () => {
                             setShowPassed(true);
@@ -283,7 +283,7 @@ const Discover = () => {
 
             {/* Floating Message Button */}
             <div className="fixed bottom-8 right-8 z-50">
-                <button className="w-16 h-16 bg-blue-500 rounded-full flex items-center justify-center text-white shadow-lg hover:bg-blue-600 hover:scale-105 transition-all">
+                <button className="w-16 h-16 bg-blue-500 dark:bg-blue-600 rounded-full flex items-center justify-center text-white shadow-lg shadow-blue-500/30 dark:shadow-none hover:bg-blue-600 dark:hover:bg-blue-500 hover:scale-105 transition-all">
                     <MessageSquare size={28} />
                 </button>
             </div>
@@ -292,22 +292,22 @@ const Discover = () => {
             {showPassed && (
                 <div className="fixed inset-0 z-50 flex items-end sm:items-center justify-center p-0 sm:p-6 bg-black/50 backdrop-blur-sm" onClick={() => setShowPassed(false)}>
                     <div
-                        className="bg-white w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[85vh] flex flex-col"
+                        className="bg-white dark:bg-gray-900 w-full sm:max-w-lg rounded-t-3xl sm:rounded-3xl shadow-2xl overflow-hidden max-h-[85vh] flex flex-col transition-colors border-t border-gray-200 dark:border-gray-700 sm:border"
                         onClick={e => e.stopPropagation()}
                     >
                         {/* Header */}
-                        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100">
+                        <div className="flex items-center justify-between px-6 py-5 border-b border-gray-100 dark:border-gray-800">
                             <div className="flex items-center gap-3">
-                                <div className="w-9 h-9 bg-orange-100 rounded-full flex items-center justify-center">
-                                    <History size={18} className="text-orange-500" />
+                                <div className="w-9 h-9 bg-orange-100 dark:bg-orange-500/10 rounded-full flex items-center justify-center">
+                                    <History size={18} className="text-orange-500 dark:text-orange-400" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-gray-900">Recently Passed</h3>
-                                    <p className="text-xs text-gray-400">Past 10 profiles</p>
+                                    <h3 className="font-bold text-gray-900 dark:text-white">Recently Passed</h3>
+                                    <p className="text-xs text-gray-400 dark:text-gray-500">Past 10 profiles</p>
                                 </div>
                             </div>
-                            <button onClick={() => setShowPassed(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
-                                <X size={20} className="text-gray-500" />
+                            <button onClick={() => setShowPassed(false)} className="p-2 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors">
+                                <X size={20} className="text-gray-500 dark:text-gray-400" />
                             </button>
                         </div>
 
@@ -325,22 +325,22 @@ const Discover = () => {
                             ) : (
                                 <div className="space-y-3 py-2">
                                     {passedProfiles.map((p) => (
-                                        <div key={p.id} className="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-50 transition-colors">
+                                        <div key={p.id} className="flex items-center gap-4 p-3 rounded-2xl hover:bg-gray-50 dark:hover:bg-gray-800/50 transition-colors">
                                             <img
                                                 src={p.image}
                                                 alt={p.name}
-                                                className="w-14 h-14 rounded-full object-cover flex-shrink-0 border-2 border-gray-100"
+                                                className="w-14 h-14 rounded-full object-cover flex-shrink-0 border-2 border-gray-100 dark:border-gray-800"
                                             />
                                             <div className="flex-1 min-w-0">
-                                                <p className="font-semibold text-gray-900 truncate">{p.name}, {p.age}</p>
-                                                <p className="text-sm text-gray-500 truncate">{p.occupation}</p>
-                                                <p className="text-xs text-gray-400 truncate">{p.university}</p>
+                                                <p className="font-semibold text-gray-900 dark:text-white truncate">{p.name}, {p.age}</p>
+                                                <p className="text-sm text-gray-500 dark:text-gray-400 truncate">{p.occupation}</p>
+                                                <p className="text-xs text-gray-400 dark:text-gray-500 truncate">{p.university}</p>
                                             </div>
                                             <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                                                <span className="text-xs text-orange-400 font-medium bg-orange-50 px-2 py-1 rounded-full">Passed</span>
+                                                <span className="text-xs text-orange-400 dark:text-orange-500 font-medium bg-orange-50 dark:bg-orange-500/10 px-2 py-1 rounded-full border border-transparent dark:border-orange-500/20">Passed</span>
                                                 <button
                                                     onClick={() => setSelectedPassedProfile(p)}
-                                                    className="text-xs text-primary font-semibold hover:underline"
+                                                    className="text-xs text-primary dark:text-blue-400 font-semibold hover:underline"
                                                 >
                                                     View Profile
                                                 </button>
@@ -358,11 +358,11 @@ const Discover = () => {
             {selectedPassedProfile && (
                 <div className="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm" onClick={() => setSelectedPassedProfile(null)}>
                     <div
-                        className="bg-white rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200"
+                        className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-sm shadow-2xl overflow-hidden animate-in fade-in zoom-in duration-200 border border-gray-200 dark:border-gray-700"
                         onClick={e => e.stopPropagation()}
                     >
                         {/* Cover Image */}
-                        <div className="relative h-56 bg-gray-100">
+                        <div className="relative h-56 bg-gray-100 dark:bg-gray-800">
                             <img src={selectedPassedProfile.image} alt={selectedPassedProfile.name} className="w-full h-full object-cover" />
                             <div className="absolute inset-x-0 bottom-0 h-1/2 bg-gradient-to-t from-black/70 to-transparent flex flex-col justify-end p-4">
                                 <h2 className="text-white text-2xl font-bold">{selectedPassedProfile.name}, {selectedPassedProfile.age}</h2>
@@ -379,19 +379,19 @@ const Discover = () => {
 
                         {/* Info */}
                         <div className="p-5 space-y-3">
-                            <div className="flex items-center gap-2 text-gray-600">
-                                <Coffee size={16} className="text-primary flex-shrink-0" />
+                            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                                <Coffee size={16} className="text-primary dark:text-blue-400 flex-shrink-0" />
                                 <span className="text-sm">{selectedPassedProfile.occupation}</span>
                             </div>
-                            <div className="flex items-center gap-2 text-gray-600">
-                                <Home size={16} className="text-gray-400 flex-shrink-0" />
+                            <div className="flex items-center gap-2 text-gray-600 dark:text-gray-300">
+                                <Home size={16} className="text-gray-400 dark:text-gray-500 flex-shrink-0" />
                                 <span className="text-sm">{selectedPassedProfile.university}</span>
                             </div>
 
                             <div className="pt-3 flex gap-3">
                                 <button
                                     onClick={() => setSelectedPassedProfile(null)}
-                                    className="flex-1 py-2.5 bg-gray-100 text-gray-600 font-semibold rounded-xl hover:bg-gray-200 transition-colors text-sm"
+                                    className="flex-1 py-2.5 bg-gray-100 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-200 dark:hover:bg-gray-700 transition-colors text-sm border border-transparent dark:border-gray-700"
                                 >
                                     Close
                                 </button>
@@ -404,7 +404,7 @@ const Discover = () => {
             {/* Detailed Info Modal */}
             {showInfo && (
                 <div className="fixed inset-0 z-50 flex items-center justify-center p-4 sm:p-6 bg-black/60 backdrop-blur-sm">
-                    <div className="bg-white rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl animate-in fade-in zoom-in duration-300 relative">
+                    <div className="bg-white dark:bg-gray-900 rounded-3xl w-full max-w-2xl max-h-[90vh] overflow-y-auto shadow-2xl border border-gray-200 dark:border-gray-800 animate-in fade-in zoom-in duration-300 relative transition-colors">
                         <button
                             onClick={() => setShowInfo(false)}
                             className="absolute top-4 right-4 z-10 p-2 bg-black/20 hover:bg-black/40 text-white rounded-full transition-colors backdrop-blur-md"
@@ -413,7 +413,7 @@ const Discover = () => {
                         </button>
 
                         {/* Photo Gallery */}
-                        <div className="relative aspect-[4/3] w-full bg-gray-100">
+                        <div className="relative aspect-[4/3] w-full bg-gray-100 dark:bg-gray-800">
                             <img
                                 src={galleryImages[currentPhotoIndex]}
                                 alt={`${currentProfile.name} - ${currentPhotoIndex}`}
@@ -454,74 +454,74 @@ const Discover = () => {
                             {/* Basic Info & Match Score */}
                             <div className="flex justify-between items-start">
                                 <div>
-                                    <h2 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
+                                    <h2 className="text-3xl font-bold text-gray-900 dark:text-white flex items-center gap-3">
                                         {currentProfile.name}, {currentProfile.age}
-                                        <div className="flex items-center gap-1.5 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold border border-green-200">
+                                        <div className="flex items-center gap-1.5 bg-green-100 dark:bg-green-500/10 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-sm font-semibold border border-green-200 dark:border-green-500/20">
                                             <ShieldCheck size={16} /> Verified
                                         </div>
                                     </h2>
-                                    <p className="text-gray-500 text-lg mt-1 flex gap-2"><Home size={20} className="text-gray-400" /> {currentProfile.university}</p>
-                                    <p className="text-primary font-medium mt-1 flex gap-2"><Coffee size={20} className="text-primary/70" /> {currentProfile.occupation}</p>
+                                    <p className="text-gray-500 dark:text-gray-400 text-lg mt-1 flex gap-2"><Home size={20} className="text-gray-400 dark:text-gray-500" /> {currentProfile.university}</p>
+                                    <p className="text-primary dark:text-blue-400 font-medium mt-1 flex gap-2"><Coffee size={20} className="text-primary/70 dark:text-blue-400/70" /> {currentProfile.occupation}</p>
                                 </div>
                                 <div className="text-center">
-                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-blue-400 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-200">
+                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-blue-400 dark:from-blue-600 dark:to-blue-400 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-200 dark:shadow-none">
                                         {currentProfile.matchPercentage}%
                                     </div>
-                                    <span className="text-xs font-semibold text-gray-500 mt-2 block uppercase tracking-wider">Match</span>
+                                    <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 mt-2 block uppercase tracking-wider">Match</span>
                                 </div>
                             </div>
 
                             {/* Bio */}
-                            <div className="bg-blue-50/50 p-5 rounded-2xl border border-blue-100">
-                                <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wider mb-2">About me</h3>
-                                <p className="text-gray-700 leading-relaxed">"{currentProfile.bio}"</p>
+                            <div className="bg-blue-50/50 dark:bg-blue-900/10 p-5 rounded-2xl border border-blue-100 dark:border-blue-900/30">
+                                <h3 className="text-sm font-bold text-blue-800 dark:text-blue-400 uppercase tracking-wider mb-2">About me</h3>
+                                <p className="text-gray-700 dark:text-gray-300 leading-relaxed">"{currentProfile.bio}"</p>
                             </div>
 
                             {/* Detail Lifestyle Preferences */}
                             {currentProfile.lifestyle && (
                                 <div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><Sparkles className="text-yellow-500" /> Lifestyle</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4 flex items-center gap-2"><Sparkles className="text-yellow-500 dark:text-yellow-400" /> Lifestyle</h3>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                        <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                        <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl border border-gray-100 dark:border-gray-700">
                                             <Sun className="text-orange-400" size={20} />
                                             <div>
-                                                <p className="text-xs text-gray-500 font-medium">Wake up time</p>
-                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.wakeUpTime || 'Not set'}</p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Wake up time</p>
+                                                <p className="text-sm text-gray-900 dark:text-gray-200 font-semibold">{currentProfile.lifestyle.wakeUpTime || 'Not set'}</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                        <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl border border-gray-100 dark:border-gray-700">
                                             <Moon className="text-indigo-400" size={20} />
                                             <div>
-                                                <p className="text-xs text-gray-500 font-medium">Sleep time</p>
-                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.sleepTime || 'Not set'}</p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Sleep time</p>
+                                                <p className="text-sm text-gray-900 dark:text-gray-200 font-semibold">{currentProfile.lifestyle.sleepTime || 'Not set'}</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                        <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl border border-gray-100 dark:border-gray-700">
                                             <Wind className="text-cyan-500" size={20} />
                                             <div>
-                                                <p className="text-xs text-gray-500 font-medium">Cleanliness layer</p>
-                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.cleanlinessLevel ? `${currentProfile.lifestyle.cleanlinessLevel}/5` : 'Not set'}</p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Cleanliness layer</p>
+                                                <p className="text-sm text-gray-900 dark:text-gray-200 font-semibold">{currentProfile.lifestyle.cleanlinessLevel ? `${currentProfile.lifestyle.cleanlinessLevel}/5` : 'Not set'}</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
-                                            <VolumeX className="text-gray-400" size={20} />
+                                        <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl border border-gray-100 dark:border-gray-700">
+                                            <VolumeX className="text-gray-400 dark:text-gray-500" size={20} />
                                             <div>
-                                                <p className="text-xs text-gray-500 font-medium">Noise level</p>
-                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.noiseLevel ? `${currentProfile.lifestyle.noiseLevel}/5` : 'Not set'}</p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Noise level</p>
+                                                <p className="text-sm text-gray-900 dark:text-gray-200 font-semibold">{currentProfile.lifestyle.noiseLevel ? `${currentProfile.lifestyle.noiseLevel}/5` : 'Not set'}</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
-                                            <Dog className="text-amber-600" size={20} />
+                                        <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl border border-gray-100 dark:border-gray-700">
+                                            <Dog className="text-amber-600 dark:text-amber-500" size={20} />
                                             <div>
-                                                <p className="text-xs text-gray-500 font-medium">Pets</p>
-                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.hasPets ? (currentProfile.lifestyle.petType || 'Has pets') : 'No pets'}</p>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Pets</p>
+                                                <p className="text-sm text-gray-900 dark:text-gray-200 font-semibold">{currentProfile.lifestyle.hasPets ? (currentProfile.lifestyle.petType || 'Has pets') : 'No pets'}</p>
                                             </div>
                                         </div>
-                                        <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
+                                        <div className="flex items-center gap-3 bg-gray-50 dark:bg-gray-800/50 p-3 rounded-xl border border-gray-100 dark:border-gray-700">
                                             <Info className="text-red-400" size={20} />
                                             <div>
-                                                <p className="text-xs text-gray-500 font-medium">Smoking & Drinking</p>
-                                                <p className="text-sm text-gray-900 font-semibold truncate" title={`${currentProfile.lifestyle.smokingStatus} • ${currentProfile.lifestyle.drinkingStatus}`}>
+                                                <p className="text-xs text-gray-500 dark:text-gray-400 font-medium">Smoking & Drinking</p>
+                                                <p className="text-sm text-gray-900 dark:text-gray-200 font-semibold truncate" title={`${currentProfile.lifestyle.smokingStatus} • ${currentProfile.lifestyle.drinkingStatus}`}>
                                                     {currentProfile.lifestyle.smokingStatus} • {currentProfile.lifestyle.drinkingStatus}
                                                 </p>
                                             </div>
@@ -532,8 +532,8 @@ const Discover = () => {
 
                             {/* Additional Attributes/Interests Tags */}
                             {currentProfile.traits && currentProfile.traits.length > 0 && (
-                                <div className="pt-4 border-t border-gray-100">
-                                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Similarities / Interests</h3>
+                                <div className="pt-4 border-t border-gray-100 dark:border-gray-800">
+                                    <h3 className="text-sm font-bold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4">Similarities / Interests</h3>
                                     <div className="flex flex-wrap gap-2">
                                         {currentProfile.traits.map((trait, index) => {
                                             let IconComponent = Info;
@@ -546,9 +546,9 @@ const Discover = () => {
                                             return (
                                                 <div
                                                     key={index}
-                                                    className="flex items-center gap-1.5 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-sm font-medium"
+                                                    className="flex items-center gap-1.5 bg-gray-100 dark:bg-gray-800 text-gray-700 dark:text-gray-300 px-4 py-2 rounded-full text-sm font-medium border border-transparent dark:border-gray-700"
                                                 >
-                                                    <IconComponent size={14} className="text-gray-500" />
+                                                    <IconComponent size={14} className="text-gray-500 dark:text-gray-400" />
                                                     {trait.text}
                                                 </div>
                                             );
@@ -561,13 +561,13 @@ const Discover = () => {
                             <div className="flex justify-center gap-6 pt-6 mt-4">
                                 <button
                                     onClick={() => handleSwipe('Pass')}
-                                    className="px-8 py-3 bg-white text-gray-600 font-bold rounded-xl border border-gray-200 shadow-sm hover:bg-gray-50 hover:text-red-500 transition-colors w-full"
+                                    className="px-8 py-3 bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-bold rounded-xl border border-gray-200 dark:border-gray-700 shadow-sm hover:bg-gray-50 dark:hover:bg-gray-700 hover:text-red-500 transition-colors w-full"
                                 >
                                     Pass
                                 </button>
                                 <button
                                     onClick={() => handleSwipe('Like')}
-                                    className="px-8 py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-600 hover:-translate-y-0.5 transition-all w-full flex items-center justify-center gap-2"
+                                    className="px-8 py-3 bg-primary dark:bg-blue-600 text-white font-bold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-600 dark:hover:bg-blue-500 hover:-translate-y-0.5 transition-all w-full flex items-center justify-center gap-2"
                                 >
                                     <Heart size={20} fill="currentColor" /> Like
                                 </button>

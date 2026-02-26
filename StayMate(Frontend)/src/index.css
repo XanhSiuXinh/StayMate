@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+@custom-variant dark (&:is(.dark *));
+
 @theme {
   --color-primary: #3B82F6;
   --color-primary-hover: #2563EB;
@@ -41,6 +43,7 @@
     color: var(--text-main);
     -webkit-font-smoothing: antialiased;
     min-height: 100vh;
+    @apply dark:bg-gray-900 dark:text-gray-100 transition-colors duration-200;
   }
 
   #root {

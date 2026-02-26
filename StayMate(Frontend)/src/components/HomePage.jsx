@@ -1,4 +1,4 @@
-    import { useAuth } from '../context/AuthContext';
+import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { LogOut, Home } from 'lucide-react';
 
@@ -6,50 +6,25 @@ const HomePage = () => {
     const { user, logout } = useAuth();
     const navigate = useNavigate();
 
-    const handleLogout = () => { 
+    const handleLogout = () => {
         logout();
         navigate('/login');
     };
 
     return (
-        <div>
-            <header style={{
-                padding: '1.5rem',
-                display: 'flex',
-                justifyContent: 'space-between',
-                alignItems: 'center',
-                borderBottom: '1px solid rgba(255,255,255,0.05)'
-            }}>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: '700', margin: 0, display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                    <Home size={24} />
-                    Stay<span style={{ color: 'var(--primary)' }}>Mate</span>.
+        <div className="min-h-[calc(100vh-4rem)] bg-gray-50 dark:bg-gray-900 transition-colors duration-200">
+            <header className="p-6 flex justify-between items-center border-b border-gray-200 dark:border-gray-800 bg-white dark:bg-gray-800 transition-colors">
+                <h1 className="text-2xl font-bold m-0 flex items-center gap-2 text-gray-900 dark:text-white">
+                    <Home size={24} className="text-primary dark:text-blue-400" />
+                    Stay<span className="text-primary dark:text-blue-400">Mate</span>.
                 </h1>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                    <span style={{ color: 'var(--text-muted)' }}>
-                        Welcome, <strong style={{ color: 'white' }}>{user?.fullName}</strong>
+                <div className="flex items-center gap-4">
+                    <span className="text-gray-500 dark:text-gray-400">
+                        Welcome, <strong className="text-gray-900 dark:text-white">{user?.fullName}</strong>
                     </span>
                     <button
                         onClick={handleLogout}
-                        style={{
-                            background: 'transparent',
-                            border: '1px solid var(--border)',
-                            color: 'white',
-                            padding: '0.5rem 1rem',
-                            borderRadius: '0.5rem',
-                            cursor: 'pointer',
-                            display: 'flex',
-                            alignItems: 'center',
-                            gap: '0.5rem',
-                            transition: 'all 0.2s'
-                        }}
-                        onMouseEnter={(e) => {
-                            e.target.style.background = 'var(--bg-card)';
-                            e.target.style.borderColor = 'var(--primary)';
-                        }}
-                        onMouseLeave={(e) => {
-                            e.target.style.background = 'transparent';
-                            e.target.style.borderColor = 'var(--border)';
-                        }}
+                        className="bg-transparent border border-gray-200 dark:border-gray-700 text-gray-700 dark:text-gray-300 py-2 px-4 rounded-lg cursor-pointer flex items-center gap-2 transition-all hover:bg-gray-50 dark:hover:bg-gray-700 hover:border-primary dark:hover:border-blue-400"
                     >
                         <LogOut size={18} />
                         Logout
@@ -57,17 +32,11 @@ const HomePage = () => {
                 </div>
             </header>
 
-            <main style={{ padding: '2rem', maxWidth: '1200px', margin: '0 auto' }}>
-                <div style={{
-                    background: 'var(--bg-card)',
-                    padding: '3rem',
-                    borderRadius: 'var(--radius-lg)',
-                    border: '1px solid var(--border)',
-                    textAlign: 'center'
-                }}>
-                    <h2 style={{ fontSize: '2.5rem', marginBottom: '1rem' }}>👋 Welcome to StayMate!</h2>
-                    <p style={{ color: 'var(--text-muted)', fontSize: '1.1rem' }}>
-                        Logged in as <strong style={{ color: 'var(--primary)' }}>{user?.email}</strong>
+            <main className="p-8 max-w-6xl mx-auto">
+                <div className="bg-white dark:bg-gray-800 p-12 rounded-2xl border border-gray-100 dark:border-gray-700 text-center shadow-sm transition-colors">
+                    <h2 className="text-4xl font-bold mb-4 text-gray-900 dark:text-white">👋 Welcome to StayMate!</h2>
+                    <p className="text-lg text-gray-500 dark:text-gray-400">
+                        Logged in as <strong className="text-primary dark:text-blue-400">{user?.email}</strong>
                     </p>
                 </div>
             </main>

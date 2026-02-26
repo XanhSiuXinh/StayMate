@@ -129,24 +129,24 @@ const Profile = () => {
 
     if (loading) {
         return (
-            <div className="flex items-center justify-center min-h-screen bg-gray-50">
-                <Loader2 className="w-12 h-12 text-primary animate-spin" />
+            <div className="flex items-center justify-center min-h-screen bg-gray-50 dark:bg-gray-900 transition-colors">
+                <Loader2 className="w-12 h-12 text-primary dark:text-blue-400 animate-spin" />
             </div>
         );
     }
 
     return (
-        <div className="min-h-screen bg-gray-50 p-6 md:p-12">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 p-6 md:p-12 transition-colors">
             <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-8">
 
                 {/* Left Column: User Card */}
                 <div className="md:col-span-1 space-y-6">
-                    <div className="bg-white rounded-2xl p-8 shadow-sm border border-gray-100 flex flex-col items-center">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl p-8 shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col items-center transition-colors">
                         <div className="relative w-40 h-40 mb-6 group">
                             <img
                                 src={profile?.avatarUrl || `https://ui-avatars.com/api/?name=${profile?.fullName}&background=random&size=200`}
                                 alt="Profile"
-                                className="w-full h-full rounded-full object-cover border-4 border-white shadow-md transition-transform group-hover:scale-105"
+                                className="w-full h-full rounded-full object-cover border-4 border-white dark:border-gray-700 shadow-md transition-transform group-hover:scale-105"
                             />
                             {isEditing && (
                                 <div
@@ -170,29 +170,29 @@ const Profile = () => {
                             className="hidden"
                         />
 
-                        <h2 className="text-2xl font-bold text-gray-900 mb-1 text-center">{profile?.fullName}</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1 text-center">{profile?.fullName}</h2>
 
                         {profile?.isVerified && (
-                            <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold mb-4 border border-emerald-100">
+                            <div className="flex items-center gap-2 bg-emerald-50 dark:bg-emerald-500/10 text-emerald-700 dark:text-emerald-400 px-3 py-1 rounded-full text-xs font-semibold mb-4 border border-emerald-100 dark:border-emerald-500/20">
                                 <Award size={14} /> Verified Student
                             </div>
                         )}
 
-                        <div className="w-full space-y-4 pt-6 border-t border-gray-100">
-                            <div className="flex items-center gap-3 text-gray-600">
-                                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                        <div className="w-full space-y-4 pt-6 border-t border-gray-100 dark:border-gray-700">
+                            <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
+                                <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
                                     <Mail size={16} />
                                 </div>
                                 <span className="text-sm truncate">{profile?.email}</span>
                             </div>
-                            <div className="flex items-center gap-3 text-gray-600">
-                                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                            <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
+                                <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
                                     <Phone size={16} />
                                 </div>
                                 <span className="text-sm">{profile?.phoneNumber || "Add phone number"}</span>
                             </div>
-                            <div className="flex items-center gap-3 text-gray-600">
-                                <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
+                            <div className="flex items-center gap-3 text-gray-600 dark:text-gray-300">
+                                <div className="w-8 h-8 rounded-full bg-blue-50 dark:bg-blue-500/10 flex items-center justify-center text-blue-600 dark:text-blue-400">
                                     <User size={16} />
                                 </div>
                                 <span className="text-sm">{profile?.gender || "Add gender"}</span>
@@ -201,23 +201,23 @@ const Profile = () => {
 
                         <button
                             onClick={logout}
-                            className="mt-8 w-full py-2.5 px-4 bg-gray-50 hover:bg-red-50 text-gray-600 hover:text-red-600 rounded-lg transition-colors text-sm font-medium border border-gray-200"
+                            className="mt-8 w-full py-2.5 px-4 bg-gray-50 dark:bg-gray-700/50 hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors text-sm font-medium border border-gray-200 dark:border-gray-600"
                         >
                             Log Out
                         </button>
                     </div>
 
                     {/* Quick Stats (Placeholder for future features) */}
-                    <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                        <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Trust Score</h3>
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl p-6 shadow-sm border border-gray-100 dark:border-gray-700 transition-colors">
+                        <h3 className="text-sm font-semibold text-gray-400 dark:text-gray-500 uppercase tracking-wider mb-4">Trust Score</h3>
                         <div className="grid grid-cols-2 gap-4">
-                            <div className="text-center p-3 bg-gray-50 rounded-lg">
-                                <span className="block text-xl font-bold text-gray-900">12</span>
-                                <span className="text-xs text-gray-500">Connections</span>
+                            <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <span className="block text-xl font-bold text-gray-900 dark:text-white">12</span>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">Connections</span>
                             </div>
-                            <div className="text-center p-3 bg-gray-50 rounded-lg">
-                                <span className="block text-xl font-bold text-gray-900">4.8</span>
-                                <span className="text-xs text-gray-500">Reviews</span>
+                            <div className="text-center p-3 bg-gray-50 dark:bg-gray-700/50 rounded-lg">
+                                <span className="block text-xl font-bold text-gray-900 dark:text-white">4.8</span>
+                                <span className="text-xs text-gray-500 dark:text-gray-400">Reviews</span>
                             </div>
                         </div>
                     </div>
@@ -225,19 +225,19 @@ const Profile = () => {
 
                 {/* Right Column: Profile Content */}
                 <div className="md:col-span-2">
-                    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 overflow-hidden min-h-[600px] flex flex-col">
+                    <div className="bg-white dark:bg-gray-800 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 overflow-hidden min-h-[600px] flex flex-col transition-colors">
 
                         {/* Tab Navigation */}
-                        <div className="flex border-b border-gray-100">
+                        <div className="flex border-b border-gray-100 dark:border-gray-700">
                             <button
                                 onClick={() => setActiveTab('about')}
-                                className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${activeTab === 'about' ? 'text-primary border-b-2 border-primary bg-blue-50/50' : 'text-gray-500 hover:text-gray-700'}`}
+                                className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${activeTab === 'about' ? 'text-primary dark:text-blue-400 border-b-2 border-primary dark:border-blue-400 bg-blue-50/50 dark:bg-blue-500/5' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
                             >
                                 <User size={18} /> About Me
                             </button>
                             <button
                                 onClick={() => setActiveTab('lifestyle')}
-                                className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${activeTab === 'lifestyle' ? 'text-primary border-b-2 border-primary bg-blue-50/50' : 'text-gray-500 hover:text-gray-700'}`}
+                                className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${activeTab === 'lifestyle' ? 'text-primary dark:text-blue-400 border-b-2 border-primary dark:border-blue-400 bg-blue-50/50 dark:bg-blue-500/5' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
                             >
                                 <Activity size={18} /> Matching Profile
                             </button>
@@ -247,17 +247,17 @@ const Profile = () => {
                             {activeTab === 'about' && (
                                 <div className="flex justify-between items-center mb-8">
                                     <div>
-                                        <h1 className="text-2xl font-bold text-gray-900">
+                                        <h1 className="text-2xl font-bold text-gray-900 dark:text-white">
                                             My Profile
                                         </h1>
-                                        <p className="text-gray-500">
+                                        <p className="text-gray-500 dark:text-gray-400">
                                             Manage your personal information space.
                                         </p>
                                     </div>
                                     {!isEditing ? (
                                         <button
                                             onClick={() => setIsEditing(true)}
-                                            className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm font-medium text-sm"
+                                            className="flex items-center gap-2 px-4 py-2 bg-primary dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors shadow-sm font-medium text-sm"
                                         >
                                             <Edit2 size={16} /> Edit Profile
                                         </button>
@@ -265,14 +265,14 @@ const Profile = () => {
                                         <div className="flex gap-2">
                                             <button
                                                 onClick={() => { setIsEditing(false); setFormData(profile); setError(''); }}
-                                                className="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
+                                                className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium text-sm"
                                             >
                                                 Cancel
                                             </button>
                                             <button
                                                 onClick={handleUpdate}
                                                 disabled={updating}
-                                                className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm font-medium text-sm disabled:opacity-70"
+                                                className="flex items-center gap-2 px-4 py-2 bg-primary dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors shadow-sm font-medium text-sm disabled:opacity-70"
                                             >
                                                 {updating ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                                                 Save Changes
@@ -282,44 +282,44 @@ const Profile = () => {
                                 </div>
                             )}
 
-                            {error && <div className="mb-6 p-4 bg-red-50 text-red-700 rounded-lg text-sm border border-red-100 flex items-center gap-2"><X size={16} />{error}</div>}
-                            {success && <div className="mb-6 p-4 bg-green-50 text-green-700 rounded-lg text-sm border border-green-100 flex items-center gap-2"><Award size={16} />{success}</div>}
+                            {error && <div className="mb-6 p-4 bg-red-50 dark:bg-red-500/10 text-red-700 dark:text-red-400 rounded-lg text-sm border border-red-100 dark:border-red-500/20 flex items-center gap-2"><X size={16} />{error}</div>}
+                            {success && <div className="mb-6 p-4 bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 rounded-lg text-sm border border-green-100 dark:border-green-500/20 flex items-center gap-2"><Award size={16} />{success}</div>}
 
                             {/* ABOUT TAB CONTENT */}
                             {activeTab === 'about' && (
                                 <form className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-700">Full Name</label>
+                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
                                             <input
                                                 type="text"
                                                 name="fullName"
                                                 value={formData.fullName || ''}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-all disabled:text-gray-500 disabled:bg-gray-100/50"
+                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-400 outline-none transition-all disabled:text-gray-500 dark:disabled:text-gray-400 disabled:bg-gray-100/50 dark:disabled:bg-gray-800"
                                                 placeholder="e.g. John Doe"
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-700">Date of Birth</label>
+                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Date of Birth</label>
                                             <input
                                                 type="date"
                                                 name="dateOfBirth"
                                                 value={formData.dateOfBirth || ''}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-all disabled:text-gray-500 disabled:bg-gray-100/50"
+                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-400 outline-none transition-all disabled:text-gray-500 dark:disabled:text-gray-400 disabled:bg-gray-100/50 dark:disabled:bg-gray-800"
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-700">Gender</label>
+                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Gender</label>
                                             <select
                                                 name="gender"
                                                 value={formData.gender || ''}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-all disabled:text-gray-500 disabled:bg-gray-100/50"
+                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-400 outline-none transition-all disabled:text-gray-500 dark:disabled:text-gray-400 disabled:bg-gray-100/50 dark:disabled:bg-gray-800"
                                             >
                                                 <option value="">Select gender</option>
                                                 <option value="Male">Male</option>
@@ -328,56 +328,56 @@ const Profile = () => {
                                             </select>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-700">Phone Number</label>
+                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
                                             <input
                                                 type="tel"
                                                 name="phoneNumber"
                                                 value={formData.phoneNumber || ''}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-all disabled:text-gray-500 disabled:bg-gray-100/50"
+                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-400 outline-none transition-all disabled:text-gray-500 dark:disabled:text-gray-400 disabled:bg-gray-100/50 dark:disabled:bg-gray-800"
                                                 placeholder="+1 234 567 890"
                                             />
                                         </div>
 
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-sm font-medium text-gray-700">Occupation / Major</label>
+                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Occupation / Major</label>
                                             <input
                                                 type="text"
                                                 name="occupation"
                                                 value={formData.occupation || ''}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-all disabled:text-gray-500 disabled:bg-gray-100/50"
+                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-400 outline-none transition-all disabled:text-gray-500 dark:disabled:text-gray-400 disabled:bg-gray-100/50 dark:disabled:bg-gray-800"
                                                 placeholder="e.g. IT Student, Humanities, Accounting..."
                                             />
                                         </div>
 
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-sm font-medium text-gray-700">School / Workplace</label>
+                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">School / Workplace</label>
                                             <input
                                                 type="text"
                                                 name="school"
                                                 value={formData.school || ''}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-all disabled:text-gray-500 disabled:bg-gray-100/50"
+                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-400 outline-none transition-all disabled:text-gray-500 dark:disabled:text-gray-400 disabled:bg-gray-100/50 dark:disabled:bg-gray-800"
                                                 placeholder="e.g. FPT University, National University..."
                                             />
                                         </div>
 
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-sm font-medium text-gray-700">About Me</label>
+                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">About Me</label>
                                             <textarea
                                                 name="bio"
                                                 value={formData.bio || ''}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
                                                 rows="5"
-                                                className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-all disabled:text-gray-500 disabled:bg-gray-100/50 resize-none"
+                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-400 outline-none transition-all disabled:text-gray-500 dark:disabled:text-gray-400 disabled:bg-gray-100/50 dark:disabled:bg-gray-800 resize-none"
                                                 placeholder="Tell us a bit about yourself. What are your hobbies? What are you like as a roommate?"
                                             />
-                                            <p className="text-xs text-gray-400 text-right">Tip: Writing detailed info increases your chances of finding matching roommates.</p>
+                                            <p className="text-xs text-gray-400 dark:text-gray-500 text-right">Tip: Writing detailed info increases your chances of finding matching roommates.</p>
                                         </div>
                                     </div>
                                 </form>
