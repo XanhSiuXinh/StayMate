@@ -95,7 +95,7 @@ const Discover = () => {
         return (
             <div className="flex-1 min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-gray-50 gap-4">
                 <Loader2 className="w-10 h-10 animate-spin text-primary" />
-                <p className="text-gray-500 font-medium">Đang kiểm tra hồ sơ của bạn...</p>
+                <p className="text-gray-500 font-medium">Checking your profile...</p>
             </div>
         );
     }
@@ -118,25 +118,25 @@ const Discover = () => {
                         </div>
 
                         <h2 className="text-2xl font-bold text-gray-900 mb-3">
-                            Bạn chưa có hồ sơ ghép đôi!
+                            You don't have a matching profile yet!
                         </h2>
                         <p className="text-gray-500 leading-relaxed mb-8">
-                            Để xem và ghép đôi với những người bạn cùng phòng phù hợp, bạn cần tạo hồ sơ ghép đôi trước. Chỉ mất vài phút thôi!
+                            To view and match with compatible roommates, you need to create a matching profile first. It only takes a few minutes!
                         </p>
 
                         {/* Steps preview */}
                         <div className="grid grid-cols-3 gap-4 mb-10 text-sm">
                             <div className="flex flex-col items-center gap-2">
                                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary font-bold text-lg">1</div>
-                                <span className="text-gray-500">Điền thông tin cá nhân</span>
+                                <span className="text-gray-500">Fill your info</span>
                             </div>
                             <div className="flex flex-col items-center gap-2">
                                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary font-bold text-lg">2</div>
-                                <span className="text-gray-500">Thêm sở thích & thói quen</span>
+                                <span className="text-gray-500">Add preferences</span>
                             </div>
                             <div className="flex flex-col items-center gap-2">
                                 <div className="w-10 h-10 rounded-full bg-blue-50 flex items-center justify-center text-primary font-bold text-lg">3</div>
-                                <span className="text-gray-500">Bắt đầu ghép đôi!</span>
+                                <span className="text-gray-500">Start matching!</span>
                             </div>
                         </div>
 
@@ -145,7 +145,7 @@ const Discover = () => {
                             className="w-full py-4 bg-primary text-white font-bold rounded-2xl text-lg shadow-lg shadow-blue-200 hover:bg-blue-600 hover:-translate-y-0.5 transition-all flex items-center justify-center gap-3"
                         >
                             <Heart size={22} fill="currentColor" />
-                            Tạo hồ sơ ghép đôi ngay
+                            Create matching profile now
                         </button>
                     </div>
                 </div>
@@ -156,7 +156,7 @@ const Discover = () => {
     if (!currentProfile) {
         return (
             <div className="flex-1 min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50">
-                <p className="text-gray-500 font-medium tracking-wide">Không còn hồ sơ nào để khám phá tại thời điểm này. 🔍</p>
+                <p className="text-gray-500 font-medium tracking-wide">No more profiles to discover at this time. 🔍</p>
             </div>
         );
     }
@@ -255,7 +255,7 @@ const Discover = () => {
                         className="flex items-center gap-2 text-sm text-gray-400 hover:text-primary transition-colors font-medium group"
                     >
                         <UserCircle2 size={18} className="group-hover:scale-110 transition-transform" />
-                        Xem hồ sơ của bạn
+                        View your profile
                     </button>
                     <span className="text-gray-200">|</span>
                     <button
@@ -275,7 +275,7 @@ const Discover = () => {
                         className="flex items-center gap-2 text-sm text-gray-400 hover:text-orange-500 transition-colors font-medium group"
                     >
                         <History size={18} className="group-hover:scale-110 transition-transform" />
-                        Đã từ chối
+                        Passed Profiles
                     </button>
                 </div>
 
@@ -302,8 +302,8 @@ const Discover = () => {
                                     <History size={18} className="text-orange-500" />
                                 </div>
                                 <div>
-                                    <h3 className="font-bold text-gray-900">Đã từ chối gần đây</h3>
-                                    <p className="text-xs text-gray-400">10 hồ sơ gần nhất</p>
+                                    <h3 className="font-bold text-gray-900">Recently Passed</h3>
+                                    <p className="text-xs text-gray-400">Past 10 profiles</p>
                                 </div>
                             </div>
                             <button onClick={() => setShowPassed(false)} className="p-2 hover:bg-gray-100 rounded-full transition-colors">
@@ -320,7 +320,7 @@ const Discover = () => {
                             ) : passedProfiles.length === 0 ? (
                                 <div className="text-center py-16 text-gray-400">
                                     <History size={40} className="mx-auto mb-3 opacity-40" />
-                                    <p className="font-medium">Chưa có hồ sơ nào bị từ chối.</p>
+                                    <p className="font-medium">No passed profiles yet.</p>
                                 </div>
                             ) : (
                                 <div className="space-y-3 py-2">
@@ -337,12 +337,12 @@ const Discover = () => {
                                                 <p className="text-xs text-gray-400 truncate">{p.university}</p>
                                             </div>
                                             <div className="flex flex-col items-end gap-1.5 flex-shrink-0">
-                                                <span className="text-xs text-orange-400 font-medium bg-orange-50 px-2 py-1 rounded-full">Đã bỏ qua</span>
+                                                <span className="text-xs text-orange-400 font-medium bg-orange-50 px-2 py-1 rounded-full">Passed</span>
                                                 <button
                                                     onClick={() => setSelectedPassedProfile(p)}
                                                     className="text-xs text-primary font-semibold hover:underline"
                                                 >
-                                                    Xem lại hồ sơ
+                                                    View Profile
                                                 </button>
                                             </div>
                                         </div>
@@ -374,7 +374,7 @@ const Discover = () => {
                             >
                                 <X size={18} />
                             </button>
-                            <span className="absolute top-3 left-3 bg-orange-500/90 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-md">Đã bỏ qua</span>
+                            <span className="absolute top-3 left-3 bg-orange-500/90 text-white text-xs font-bold px-3 py-1.5 rounded-full backdrop-blur-md">Passed</span>
                         </div>
 
                         {/* Info */}
@@ -393,7 +393,7 @@ const Discover = () => {
                                     onClick={() => setSelectedPassedProfile(null)}
                                     className="flex-1 py-2.5 bg-gray-100 text-gray-600 font-semibold rounded-xl hover:bg-gray-200 transition-colors text-sm"
                                 >
-                                    Đóng
+                                    Close
                                 </button>
                             </div>
                         </div>
@@ -457,7 +457,7 @@ const Discover = () => {
                                     <h2 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
                                         {currentProfile.name}, {currentProfile.age}
                                         <div className="flex items-center gap-1.5 bg-green-100 text-green-700 px-3 py-1 rounded-full text-sm font-semibold border border-green-200">
-                                            <ShieldCheck size={16} /> Xác thực
+                                            <ShieldCheck size={16} /> Verified
                                         </div>
                                     </h2>
                                     <p className="text-gray-500 text-lg mt-1 flex gap-2"><Home size={20} className="text-gray-400" /> {currentProfile.university}</p>
@@ -467,60 +467,60 @@ const Discover = () => {
                                     <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-blue-400 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-200">
                                         {currentProfile.matchPercentage}%
                                     </div>
-                                    <span className="text-xs font-semibold text-gray-500 mt-2 block uppercase tracking-wider">Độ hợp</span>
+                                    <span className="text-xs font-semibold text-gray-500 mt-2 block uppercase tracking-wider">Match</span>
                                 </div>
                             </div>
 
                             {/* Bio */}
                             <div className="bg-blue-50/50 p-5 rounded-2xl border border-blue-100">
-                                <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wider mb-2">Giới thiệu bản thân</h3>
+                                <h3 className="text-sm font-bold text-blue-800 uppercase tracking-wider mb-2">About me</h3>
                                 <p className="text-gray-700 leading-relaxed">"{currentProfile.bio}"</p>
                             </div>
 
                             {/* Detail Lifestyle Preferences */}
                             {currentProfile.lifestyle && (
                                 <div>
-                                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><Sparkles className="text-yellow-500" /> Thói quen sinh hoạt</h3>
+                                    <h3 className="text-lg font-bold text-gray-900 mb-4 flex items-center gap-2"><Sparkles className="text-yellow-500" /> Lifestyle</h3>
                                     <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                                         <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
                                             <Sun className="text-orange-400" size={20} />
                                             <div>
-                                                <p className="text-xs text-gray-500 font-medium">Giờ dậy</p>
-                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.wakeUpTime || 'Chưa cập nhật'}</p>
+                                                <p className="text-xs text-gray-500 font-medium">Wake up time</p>
+                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.wakeUpTime || 'Not set'}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
                                             <Moon className="text-indigo-400" size={20} />
                                             <div>
-                                                <p className="text-xs text-gray-500 font-medium">Giờ đi ngủ</p>
-                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.sleepTime || 'Chưa cập nhật'}</p>
+                                                <p className="text-xs text-gray-500 font-medium">Sleep time</p>
+                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.sleepTime || 'Not set'}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
                                             <Wind className="text-cyan-500" size={20} />
                                             <div>
-                                                <p className="text-xs text-gray-500 font-medium">Mức độ sạch sẽ</p>
-                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.cleanlinessLevel ? `${currentProfile.lifestyle.cleanlinessLevel}/5` : 'Chưa cập nhật'}</p>
+                                                <p className="text-xs text-gray-500 font-medium">Cleanliness layer</p>
+                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.cleanlinessLevel ? `${currentProfile.lifestyle.cleanlinessLevel}/5` : 'Not set'}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
                                             <VolumeX className="text-gray-400" size={20} />
                                             <div>
-                                                <p className="text-xs text-gray-500 font-medium">Độ ồn ào</p>
-                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.noiseLevel ? `${currentProfile.lifestyle.noiseLevel}/5` : 'Chưa cập nhật'}</p>
+                                                <p className="text-xs text-gray-500 font-medium">Noise level</p>
+                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.noiseLevel ? `${currentProfile.lifestyle.noiseLevel}/5` : 'Not set'}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
                                             <Dog className="text-amber-600" size={20} />
                                             <div>
-                                                <p className="text-xs text-gray-500 font-medium">Thú cưng</p>
-                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.hasPets ? (currentProfile.lifestyle.petType || 'Có nuôi') : 'Không nuôi'}</p>
+                                                <p className="text-xs text-gray-500 font-medium">Pets</p>
+                                                <p className="text-sm text-gray-900 font-semibold">{currentProfile.lifestyle.hasPets ? (currentProfile.lifestyle.petType || 'Has pets') : 'No pets'}</p>
                                             </div>
                                         </div>
                                         <div className="flex items-center gap-3 bg-gray-50 p-3 rounded-xl border border-gray-100">
                                             <Info className="text-red-400" size={20} />
                                             <div>
-                                                <p className="text-xs text-gray-500 font-medium">Hút thuốc & Rượu bia</p>
+                                                <p className="text-xs text-gray-500 font-medium">Smoking & Drinking</p>
                                                 <p className="text-sm text-gray-900 font-semibold truncate" title={`${currentProfile.lifestyle.smokingStatus} • ${currentProfile.lifestyle.drinkingStatus}`}>
                                                     {currentProfile.lifestyle.smokingStatus} • {currentProfile.lifestyle.drinkingStatus}
                                                 </p>
@@ -533,7 +533,7 @@ const Discover = () => {
                             {/* Additional Attributes/Interests Tags */}
                             {currentProfile.traits && currentProfile.traits.length > 0 && (
                                 <div className="pt-4 border-t border-gray-100">
-                                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Điểm Tương Đồng / Sở Thích</h3>
+                                    <h3 className="text-sm font-bold text-gray-400 uppercase tracking-wider mb-4">Similarities / Interests</h3>
                                     <div className="flex flex-wrap gap-2">
                                         {currentProfile.traits.map((trait, index) => {
                                             let IconComponent = Info;
@@ -563,13 +563,13 @@ const Discover = () => {
                                     onClick={() => handleSwipe('Pass')}
                                     className="px-8 py-3 bg-white text-gray-600 font-bold rounded-xl border border-gray-200 shadow-sm hover:bg-gray-50 hover:text-red-500 transition-colors w-full"
                                 >
-                                    Bỏ Qua
+                                    Pass
                                 </button>
                                 <button
                                     onClick={() => handleSwipe('Like')}
                                     className="px-8 py-3 bg-primary text-white font-bold rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-600 hover:-translate-y-0.5 transition-all w-full flex items-center justify-center gap-2"
                                 >
-                                    <Heart size={20} fill="currentColor" /> Thích
+                                    <Heart size={20} fill="currentColor" /> Like
                                 </button>
                             </div>
                         </div>

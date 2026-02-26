@@ -35,7 +35,7 @@ const Saved = () => {
         return (
             <div className="flex-1 min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-gray-50 gap-4">
                 <Loader2 className="w-10 h-10 animate-spin text-primary" />
-                <p className="text-gray-500 font-medium">Đang tải danh sách đã lưu...</p>
+                <p className="text-gray-500 font-medium">Loading saved list...</p>
             </div>
         );
     }
@@ -44,18 +44,18 @@ const Saved = () => {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 w-full">
             <div className="mb-8">
                 <h1 className="text-3xl font-bold text-gray-900 flex items-center gap-3">
-                    <Heart className="w-8 h-8 text-red-500 fill-red-500" /> Hồ Sơ Đã Thích
+                    <Heart className="w-8 h-8 text-red-500 fill-red-500" /> Saved Profiles
                 </h1>
-                <p className="text-gray-500 mt-2">Xem lại những người bạn đã vuốt Thích (Like) trên trang Khám Phá.</p>
+                <p className="text-gray-500 mt-2">Review the people you have liked on the Discover page.</p>
             </div>
 
             {savedProfiles.length === 0 ? (
                 <div className="bg-white rounded-2xl p-12 text-center shadow-sm border border-gray-100 max-w-2xl mx-auto">
                     <Heart className="w-16 h-16 text-gray-300 mx-auto mb-4" />
-                    <h3 className="text-xl font-bold text-gray-900 mb-2">Chưa có ai ở đây cả</h3>
-                    <p className="text-gray-500 mb-6">Bạn chưa "Thích" hồ sơ nào trên trang Khám Phá. Hãy bắt đầu vuốt nhé!</p>
+                    <h3 className="text-xl font-bold text-gray-900 mb-2">No one here yet</h3>
+                    <p className="text-gray-500 mb-6">You haven't "Liked" any profiles on the Discover page yet. Start swiping!</p>
                     <Link to="/discover" className="inline-flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-full text-white bg-primary hover:bg-blue-600 transition-colors shadow-sm">
-                        Khám Phá Ngay
+                        Discover Now
                     </Link>
                 </div>
             ) : (
@@ -94,7 +94,7 @@ const Saved = () => {
                                 {/* Action Buttons */}
                                 <div className="pt-4 mt-auto border-t border-gray-100 flex gap-3">
                                     <button className="flex-1 bg-primary text-white py-2.5 rounded-full font-medium hover:bg-blue-600 transition-colors flex items-center justify-center gap-2 shadow-sm text-sm">
-                                        <Mail className="w-4 h-4" /> Nhắn Tin
+                                        <Mail className="w-4 h-4" /> Message
                                     </button>
                                 </div>
                             </div>

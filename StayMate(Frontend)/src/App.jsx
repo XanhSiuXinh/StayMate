@@ -11,6 +11,7 @@ import Layout from './components/layout/Layout';
 import Discover from './components/Discover';
 import Messages from './components/Messages';
 import Preferences from './components/Preferences';
+import Settings from './components/Settings';
 import Saved from './components/Saved';
 
 function App() {
@@ -79,6 +80,14 @@ function App() {
                     element={
                         <ProtectedRoute>
                             <Saved />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/settings"
+                    element={
+                        <ProtectedRoute>
+                            <Settings />
                         </ProtectedRoute>
                     }
                 />

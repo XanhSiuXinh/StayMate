@@ -2,6 +2,8 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Security.Cryptography;
+using System.Text;
 using StayMate.DTOs;
 using StayMate.Models;
 
@@ -204,5 +206,74 @@ public class UsersController : ControllerBase
             hasMatchingProfile = hasLifestyle,
             hasBasicProfile = hasBasicProfile
         });
+    }
+
+    [HttpPut("change-password")]
+    [Authorize]
+    public async Task<IActionResult> ChangePassword([FromBody] ChangePasswordDto request)
+    {
+        var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out int userId))
+            return Unauthorized("Token invalid");
+
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return NotFound("User not found.");
+
+        if (string.IsNullOrEmpty(user.PasswordHash))
+            return BadRequest(new { message = "Accounts created via Google cannot change password here." });
+
+        var parts = user.PasswordHash.Split('.');
+        if (parts.Length != 2) return BadRequest(new { message = "Invalid password format in DB." });
+
+        var salt = Convert.FromBase64String(parts[0]);
+        var storedHash = Convert.FromBase64String(parts[1]);
+
+        if (!VerifyPasswordHash(request.CurrentPassword, storedHash, salt))
+            return BadRequest(new { message = "Wrong current password." });
+
+        CreatePasswordHash(request.NewPassword, out byte[] newHash, out byte[] newSalt);
+        user.PasswordHash = Convert.ToBase64String(newSalt) + "." + Convert.ToBase64String(newHash);
+        user.UpdatedAt = DateTime.Now;
+
+        await _context.SaveChangesAsync();
+        return Ok(new { message = "Password changed successfully." });
+    }
+
+    [HttpDelete("account")]
+    [Authorize]
+    public async Task<IActionResult> DeleteAccount()
+    {
+        var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+        if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out int userId))
+            return Unauthorized("Token invalid");
+
+        var user = await _context.Users.FindAsync(userId);
+        if (user == null) return NotFound("User not found.");
+
+        // For this implementation, hard delete the user
+        // (EF Core should cascade delete related entities like LifestylePreferences, Photos if configured correctly,
+        // otherwise we might need to delete them manually.)
+        _context.Users.Remove(user);
+        await _context.SaveChangesAsync();
+
+        return Ok(new { message = "Account deleted successfully." });
+    }
+
+    private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
+    {
+        using (var hmac = new HMACSHA512())
+        {
+            passwordSalt = hmac.Key;
+            passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+        }
+    }
+
+    private bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
+    {
+        using (var hmac = new HMACSHA512(storedSalt))
+        {
+            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
+            return computedHash.SequenceEqual(storedHash);
+        }
     }
 }

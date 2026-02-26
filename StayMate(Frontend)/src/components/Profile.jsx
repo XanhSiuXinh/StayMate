@@ -32,10 +32,10 @@ const Profile = () => {
                 setProfile(data);
                 setFormData(data);
             } else {
-                setError(data.message || 'Tải hồ sơ thất bại');
+                setError(data.message || 'Failed to load profile');
             }
         } catch (err) {
-            setError('Lỗi kết nối đến máy chủ');
+            setError('Server connection error');
         } finally {
             setLoading(false);
         }
@@ -61,14 +61,14 @@ const Profile = () => {
 
             if (response.ok) {
                 setProfile(data.user || formData);
-                setSuccess('Cập nhật hồ sơ thành công!');
+                setSuccess('Profile updated successfully!');
                 setIsEditing(false);
                 updateUser({ fullName: formData.fullName, avatarUrl: formData.avatarUrl });
             } else {
-                setError(data.message || 'Cập nhật thất bại');
+                setError(data.message || 'Update failed');
             }
         } catch (err) {
-            setError('Lỗi cập nhật hồ sơ');
+            setError('Error updating profile');
         } finally {
             setUpdating(false);
         }
@@ -108,16 +108,16 @@ const Profile = () => {
             if (res.ok) {
                 setFormData(prev => ({ ...prev, avatarUrl: data.avatarUrl }));
                 setProfile(prev => ({ ...prev, avatarUrl: data.avatarUrl }));
-                setSuccess('Đổi ảnh đại diện thành công!');
+                setSuccess('Avatar updated successfully!');
                 setTimeout(() => setSuccess(''), 3000);
                 // Also update the context so navbar updates
                 updateUser({ fullName: formData.fullName, avatarUrl: data.avatarUrl });
             } else {
-                setError(data.message || 'Lỗi khi đổi ảnh đại diện.');
+                setError(data.message || 'Error updating avatar.');
                 setTimeout(() => setError(''), 3000);
             }
         } catch (err) {
-            setError('Lỗi kết nối.');
+            setError('Connection error.');
             setTimeout(() => setError(''), 3000);
         } finally {
             setUploadingAvatar(false);
@@ -156,7 +156,7 @@ const Profile = () => {
                                     {uploadingAvatar ? (
                                         <Loader2 className="w-5 h-5 text-white animate-spin" />
                                     ) : (
-                                        <span className="text-white text-sm font-medium">Đổi Ảnh</span>
+                                        <span className="text-white text-sm font-medium">Change Photo</span>
                                     )}
                                 </div>
                             )}
@@ -174,7 +174,7 @@ const Profile = () => {
 
                         {profile?.isVerified && (
                             <div className="flex items-center gap-2 bg-emerald-50 text-emerald-700 px-3 py-1 rounded-full text-xs font-semibold mb-4 border border-emerald-100">
-                                <Award size={14} /> Sinh viên đã xác thực
+                                <Award size={14} /> Verified Student
                             </div>
                         )}
 
@@ -189,13 +189,13 @@ const Profile = () => {
                                 <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                                     <Phone size={16} />
                                 </div>
-                                <span className="text-sm">{profile?.phoneNumber || "Thêm số điện thoại"}</span>
+                                <span className="text-sm">{profile?.phoneNumber || "Add phone number"}</span>
                             </div>
                             <div className="flex items-center gap-3 text-gray-600">
                                 <div className="w-8 h-8 rounded-full bg-blue-50 flex items-center justify-center text-blue-600">
                                     <User size={16} />
                                 </div>
-                                <span className="text-sm">{profile?.gender || "Thêm giới tính"}</span>
+                                <span className="text-sm">{profile?.gender || "Add gender"}</span>
                             </div>
                         </div>
 
@@ -203,21 +203,21 @@ const Profile = () => {
                             onClick={logout}
                             className="mt-8 w-full py-2.5 px-4 bg-gray-50 hover:bg-red-50 text-gray-600 hover:text-red-600 rounded-lg transition-colors text-sm font-medium border border-gray-200"
                         >
-                            Đăng Xuất
+                            Log Out
                         </button>
                     </div>
 
                     {/* Quick Stats (Placeholder for future features) */}
                     <div className="bg-white rounded-2xl p-6 shadow-sm border border-gray-100">
-                        <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Chỉ Số Uy Tín</h3>
+                        <h3 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4">Trust Score</h3>
                         <div className="grid grid-cols-2 gap-4">
                             <div className="text-center p-3 bg-gray-50 rounded-lg">
                                 <span className="block text-xl font-bold text-gray-900">12</span>
-                                <span className="text-xs text-gray-500">Kết nối</span>
+                                <span className="text-xs text-gray-500">Connections</span>
                             </div>
                             <div className="text-center p-3 bg-gray-50 rounded-lg">
                                 <span className="block text-xl font-bold text-gray-900">4.8</span>
-                                <span className="text-xs text-gray-500">Đánh giá</span>
+                                <span className="text-xs text-gray-500">Reviews</span>
                             </div>
                         </div>
                     </div>
@@ -233,13 +233,13 @@ const Profile = () => {
                                 onClick={() => setActiveTab('about')}
                                 className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${activeTab === 'about' ? 'text-primary border-b-2 border-primary bg-blue-50/50' : 'text-gray-500 hover:text-gray-700'}`}
                             >
-                                <User size={18} /> Giới Thiệu
+                                <User size={18} /> About Me
                             </button>
                             <button
                                 onClick={() => setActiveTab('lifestyle')}
                                 className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${activeTab === 'lifestyle' ? 'text-primary border-b-2 border-primary bg-blue-50/50' : 'text-gray-500 hover:text-gray-700'}`}
                             >
-                                <Activity size={18} /> Hồ Sơ Ghép Đôi
+                                <Activity size={18} /> Matching Profile
                             </button>
                         </div>
 
@@ -248,10 +248,10 @@ const Profile = () => {
                                 <div className="flex justify-between items-center mb-8">
                                     <div>
                                         <h1 className="text-2xl font-bold text-gray-900">
-                                            Hồ Sơ Của Tôi
+                                            My Profile
                                         </h1>
                                         <p className="text-gray-500">
-                                            Quản lý không gian thông tin cá nhân của bạn.
+                                            Manage your personal information space.
                                         </p>
                                     </div>
                                     {!isEditing ? (
@@ -259,7 +259,7 @@ const Profile = () => {
                                             onClick={() => setIsEditing(true)}
                                             className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm font-medium text-sm"
                                         >
-                                            <Edit2 size={16} /> Chỉnh Sửa
+                                            <Edit2 size={16} /> Edit Profile
                                         </button>
                                     ) : (
                                         <div className="flex gap-2">
@@ -267,7 +267,7 @@ const Profile = () => {
                                                 onClick={() => { setIsEditing(false); setFormData(profile); setError(''); }}
                                                 className="px-4 py-2 bg-white border border-gray-200 text-gray-600 rounded-lg hover:bg-gray-50 transition-colors font-medium text-sm"
                                             >
-                                                Hủy
+                                                Cancel
                                             </button>
                                             <button
                                                 onClick={handleUpdate}
@@ -275,7 +275,7 @@ const Profile = () => {
                                                 className="flex items-center gap-2 px-4 py-2 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm font-medium text-sm disabled:opacity-70"
                                             >
                                                 {updating ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
-                                                Lưu Thay Đổi
+                                                Save Changes
                                             </button>
                                         </div>
                                     )}
@@ -290,7 +290,7 @@ const Profile = () => {
                                 <form className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-700">Họ và Tên</label>
+                                            <label className="text-sm font-medium text-gray-700">Full Name</label>
                                             <input
                                                 type="text"
                                                 name="fullName"
@@ -298,11 +298,11 @@ const Profile = () => {
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
                                                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-all disabled:text-gray-500 disabled:bg-gray-100/50"
-                                                placeholder="VD: Nguyễn Văn A"
+                                                placeholder="e.g. John Doe"
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-700">Ngày Sinh</label>
+                                            <label className="text-sm font-medium text-gray-700">Date of Birth</label>
                                             <input
                                                 type="date"
                                                 name="dateOfBirth"
@@ -313,7 +313,7 @@ const Profile = () => {
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-700">Giới Tính</label>
+                                            <label className="text-sm font-medium text-gray-700">Gender</label>
                                             <select
                                                 name="gender"
                                                 value={formData.gender || ''}
@@ -321,15 +321,14 @@ const Profile = () => {
                                                 disabled={!isEditing}
                                                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-all disabled:text-gray-500 disabled:bg-gray-100/50"
                                             >
-                                                <option value="">Chọn giới tính</option>
-                                                <option value="Nam">Nam</option>
-                                                <option value="Nữ">Nữ</option>
-                                                <option value="Không xác định">Khác</option>
-                                                <option value="Other">Khác</option>
+                                                <option value="">Select gender</option>
+                                                <option value="Male">Male</option>
+                                                <option value="Female">Female</option>
+                                                <option value="Other">Other</option>
                                             </select>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-700">Số Điện Thoại</label>
+                                            <label className="text-sm font-medium text-gray-700">Phone Number</label>
                                             <input
                                                 type="tel"
                                                 name="phoneNumber"
@@ -337,12 +336,12 @@ const Profile = () => {
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
                                                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-all disabled:text-gray-500 disabled:bg-gray-100/50"
-                                                placeholder="+84 123 456 789"
+                                                placeholder="+1 234 567 890"
                                             />
                                         </div>
 
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-sm font-medium text-gray-700">Nghề Nghiệp / Chuyên Ngành</label>
+                                            <label className="text-sm font-medium text-gray-700">Occupation / Major</label>
                                             <input
                                                 type="text"
                                                 name="occupation"
@@ -350,12 +349,12 @@ const Profile = () => {
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
                                                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-all disabled:text-gray-500 disabled:bg-gray-100/50"
-                                                placeholder="VD: Sinh viên ngành IT, Nhân văn, Kế toán..."
+                                                placeholder="e.g. IT Student, Humanities, Accounting..."
                                             />
                                         </div>
 
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-sm font-medium text-gray-700">Trường Học / Nơi Công Tác</label>
+                                            <label className="text-sm font-medium text-gray-700">School / Workplace</label>
                                             <input
                                                 type="text"
                                                 name="school"
@@ -363,12 +362,12 @@ const Profile = () => {
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
                                                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-all disabled:text-gray-500 disabled:bg-gray-100/50"
-                                                placeholder="VD: Đại học FPT, Đại học Quốc Gia..."
+                                                placeholder="e.g. FPT University, National University..."
                                             />
                                         </div>
 
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-sm font-medium text-gray-700">Về Bản Thân</label>
+                                            <label className="text-sm font-medium text-gray-700">About Me</label>
                                             <textarea
                                                 name="bio"
                                                 value={formData.bio || ''}
@@ -376,9 +375,9 @@ const Profile = () => {
                                                 disabled={!isEditing}
                                                 rows="5"
                                                 className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:bg-white focus:ring-2 focus:ring-blue-100 focus:border-primary outline-none transition-all disabled:text-gray-500 disabled:bg-gray-100/50 resize-none"
-                                                placeholder="Giới thiệu đôi nét về bản thân bạn. Sở thích của bạn là gì? Bạn là người như thế nào khi ở chung trọ?"
+                                                placeholder="Tell us a bit about yourself. What are your hobbies? What are you like as a roommate?"
                                             />
-                                            <p className="text-xs text-gray-400 text-right">Mẹo: Viết chi tiết giúp tăng cơ hội tìm được bạn phù hợp.</p>
+                                            <p className="text-xs text-gray-400 text-right">Tip: Writing detailed info increases your chances of finding matching roommates.</p>
                                         </div>
                                     </div>
                                 </form>

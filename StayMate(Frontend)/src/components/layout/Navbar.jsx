@@ -55,7 +55,7 @@ const Navbar = () => {
                             <div className="h-6 w-px bg-gray-200 mx-2"></div>
 
                             <div className="flex items-center gap-4">
-                                <Link to="/preferences" className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors bg-gray-100/50">
+                                <Link to="/settings" className="p-2 text-gray-600 hover:bg-gray-100 rounded-full transition-colors bg-gray-100/50">
                                     <Settings size={20} />
                                 </Link>
 
@@ -147,6 +147,13 @@ const Navbar = () => {
                                     onClick={() => setIsMenuOpen(false)}
                                 >
                                     Profile Settings
+                                </Link>
+                                <Link
+                                    to="/settings"
+                                    className="block px-3 py-2 text-gray-700 hover:bg-gray-50 rounded-lg font-medium flex items-center gap-2"
+                                    onClick={() => setIsMenuOpen(false)}
+                                >
+                                    <Settings size={18} /> App Settings
                                 </Link>
                                 <Link
                                     to="/preferences"

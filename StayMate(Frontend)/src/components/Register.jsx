@@ -90,17 +90,17 @@ const Register = () => {
                         <div className="w-16 h-16 bg-blue-50 text-primary rounded-full flex items-center justify-center mx-auto mb-6 shadow-sm">
                             <Heart size={32} />
                         </div>
-                        <h2 className="text-2xl font-bold text-gray-900 mb-3">Tạo tài khoản thành công!</h2>
+                        <h2 className="text-2xl font-bold text-gray-900 mb-3">Account Created!</h2>
                         <p className="text-gray-500 mb-8 whitespace-pre-line leading-relaxed">
-                            Chào mừng bạn đến với StayMate.<br />
-                            Bạn có muốn tạo <b>Hồ sơ ghép đôi</b> ngay bây giờ để hệ thống gợi ý những người bạn cùng phòng phù hợp nhất không?
+                            Welcome to StayMate.<br />
+                            Would you like to create your <b>Matching Profile</b> now so we can suggest the best compatible roommates for you?
                         </p>
                         <div className="grid grid-cols-2 gap-4">
                             <button
                                 onClick={closeAuthModal}
                                 className="py-3 px-4 bg-gray-50 text-gray-600 font-semibold rounded-xl hover:bg-gray-100 transition-colors border border-gray-200"
                             >
-                                Để sau
+                                Later
                             </button>
                             <button
                                 onClick={() => {
@@ -109,7 +109,7 @@ const Register = () => {
                                 }}
                                 className="py-3 px-4 bg-primary text-white font-semibold rounded-xl shadow-lg shadow-blue-200 hover:bg-blue-600 hover:-translate-y-0.5 transition-all"
                             >
-                                Tạo ngay
+                                Create Now
                             </button>
                         </div>
                     </div>
