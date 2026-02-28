@@ -1,0 +1,36 @@
+{
+  "settings": {
+    "title": "App Settings",
+    "subtitle": "Manage your account preferences and app appearance",
+    "accountSecurity": "Account Security",
+    "appearanceLanguage": "Appearance & Language",
+    "changePassword": "Change Password",
+    "currentPassword": "Current Password",
+    "newPassword": "New Password",
+    "confirmNewPassword": "Confirm New Password",
+    "updatePassword": "Update Password",
+    "dangerZone": "Danger Zone",
+    "deleteAccount": "Delete Account",
+    "deleteAccountWarning": "Once you delete your account, there is no going back. Please be certain. All your data, saved rooms, and messages will be permanently removed.",
+    "deleteMyAccount": "Delete My Account",
+    "themePreference": "Theme Preference",
+    "lightMode": "Light Mode",
+    "darkMode": "Dark Mode",
+    "language": "Language",
+    "english": "English",
+    "vietnamese": "Tiếng Việt"
+  },
+  "navbar": {
+    "discover": "Discover",
+    "messages": "Messages",
+    "saved": "Saved",
+    "findRooms": "Find Rooms",
+    "postRoom": "Post a Room",
+    "profileSettings": "Profile Settings",
+    "appSettings": "App Settings",
+    "matchingPreferences": "Matching Preferences",
+    "logOut": "Log Out",
+    "logIn": "Log In",
+    "signUp": "Sign Up"
+  }
+}

@@ -1,0 +1,36 @@
+{
+    "settings": {
+        "title": "Cài đặt ứng dụng",
+        "subtitle": "Quản lý tùy chọn tài khoản và giao diện ứng dụng",
+        "accountSecurity": "Bảo mật tài khoản",
+        "appearanceLanguage": "Giao diện & Ngôn ngữ",
+        "changePassword": "Đổi mật khẩu",
+        "currentPassword": "Mật khẩu hiện tại",
+        "newPassword": "Mật khẩu mới",
+        "confirmNewPassword": "Xác nhận mật khẩu mới",
+        "updatePassword": "Cập nhật mật khẩu",
+        "dangerZone": "Vùng nguy hiểm",
+        "deleteAccount": "Xóa tài khoản",
+        "deleteAccountWarning": "Một khi bạn xóa tài khoản, sẽ không thể hoàn tác. Vui lòng chắc chắn. Tất cả dữ liệu, phòng đã lưu và tin nhắn của bạn sẽ bị xóa vĩnh viễn.",
+        "deleteMyAccount": "Xóa tài khoản của tôi",
+        "themePreference": "Tùy chọn giao diện",
+        "lightMode": "Chế độ Sáng",
+        "darkMode": "Chế độ Tối",
+        "language": "Ngôn ngữ",
+        "english": "English",
+        "vietnamese": "Tiếng Việt"
+    },
+    "navbar": {
+        "discover": "Khám phá",
+        "messages": "Tin nhắn",
+        "saved": "Đã lưu",
+        "findRooms": "Tìm phòng",
+        "postRoom": "Đăng phòng",
+        "profileSettings": "Cài đặt hồ sơ",
+        "appSettings": "Cài đặt ứng dụng",
+        "matchingPreferences": "Cài đặt sở thích",
+        "logOut": "Đăng xuất",
+        "logIn": "Đăng nhập",
+        "signUp": "Đăng ký"
+    }
+}

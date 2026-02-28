@@ -2,12 +2,14 @@ import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { LogOut, Home, User, Plus, Menu, X, Settings } from 'lucide-react';
 import { useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 const Navbar = () => {
     const { user, logout, isAuthenticated, openAuthModal } = useAuth();
     const navigate = useNavigate();
     const location = useLocation();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const { t } = useTranslation();
 
     const handleLogout = () => {
         logout();
@@ -37,19 +39,19 @@ const Navbar = () => {
                                 to="/discover"
                                 className={`text-sm font-bold transition-colors ${isActive('/discover') ? 'text-primary dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'}`}
                             >
-                                Discover
+                                {t('navbar.discover')}
                             </Link>
                             <Link
                                 to="/messages"
                                 className={`text-sm font-bold transition-colors ${isActive('/messages') ? 'text-primary dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'}`}
                             >
-                                Messages
+                                {t('navbar.messages')}
                             </Link>
                             <Link
                                 to="/saved"
                                 className={`text-sm font-bold transition-colors ${isActive('/saved') ? 'text-primary dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'}`}
                             >
-                                Saved
+                                {t('navbar.saved')}
                             </Link>
 
                             <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2"></div>
@@ -88,13 +90,13 @@ const Navbar = () => {
                                 onClick={() => openAuthModal('login')}
                                 className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium text-sm px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors cursor-pointer"
                             >
-                                Log In
+                                {t('navbar.logIn')}
                             </button>
                             <button
                                 onClick={() => openAuthModal('register')}
                                 className="bg-primary text-white font-medium text-sm px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors shadow-sm hover:shadow-md cursor-pointer"
                             >
-                                Sign Up
+                                {t('navbar.signUp')}
                             </button>
                         </div>
                     )}
@@ -132,42 +134,42 @@ const Navbar = () => {
                                     className="block px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg font-medium"
                                     onClick={() => setIsMenuOpen(false)}
                                 >
-                                    Find Rooms
+                                    {t('navbar.findRooms')}
                                 </Link>
                                 <Link
                                     to="/post-room"
                                     className="block px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg font-medium"
                                     onClick={() => setIsMenuOpen(false)}
                                 >
-                                    Post a Room
+                                    {t('navbar.postRoom')}
                                 </Link>
                                 <Link
                                     to="/profile"
                                     className="block px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg font-medium"
                                     onClick={() => setIsMenuOpen(false)}
                                 >
-                                    Profile Settings
+                                    {t('navbar.profileSettings')}
                                 </Link>
                                 <Link
                                     to="/settings"
                                     className="block px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg font-medium flex items-center gap-2"
                                     onClick={() => setIsMenuOpen(false)}
                                 >
-                                    <Settings size={18} /> App Settings
+                                    <Settings size={18} /> {t('navbar.appSettings')}
                                 </Link>
                                 <Link
                                     to="/preferences"
                                     className="block px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg font-medium flex items-center gap-2"
                                     onClick={() => setIsMenuOpen(false)}
                                 >
-                                    <Settings size={18} /> Matching Preferences
+                                    <Settings size={18} /> {t('navbar.matchingPreferences')}
                                 </Link>
                                 <div className="border-t border-gray-100 dark:border-gray-800 my-2"></div>
                                 <button
                                     onClick={() => { handleLogout(); setIsMenuOpen(false); }}
                                     className="w-full text-left px-3 py-2 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 rounded-lg font-medium flex items-center gap-2"
                                 >
-                                    <LogOut size={18} /> Log Out
+                                    <LogOut size={18} /> {t('navbar.logOut')}
                                 </button>
                             </>
                         ) : (
@@ -179,7 +181,7 @@ const Navbar = () => {
                                     }}
                                     className="w-full text-left px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg font-medium"
                                 >
-                                    Log In
+                                    {t('navbar.logIn')}
                                 </button>
                                 <button
                                     onClick={() => {
@@ -188,7 +190,7 @@ const Navbar = () => {
                                     }}
                                     className="w-full text-left px-3 py-2 text-primary dark:text-blue-400 font-bold hover:bg-blue-50 dark:hover:bg-blue-500/10 rounded-lg"
                                 >
-                                    Sign Up
+                                    {t('navbar.signUp')}
                                 </button>
                             </>
                         )}

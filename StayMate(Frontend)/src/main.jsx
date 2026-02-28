@@ -6,6 +6,7 @@ import { AuthProvider } from './context/AuthContext'
 import { ThemeProvider } from './context/ThemeContext'
 import App from './App.jsx'
 import './index.css'
+import './i18n'
 
 const GOOGLE_CLIENT_ID = "1076301859968-0a43tpqne0j2pph2ki87i1evka4gau1u.apps.googleusercontent.com"
 

@@ -16,6 +16,22 @@ const Discover = () => {
     const [passedProfiles, setPassedProfiles] = useState([]);
     const [loadingPassed, setLoadingPassed] = useState(false);
     const [selectedPassedProfile, setSelectedPassedProfile] = useState(null);
+    const [swipeCount, setSwipeCount] = useState(0); // Add swipeCount for animation key
+
+    const fetchRecommendations = async () => {
+        try {
+            const response = await fetch('http://localhost:5015/api/discover/recommendations', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (response.ok) {
+                const data = await response.json();
+                setProfiles(data);
+                setCurrentIndex(0);
+            }
+        } catch (error) {
+            console.error("Error fetching recommendations:", error);
+        }
+    };
 
     useEffect(() => {
         const checkProfileAndFetch = async () => {
@@ -30,13 +46,7 @@ const Discover = () => {
 
                     // Bước 2: Chỉ fetch gợi ý nếu đã có hồ sơ
                     if (statusData.hasMatchingProfile) {
-                        const response = await fetch('http://localhost:5015/api/discover/recommendations', {
-                            headers: { 'Authorization': `Bearer ${token}` }
-                        });
-                        if (response.ok) {
-                            const data = await response.json();
-                            setProfiles(data);
-                        }
+                        await fetchRecommendations();
                     }
                 }
             } catch (error) {
@@ -63,9 +73,16 @@ const Discover = () => {
             console.error("Error swiping profile:", error);
         }
 
-        setCurrentIndex(prev => prev + 1);
         setShowInfo(false); // Reset modal when swiping
         setCurrentPhotoIndex(0); // Reset photo gallery when swiping
+        setSwipeCount(prev => prev + 1); // Trigger animation
+
+        if (currentIndex + 1 >= profiles.length) {
+            // Lặp lại: tải lại danh sách từ server (hoặc quay lại 0)
+            await fetchRecommendations();
+        } else {
+            setCurrentIndex(prev => prev + 1);
+        }
     };
 
     const nextPhoto = () => {
@@ -168,7 +185,10 @@ const Discover = () => {
             <div className="max-w-md w-full mx-auto flex flex-col items-center">
 
                 {/* Main Card */}
-                <div className="relative w-full aspect-[3/4] rounded-[32px] overflow-hidden shadow-xl bg-gray-200">
+                <div
+                    key={swipeCount}
+                    className="relative w-full aspect-[3/4] rounded-[32px] overflow-hidden shadow-xl bg-gray-200 animate-in fade-in slide-in-from-right-8 duration-300"
+                >
                     {/* Background Image */}
                     <img
                         src={currentProfile.image}
