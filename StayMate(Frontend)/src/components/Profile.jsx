@@ -110,7 +110,7 @@ const Profile = () => {
                 setProfile(prev => ({ ...prev, avatarUrl: data.avatarUrl }));
                 setSuccess('Avatar updated successfully!');
                 setTimeout(() => setSuccess(''), 3000);
-                // Also update the context so navbar updates
+
                 updateUser({ fullName: formData.fullName, avatarUrl: data.avatarUrl });
             } else {
                 setError(data.message || 'Error updating avatar.');

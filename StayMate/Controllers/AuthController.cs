@@ -26,16 +26,16 @@ namespace StayMate.Controllers
         [HttpPost("register")]
         public async Task<ActionResult<AuthResponseDto>> Register(RegisterDto request)
         {
-            // 1. Check if user exists
+
             if (await _context.Users.AnyAsync(u => u.Email == request.Email))
             {
                 return BadRequest(new { message = "Email already exists." });
             }
 
-            // 2. Hash password
+
             CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
-            // 3. Create User entity
+
             var user = new User
             {
                 Email = request.Email,
@@ -52,7 +52,7 @@ namespace StayMate.Controllers
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
 
-            // 4. Generate Token
+
             var token = CreateToken(user);
 
             return Ok(new AuthResponseDto 
@@ -103,7 +103,7 @@ namespace StayMate.Controllers
         {
             try
             {
-                // Xác thực Google ID Token
+
                 var payload = await Google.Apis.Auth.GoogleJsonWebSignature.ValidateAsync(
                     request.IdToken,
                     new Google.Apis.Auth.GoogleJsonWebSignature.ValidationSettings
@@ -113,13 +113,13 @@ namespace StayMate.Controllers
 
                 bool isNewUser = false;
 
-                // Tìm hoặc tạo user
+
                 var user = await _context.Users.FirstOrDefaultAsync(u => u.Email == payload.Email);
 
                 if (user == null)
                 {
                     isNewUser = true;
-                    // Tạo user mới từ Google account
+
                     user = new User
                     {
                         Email = payload.Email,
@@ -140,7 +140,7 @@ namespace StayMate.Controllers
                 }
                 else
                 {
-                    // Chỉ đồng bộ Avatar từ Google nếu tài khoản chưa có avatar nào
+
                     if (string.IsNullOrEmpty(user.AvatarUrl) && !string.IsNullOrEmpty(payload.Picture))
                     {
                         user.AvatarUrl = payload.Picture;
@@ -148,7 +148,7 @@ namespace StayMate.Controllers
                     }
                 }
 
-                // Tạo JWT token
+
                 var token = CreateToken(user);
 
                 return Ok(new AuthResponseDto

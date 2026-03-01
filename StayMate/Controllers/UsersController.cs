@@ -250,9 +250,9 @@ public class UsersController : ControllerBase
         var user = await _context.Users.FindAsync(userId);
         if (user == null) return NotFound("User not found.");
 
-        // For this implementation, hard delete the user
-        // (EF Core should cascade delete related entities like LifestylePreferences, Photos if configured correctly,
-        // otherwise we might need to delete them manually.)
+
+
+
         _context.Users.Remove(user);
         await _context.SaveChangesAsync();
 

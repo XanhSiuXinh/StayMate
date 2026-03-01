@@ -18,15 +18,15 @@ const Preferences = () => {
         guestFrequency: 'Occasionally',
         cookingFrequency: 'Regularly'
     });
-    // States for Interests
+
     const [allInterests, setAllInterests] = useState([]);
     const [selectedInterestIds, setSelectedInterestIds] = useState([]);
 
-    // States for Photos
+
     const [userPhotos, setUserPhotos] = useState([]);
     const fileInputRef = useRef(null);
 
-    // Global states
+
     const [loading, setLoading] = useState(true);
     const [saving, setSaving] = useState(false);
     const [error, setError] = useState(null);
@@ -40,13 +40,13 @@ const Preferences = () => {
         setLoading(true);
         setError(null);
         try {
-            // Fetch All Interests (Metadata)
+
             const interestsRes = await fetch('http://localhost:5015/api/preferences/interests');
             if (!interestsRes.ok) throw new Error('Failed to load interests list');
             const interestsData = await interestsRes.json();
             setAllInterests(interestsData);
 
-            // Fetch User Interests
+
             const userInterestsRes = await fetch('http://localhost:5015/api/preferences/user-interests', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -55,7 +55,7 @@ const Preferences = () => {
                 setSelectedInterestIds(userInterestsData.map(i => i.interestId));
             }
 
-            // Fetch User Photos
+
             const photosRes = await fetch('http://localhost:5015/api/users/photos', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -64,7 +64,7 @@ const Preferences = () => {
                 setUserPhotos(photosData);
             }
 
-            // Fetch Lifestyle Preferences
+
             const lifestyleRes = await fetch('http://localhost:5015/api/preferences/lifestyle', {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
@@ -160,7 +160,7 @@ const Preferences = () => {
         const file = e.target.files[0];
         if (!file) return;
 
-        // Optionally, check file type/size here
+
 
         const formData = new FormData();
         formData.append('file', file);
@@ -186,7 +186,7 @@ const Preferences = () => {
             setError('Connection error.');
             setTimeout(() => setError(null), 3000);
         } finally {
-            // Reset input so the same file could be selected again if needed
+
             if (fileInputRef.current) {
                 fileInputRef.current.value = "";
             }

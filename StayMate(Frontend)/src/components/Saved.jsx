@@ -1,10 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Loader2, Heart, GraduationCap, Briefcase, Mail } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 
 const Saved = () => {
     const { token } = useAuth();
+    const navigate = useNavigate();
     const [savedProfiles, setSavedProfiles] = useState([]);
     const [loading, setLoading] = useState(true);
 
@@ -93,7 +94,7 @@ const Saved = () => {
 
                                 {/* Action Buttons */}
                                 <div className="pt-4 mt-auto border-t border-gray-100 dark:border-gray-700 flex gap-3">
-                                    <button className="flex-1 bg-primary dark:bg-blue-600 text-white py-2.5 rounded-full font-medium hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors flex items-center justify-center gap-2 shadow-sm text-sm">
+                                    <button onClick={() => navigate('/messages')} className="flex-1 bg-primary dark:bg-blue-600 text-white py-2.5 rounded-full font-medium hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors flex items-center justify-center gap-2 shadow-sm text-sm">
                                         <Mail className="w-4 h-4" /> Message
                                     </button>
                                 </div>

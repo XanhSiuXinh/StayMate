@@ -27,17 +27,17 @@ namespace StayMate.Controllers
                 return Unauthorized();
             }
 
-            // Get current user's lifestyle
+
             var currentUserLifestyle = await _context.LifestylePreferences
                 .FirstOrDefaultAsync(lp => lp.UserId == userId);
 
-            // Get users already swiped
+
             var swipedUserIds = await _context.Swipes
                 .Where(s => s.UserId == userId)
                 .Select(s => s.TargetUserId)
                 .ToListAsync();
 
-            // Get all other active users with their lifestyle, basic info, and interests
+
             var otherUsersInfo = await _context.Users
                 .Where(u => u.UserId != userId && u.IsActive == true && !swipedUserIds.Contains(u.UserId))
                 .Select(u => new
@@ -56,11 +56,11 @@ namespace StayMate.Controllers
 
             foreach (var other in otherUsersInfo)
             {
-                // Calculate match percentage
+
                 int matchScore = 0;
                 int maxScore = 0;
 
-                // Lifestyle matching (example simple logic)
+
                 if (currentUserLifestyle != null && other.Lifestyle != null)
                 {
                     maxScore += 40; // Total weight for lifestyle
@@ -71,13 +71,13 @@ namespace StayMate.Controllers
                     if (currentUserLifestyle.SmokingStatus == other.Lifestyle.SmokingStatus) matchScore += 10;
                 }
 
-                // If no lifestyle data, give a base random or average percentage
+
                 int matchPercentage = maxScore > 0 ? (int)((double)matchScore / maxScore * 100) : new Random().Next(60, 95);
 
-                // Add base randomness to make it feel dynamic even with perfect scores (e.g. max 98% instead of 100%)
+
                 if (matchPercentage > 95) matchPercentage = new Random().Next(90, 98);
 
-                // Map traits for UI (using actual data now, falling back to defaults if empty)
+
                 var traits = new List<object>();
                 
                 if (other.Lifestyle != null)
@@ -94,7 +94,7 @@ namespace StayMate.Controllers
                         traits.Add(new { icon = "Dog", text = "Pet Friendly" });
                 }
 
-                // Append top 2 interests if not enough traits
+
                 foreach (var interest in other.Interests.Take(2))
                 {
                      if(traits.Count < 3) {
@@ -102,7 +102,7 @@ namespace StayMate.Controllers
                      }
                 }
 
-                // Calculate age
+
                 int age = DateTime.Now.Year - other.User.DateOfBirth.Year;
                 if (DateTime.Now.DayOfYear < other.User.DateOfBirth.DayOfYear) age--;
 
@@ -136,7 +136,7 @@ namespace StayMate.Controllers
                 });
             }
 
-            // Order by highest match
+
             return Ok(recommendations.OrderByDescending(r => r.GetType().GetProperty("matchPercentage").GetValue(r)));
         }
 
@@ -171,8 +171,44 @@ namespace StayMate.Controllers
                 });
             }
 
+            bool isMatch = false;
+
+            if (swipeType == "Like")
+            {
+                var reciprocity = await _context.Swipes
+                    .FirstOrDefaultAsync(s => s.UserId == targetUserId && s.TargetUserId == userId && s.SwipeType == "Like");
+
+                if (reciprocity != null)
+                {
+                    var existingMatch = await _context.Matches
+                        .FirstOrDefaultAsync(m => (m.User1Id == userId && m.User2Id == targetUserId) || (m.User1Id == targetUserId && m.User2Id == userId));
+
+                    if (existingMatch == null)
+                    {
+                        var match = new Match
+                        {
+                            User1Id = userId,
+                            User2Id = targetUserId,
+                            MatchedAt = DateTime.Now,
+                            IsActive = true
+                        };
+                        _context.Matches.Add(match);
+                        await _context.SaveChangesAsync();
+
+                        var conversation = new Conversation
+                        {
+                            MatchId = match.MatchId,
+                            CreatedAt = DateTime.Now,
+                            LastMessageAt = DateTime.Now
+                        };
+                        _context.Conversations.Add(conversation);
+                        isMatch = true;
+                    }
+                }
+            }
+
             await _context.SaveChangesAsync();
-            return Ok();
+            return Ok(new { success = true, isMatch = isMatch });
         }
 
         [HttpGet("saved")]

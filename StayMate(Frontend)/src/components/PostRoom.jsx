@@ -9,7 +9,7 @@ const PostRoom = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
 
-    // Form State
+
     const [formData, setFormData] = useState({
         title: '',
         description: '',
@@ -49,7 +49,7 @@ const PostRoom = () => {
         setLoading(true);
         setError('');
 
-        // Prepare data matching CreateRoomDto
+
         const payload = {
             title: formData.title,
             description: formData.description,

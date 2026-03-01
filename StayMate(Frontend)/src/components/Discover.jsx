@@ -36,7 +36,6 @@ const Discover = () => {
     useEffect(() => {
         const checkProfileAndFetch = async () => {
             try {
-                // Bước 1: Kiểm tra xem người dùng đã có hồ sơ ghép đôi chưa
                 const statusRes = await fetch('http://localhost:5015/api/users/profile/status', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
@@ -44,7 +43,6 @@ const Discover = () => {
                     const statusData = await statusRes.json();
                     setHasMatchingProfile(statusData.hasMatchingProfile);
 
-                    // Bước 2: Chỉ fetch gợi ý nếu đã có hồ sơ
                     if (statusData.hasMatchingProfile) {
                         await fetchRecommendations();
                     }
@@ -73,12 +71,12 @@ const Discover = () => {
             console.error("Error swiping profile:", error);
         }
 
-        setShowInfo(false); // Reset modal when swiping
+        setShowInfo(false); 
         setCurrentPhotoIndex(0); // Reset photo gallery when swiping
         setSwipeCount(prev => prev + 1); // Trigger animation
 
         if (currentIndex + 1 >= profiles.length) {
-            // Lặp lại: tải lại danh sách từ server (hoặc quay lại 0)
+
             await fetchRecommendations();
         } else {
             setCurrentIndex(prev => prev + 1);
@@ -99,7 +97,7 @@ const Discover = () => {
 
     const currentProfile = profiles[currentIndex];
 
-    // Combine AvatarUrl and additional Photos into one array for the modal
+
     const getGalleryImages = () => {
         if (!currentProfile) return [];
         const mainImage = currentProfile.image; // fallback is applied in API
@@ -117,7 +115,7 @@ const Discover = () => {
         );
     }
 
-    // GATE: Nếu chưa có hồ sơ ghép đôi thì hiện màn hình mời tạo hồ sơ
+
     if (!hasMatchingProfile) {
         return (
             <div className="flex-1 min-h-[calc(100vh-64px)] flex items-center justify-center bg-gray-50 dark:bg-gray-900 p-6 transition-colors">

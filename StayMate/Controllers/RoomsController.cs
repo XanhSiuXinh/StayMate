@@ -22,7 +22,7 @@ namespace StayMate.Controllers
             _context = context;
         }
 
-        // GET: api/Rooms
+
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RoomDto>>> GetRooms([FromQuery] string? city, [FromQuery] decimal? minPrice, [FromQuery] decimal? maxPrice)
         {
@@ -64,7 +64,7 @@ namespace StayMate.Controllers
             }).ToList();
         }
 
-        // GET: api/Rooms/5
+
         [HttpGet("{id}")]
         public async Task<ActionResult<RoomDto>> GetRoom(int id)
         {
@@ -97,7 +97,7 @@ namespace StayMate.Controllers
             };
         }
 
-        // POST: api/Rooms
+
         [HttpPost]
         [Authorize]
         public async Task<ActionResult<RoomDto>> PostRoom(CreateRoomDto createRoomDto)
@@ -124,7 +124,7 @@ namespace StayMate.Controllers
             _context.Rooms.Add(room);
             await _context.SaveChangesAsync();
 
-            // Add Photos
+
             if (createRoomDto.PhotoUrls != null && createRoomDto.PhotoUrls.Any())
             {
                 foreach (var url in createRoomDto.PhotoUrls)
@@ -159,7 +159,7 @@ namespace StayMate.Controllers
             return CreatedAtAction("GetRoom", new { id = room.RoomId }, roomDto);
         }
 
-        // PUT: api/Rooms/5
+
         [HttpPut("{id}")]
         [Authorize]
         public async Task<IActionResult> PutRoom(int id, UpdateRoomDto updateRoomDto)
@@ -190,7 +190,7 @@ namespace StayMate.Controllers
             return NoContent();
         }
 
-        // DELETE: api/Rooms/5
+
         [HttpDelete("{id}")]
         [Authorize]
         public async Task<IActionResult> DeleteRoom(int id)

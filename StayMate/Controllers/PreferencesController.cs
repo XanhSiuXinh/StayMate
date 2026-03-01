@@ -18,7 +18,7 @@ public class PreferencesController : ControllerBase
         _context = context;
     }
 
-    // --- Lifestyle Preferences ---
+
 
     [HttpGet("lifestyle")]
     [Authorize]
@@ -61,7 +61,7 @@ public class PreferencesController : ControllerBase
         
         if (preference == null)
         {
-            // Create if not exists
+
             preference = new LifestylePreference
             {
                 UserId = userId,
@@ -88,7 +88,7 @@ public class PreferencesController : ControllerBase
         return Ok(new { message = "Lifestyle preference updated successfully." });
     }
 
-    // --- Interests ---
+
 
     [HttpGet("interests")]
     public async Task<ActionResult<List<InterestDto>>> GetAllInterests()
@@ -131,11 +131,11 @@ public class PreferencesController : ControllerBase
     {
         var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
         
-        // Remove existing interests for the user
+
         var existingInterests = await _context.UserInterests.Where(ui => ui.UserId == userId).ToListAsync();
         _context.UserInterests.RemoveRange(existingInterests);
 
-        // Add new interests
+
         if (dto.InterestIds != null && dto.InterestIds.Any())
         {
             foreach (var interestId in dto.InterestIds)

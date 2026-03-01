@@ -109,9 +109,6 @@ const Settings = () => {
             setDeleteLoading(false);
         }
     };
-
-    // Note: Theme and Language changes here are just UI mocks right now 
-    // unless a global context/provider is added for i18n and Themes.
     const handleThemeChange = (newTheme) => {
         setTheme(newTheme);
     };
