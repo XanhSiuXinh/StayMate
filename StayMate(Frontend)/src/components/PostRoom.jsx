@@ -20,6 +20,8 @@ const PostRoom = () => {
         district: '',
         city: '',
         areaSqm: '',
+        latitude: '',
+        longitude: '',
         photos: [] // Store actual File objects
     });
     
@@ -101,6 +103,8 @@ const PostRoom = () => {
         submitData.append('district', formData.district);
         submitData.append('city', formData.city);
         submitData.append('areaSqm', formData.areaSqm);
+        if (formData.latitude) submitData.append('latitude', formData.latitude);
+        if (formData.longitude) submitData.append('longitude', formData.longitude);
         
         // Append all selected files
         formData.photos.forEach(file => {
@@ -246,6 +250,32 @@ const PostRoom = () => {
                                 icon={MapPin}
                             />
                         </div>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <Input
+                                    label="Latitude"
+                                    type="number"
+                                    step="any"
+                                    name="latitude"
+                                    value={formData.latitude}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 10.7626"
+                                />
+                            </div>
+                            <div>
+                                <Input
+                                    label="Longitude"
+                                    type="number"
+                                    step="any"
+                                    name="longitude"
+                                    value={formData.longitude}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 106.6601"
+                                />
+                            </div>
+                        </div>
+                        <p className="text-xs text-gray-400">Tip: You can get coordinates from Google Maps by right-clicking a location.</p>
                     </div>
 
                     {/* Photos */}

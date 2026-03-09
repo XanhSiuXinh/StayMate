@@ -44,13 +44,21 @@ namespace StayMate.Controllers
                 Address = r.Address,
                 District = r.District,
                 City = r.City,
+                Ward = r.Ward,
+                Amenities = r.Amenities,
                 AreaSqm = r.AreaSqm,
                 IsAvailable = r.IsAvailable,
                 CreatedAt = r.CreatedAt,
+                Latitude = r.Latitude,
+                Longitude = r.Longitude,
                 PhotoUrls = r.Photos.Select(p => p.PhotoUrl).ToList(),
                 HostUserId = r.HostUserId,
                 HostName = r.HostUser.FullName,
-                HostAvatar = r.HostUser.AvatarUrl
+                HostAvatar = r.HostUser.AvatarUrl,
+                AverageRating = _context.Reviews.Where(rev => rev.TargetRoomId == r.RoomId).Any() 
+                    ? _context.Reviews.Where(rev => rev.TargetRoomId == r.RoomId).Average(rev => rev.Rating) 
+                    : 0,
+                ReviewsCount = _context.Reviews.Count(rev => rev.TargetRoomId == r.RoomId)
             }).ToList();
         }
 
@@ -130,13 +138,21 @@ namespace StayMate.Controllers
                 Address = r.Address,
                 District = r.District,
                 City = r.City,
+                Ward = r.Ward,
+                Amenities = r.Amenities,
                 AreaSqm = r.AreaSqm,
                 IsAvailable = r.IsAvailable,
                 CreatedAt = r.CreatedAt,
+                Latitude = r.Latitude,
+                Longitude = r.Longitude,
                 PhotoUrls = r.Photos.Select(p => p.PhotoUrl).ToList(),
                 HostUserId = r.HostUserId,
                 HostName = r.HostUser.FullName,
-                HostAvatar = r.HostUser.AvatarUrl
+                HostAvatar = r.HostUser.AvatarUrl,
+                AverageRating = _context.Reviews.Where(rev => rev.TargetRoomId == r.RoomId).Any() 
+                    ? _context.Reviews.Where(rev => rev.TargetRoomId == r.RoomId).Average(rev => rev.Rating) 
+                    : 0,
+                ReviewsCount = _context.Reviews.Count(rev => rev.TargetRoomId == r.RoomId)
             }).ToList();
         }
 
@@ -163,13 +179,21 @@ namespace StayMate.Controllers
                 Address = room.Address,
                 District = room.District,
                 City = room.City,
+                Ward = room.Ward,
+                Amenities = room.Amenities,
                 AreaSqm = room.AreaSqm,
                 IsAvailable = room.IsAvailable,
                 CreatedAt = room.CreatedAt,
+                Latitude = room.Latitude,
+                Longitude = room.Longitude,
                 PhotoUrls = room.Photos.Select(p => p.PhotoUrl).ToList(),
                 HostUserId = room.HostUserId,
                 HostName = room.HostUser.FullName,
-                HostAvatar = room.HostUser.AvatarUrl
+                HostAvatar = room.HostUser.AvatarUrl,
+                AverageRating = _context.Reviews.Where(rev => rev.TargetRoomId == room.RoomId).Any() 
+                    ? _context.Reviews.Where(rev => rev.TargetRoomId == room.RoomId).Average(rev => rev.Rating) 
+                    : 0,
+                ReviewsCount = _context.Reviews.Count(rev => rev.TargetRoomId == room.RoomId)
             };
         }
 
@@ -192,7 +216,11 @@ namespace StayMate.Controllers
                 Address = createRoomDto.Address,
                 District = createRoomDto.District,
                 City = createRoomDto.City,
+                Ward = createRoomDto.Ward,
+                Amenities = createRoomDto.Amenities,
                 AreaSqm = createRoomDto.AreaSqm,
+                Latitude = createRoomDto.Latitude,
+                Longitude = createRoomDto.Longitude,
                 IsAvailable = true,
                 CreatedAt = DateTime.Now
             };
@@ -247,13 +275,19 @@ namespace StayMate.Controllers
                 Address = room.Address,
                 District = room.District,
                 City = room.City,
+                Ward = room.Ward,
+                Amenities = room.Amenities,
                 AreaSqm = room.AreaSqm,
                 IsAvailable = room.IsAvailable,
                 CreatedAt = room.CreatedAt,
+                Latitude = room.Latitude,
+                Longitude = room.Longitude,
                 PhotoUrls = savedPhotoUrls,
                 HostUserId = userId,
                 HostName = user.FullName,
-                HostAvatar = user.AvatarUrl
+                HostAvatar = user.AvatarUrl,
+                AverageRating = 0,
+                ReviewsCount = 0
             };
 
             return CreatedAtAction("GetRoom", new { id = room.RoomId }, roomDto);
@@ -280,8 +314,14 @@ namespace StayMate.Controllers
             room.Title = updateRoomDto.Title;
             room.Description = updateRoomDto.Description;
             room.Price = updateRoomDto.Price;
+            room.City = room.City; // Assuming City doesn't change or add if needed
+            room.District = room.District; 
             room.Address = updateRoomDto.Address;
+            room.Ward = updateRoomDto.Ward;
+            room.Amenities = updateRoomDto.Amenities;
             room.AreaSqm = updateRoomDto.AreaSqm;
+            room.Latitude = updateRoomDto.Latitude;
+            room.Longitude = updateRoomDto.Longitude;
             room.IsAvailable = updateRoomDto.IsAvailable;
             room.UpdatedAt = DateTime.Now;
 

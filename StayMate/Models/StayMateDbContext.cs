@@ -48,6 +48,8 @@ public partial class StayMateDbContext : DbContext
     public virtual DbSet<RoomPhoto> RoomPhotos { get; set; }
     
     public virtual DbSet<Review> Reviews { get; set; }
+    
+    public virtual DbSet<Appointment> Appointments { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Server=localhost;Database=StayMateDB;Trusted_Connection=True;TrustServerCertificate=True;");
@@ -421,6 +423,31 @@ public partial class StayMateDbContext : DbContext
             entity.HasOne(d => d.TargetUser).WithMany()
                 .HasForeignKey(d => d.TargetUserId)
                 .OnDelete(DeleteBehavior.NoAction);
+        });
+
+        modelBuilder.Entity<Appointment>(entity =>
+        {
+            entity.HasKey(e => e.AppointmentId);
+            entity.Property(e => e.AppointmentId).HasColumnName("AppointmentID");
+            entity.Property(e => e.RequesterId).HasColumnName("RequesterID");
+            entity.Property(e => e.RoomId).HasColumnName("RoomID");
+            entity.Property(e => e.HostId).HasColumnName("HostID");
+            entity.Property(e => e.Status).HasDefaultValue("Pending");
+
+            entity.HasOne(d => d.Requester)
+                .WithMany()
+                .HasForeignKey(d => d.RequesterId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(d => d.Host)
+                .WithMany()
+                .HasForeignKey(d => d.HostId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(d => d.Room)
+                .WithMany()
+                .HasForeignKey(d => d.RoomId)
+                .OnDelete(DeleteBehavior.Cascade);
         });
 
         OnModelCreatingPartial(modelBuilder);

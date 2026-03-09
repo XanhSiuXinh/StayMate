@@ -1,4 +1,4 @@
-import { MapPin, Home, Maximize, User, ArrowRight } from 'lucide-react';
+import { MapPin, Home, Maximize, User, ArrowRight, Star } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 
 const RoomCard = ({ room }) => {
@@ -27,10 +27,15 @@ const RoomCard = ({ room }) => {
                 />
 
                 {/* Badges */}
-                <div className="absolute top-3 left-3 flex gap-2">
+                <div className="absolute top-3 left-3 flex flex-wrap gap-2">
                     {isNew(room.createdAt) && (
                         <span className="bg-blue-600 dark:bg-blue-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-sm uppercase tracking-wider">
                             New
+                        </span>
+                    )}
+                    {room.reviewsCount > 0 && (
+                        <span className="bg-amber-400 text-gray-900 text-[10px] font-bold px-2 py-1 rounded-full shadow-sm flex items-center gap-1">
+                            <Star size={10} fill="currentColor" /> {room.averageRating.toFixed(1)} ({room.reviewsCount})
                         </span>
                     )}
                     <span className="bg-white/90 dark:bg-gray-900/90 backdrop-blur-md text-gray-800 dark:text-gray-200 text-[10px] font-bold px-2 py-1 rounded-full shadow-sm flex items-center gap-1">
@@ -59,7 +64,7 @@ const RoomCard = ({ room }) => {
 
                 <div className="flex items-center gap-1.5 text-gray-500 dark:text-gray-400 text-sm mb-4">
                     <MapPin size={14} className="text-primary/70 dark:text-blue-400/70 shrink-0" />
-                    <span className="truncate">{room.district}, {room.city}</span>
+                    <span className="truncate">{room.ward ? `${room.ward}, ` : ''}{room.district}, {room.city}</span>
                 </div>
 
                 {/* Features */}

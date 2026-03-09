@@ -12,12 +12,18 @@ public class RoomDto
     public string District { get; set; } = string.Empty;
     public string City { get; set; } = string.Empty;
     public double? AreaSqm { get; set; }
+    public string? Amenities { get; set; }
+    public string? Ward { get; set; }
     public bool IsAvailable { get; set; }
     public DateTime CreatedAt { get; set; }
     public List<string> PhotoUrls { get; set; } = new List<string>();
     public int HostUserId { get; set; }
     public string HostName { get; set; } = string.Empty;
     public string? HostAvatar { get; set; }
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
+    public double AverageRating { get; set; }
+    public int ReviewsCount { get; set; }
 }
 
 public class CreateRoomDto
@@ -41,8 +47,14 @@ public class CreateRoomDto
     [Required]
     public string City { get; set; } = string.Empty;
     
+    public string? Ward { get; set; }
+    
+    public string? Amenities { get; set; }
+    
     public double? AreaSqm { get; set; }
     
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
     public List<IFormFile> Photos { get; set; } = new List<IFormFile>();
 }
 
@@ -61,7 +73,13 @@ public class UpdateRoomDto
     [Required]
     public string Address { get; set; } = string.Empty;
 
+    public string? Ward { get; set; }
+
+    public string? Amenities { get; set; }
+
     public bool IsAvailable { get; set; }
     
     public double? AreaSqm { get; set; }
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
 }

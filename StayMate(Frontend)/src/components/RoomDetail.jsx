@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
-import { MapPin, User, Home, Maximize, ArrowLeft, Loader2, Phone, Mail, Share2, Heart, Star, Send } from 'lucide-react';
+import { MapPin, User, Home, Maximize, ArrowLeft, Loader2, Phone, Mail, Share2, Heart, Star, Send, Calendar, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const RoomDetail = () => {
@@ -16,10 +17,53 @@ const RoomDetail = () => {
     const [submittingReview, setSubmittingReview] = useState(false);
     const { t } = useTranslation();
 
+    const [bookingDate, setBookingDate] = useState('');
+    const [bookingNotes, setBookingNotes] = useState('');
+    const [isBookingModalOpen, setIsBookingModalOpen] = useState(false);
+    const [bookingStatus, setBookingStatus] = useState(null); // 'idle', 'loading', 'success', 'error'
+
     useEffect(() => {
         fetchRoomDetail();
         fetchReviews();
     }, [id]);
+
+    const handleBookViewing = async (e) => {
+        e.preventDefault();
+        if (!user) {
+            navigate('/login');
+            return;
+        }
+
+        setBookingStatus('loading');
+        try {
+            const response = await fetch('http://localhost:5015/api/appointments', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    roomId: parseInt(id),
+                    appointmentDate: bookingDate,
+                    notes: bookingNotes
+                })
+            });
+
+            if (response.ok) {
+                setBookingStatus('success');
+                setBookingDate('');
+                setBookingNotes('');
+                setTimeout(() => {
+                    setIsBookingModalOpen(false);
+                    setBookingStatus(null);
+                }, 2000);
+            } else {
+                setBookingStatus('error');
+            }
+        } catch (err) {
+            setBookingStatus('error');
+        }
+    };
 
     const fetchReviews = async () => {
         try {
@@ -162,16 +206,33 @@ const RoomDetail = () => {
                         <div className="flex flex-col md:flex-row md:items-start justify-between gap-4 mb-6 pb-6 border-b border-gray-100 dark:border-gray-700">
                             <div>
                                 <h1 className="text-2xl md:text-3xl font-bold text-gray-900 dark:text-white mb-2">{room.title}</h1>
-                                <div className="flex items-center gap-2 text-gray-500 dark:text-gray-400 text-sm md:text-base">
-                                    <MapPin size={18} className="text-primary dark:text-blue-400" />
-                                    <span>{room.address}, {room.district}, {room.city}</span>
+                                <div className="flex flex-wrap items-center gap-y-2 gap-x-4 text-gray-500 dark:text-gray-400 text-sm mb-6">
+                                    <span className="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 px-2.5 py-1 rounded-full border border-gray-100 dark:border-gray-700">
+                                        <MapPin size={14} className="text-primary dark:text-blue-400" /> {room.address}{room.ward ? `, ${room.ward}` : ''}, {room.district}, {room.city}
+                                    </span>
+                                    <span className="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 px-2.5 py-1 rounded-full border border-gray-100 dark:border-gray-700">
+                                        <Maximize size={14} className="text-primary dark:text-blue-400" /> {room.areaSqm} m²
+                                    </span>
+                                    <span className="flex items-center gap-1.5 bg-gray-50 dark:bg-gray-800 px-2.5 py-1 rounded-full border border-gray-100 dark:border-gray-700 text-green-600 dark:text-green-400 font-medium">
+                                        <Home size={14} /> {room.isAvailable ? t('rooms.available') : t('rooms.occupied')}
+                                    </span>
                                 </div>
                             </div>
-                            <div className="flex items-center gap-2 bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 px-4 py-2 rounded-lg font-medium self-start border border-transparent dark:border-green-500/20">
-                                <Home size={18} />
-                                <span>Available Now</span>
-                            </div>
                         </div>
+
+                        {/* Amenities */}
+                        {room.amenities && (
+                            <div className="mb-8">
+                                <h3 className="text-lg font-bold text-gray-900 dark:text-white mb-4">Amenities</h3>
+                                <div className="flex flex-wrap gap-2">
+                                    {room.amenities.split(',').map((item, idx) => (
+                                        <span key={idx} className="px-3 py-1 bg-blue-50 dark:bg-blue-500/10 text-blue-600 dark:text-blue-400 rounded-lg text-xs font-medium border border-blue-100 dark:border-blue-500/20">
+                                            {item.trim()}
+                                        </span>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
 
                         {/* Stats Grid */}
                         <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
@@ -319,12 +380,17 @@ const RoomDetail = () => {
                         </div>
 
                         <div className="space-y-3">
-                            <button className="w-full py-3 px-4 bg-primary dark:bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors shadow-lg shadow-blue-100 dark:shadow-none flex items-center justify-center gap-2">
-                                <Phone size={18} /> Call Host
-                            </button>
-                            <button className="w-full py-3 px-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-700 dark:text-gray-300 font-bold rounded-xl hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors flex items-center justify-center gap-2">
-                                <Mail size={18} /> Message Host
-                            </button>
+                                <button 
+                                    className="w-full py-3 px-4 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 mb-3"
+                                    onClick={() => setIsBookingModalOpen(true)}
+                                >
+                                    <Calendar size={18} />
+                                    {t('appointments.book_now')}
+                                </button>
+                                <button className="w-full py-3 px-4 bg-white dark:bg-gray-800 border-2 border-primary/20 dark:border-blue-500/20 text-primary dark:text-blue-400 rounded-xl font-bold hover:bg-primary/5 dark:hover:bg-blue-500/5 transition-all flex items-center justify-center gap-2">
+                                    <Mail size={18} />
+                                    {t('rooms.contact_host')}
+                                </button>
                         </div>
 
                         <div className="mt-6 pt-6 border-t border-gray-100 dark:border-gray-700 text-center">
@@ -336,6 +402,62 @@ const RoomDetail = () => {
                 </div>
 
             </main>
+            {/* Booking Modal */}
+            {isBookingModalOpen && (
+                <div className="fixed inset-0 z-[100] flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+                    <div className="bg-white dark:bg-gray-900 rounded-2xl w-full max-w-md overflow-hidden shadow-2xl animate-in fade-in zoom-in duration-200">
+                        <div className="p-6">
+                            <div className="flex justify-between items-center mb-6">
+                                <h3 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                                    <Calendar className="text-primary" />
+                                    {t('appointments.book_now')}
+                                </h3>
+                                <button onClick={() => setIsBookingModalOpen(false)} className="text-gray-400 hover:text-gray-600 dark:hover:text-gray-200">
+                                    <X size={24} />
+                                </button>
+                            </div>
+
+                            <form onSubmit={handleBookViewing} className="space-y-4">
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{t('appointments.date')}</label>
+                                    <input 
+                                        type="datetime-local" 
+                                        required
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all"
+                                        value={bookingDate}
+                                        onChange={(e) => setBookingDate(e.target.value)}
+                                        min={new Date().toISOString().slice(0, 16)}
+                                    />
+                                </div>
+                                <div>
+                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300 mb-2">{t('appointments.notes')}</label>
+                                    <textarea 
+                                        className="w-full px-4 py-3 rounded-xl border border-gray-200 dark:border-gray-700 bg-gray-50 dark:bg-gray-800 text-gray-900 dark:text-white focus:ring-2 focus:ring-primary outline-none transition-all h-24 resize-none"
+                                        placeholder={t('appointments.notes_placeholder')}
+                                        value={bookingNotes}
+                                        onChange={(e) => setBookingNotes(e.target.value)}
+                                    ></textarea>
+                                </div>
+
+                                {bookingStatus === 'success' ? (
+                                    <div className="bg-green-50 dark:bg-green-500/10 text-green-600 dark:text-green-400 p-4 rounded-xl text-center font-medium animate-bounce">
+                                        {t('appointments.success')}
+                                    </div>
+                                ) : (
+                                    <button 
+                                        type="submit"
+                                        disabled={bookingStatus === 'loading'}
+                                        className="w-full py-4 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold shadow-lg shadow-primary/20 disabled:opacity-50 transition-all flex items-center justify-center gap-2"
+                                    >
+                                        {bookingStatus === 'loading' ? <Loader2 className="animate-spin" /> : <Send size={18} />}
+                                        {t('appointments.book_now')}
+                                    </button>
+                                )}
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            )}
         </div>
     );
 };

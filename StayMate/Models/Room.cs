@@ -43,6 +43,9 @@ public class Room
 
     public bool IsAvailable { get; set; } = true;
 
+    public double? Latitude { get; set; }
+    public double? Longitude { get; set; }
+
     public DateTime CreatedAt { get; set; } = DateTime.Now;
     
     public DateTime? UpdatedAt { get; set; }

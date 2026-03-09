@@ -21,6 +21,8 @@ const Profile = () => {
     const [reviews, setReviews] = useState([]);
     const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
     const [submittingReview, setSubmittingReview] = useState(false);
+    const [appointments, setAppointments] = useState({ incoming: [], outgoing: [] });
+    const [fetchingAppointments, setFetchingAppointments] = useState(false);
     const { t } = useTranslation();
 
     const isOwnProfile = !id || parseInt(id) === currentUser?.userId;
@@ -29,7 +31,54 @@ const Profile = () => {
     useEffect(() => {
         fetchProfile();
         fetchReviews();
+        if (isOwnProfile) {
+            fetchAppointments();
+        }
     }, [id]);
+
+    const fetchAppointments = async () => {
+        setFetchingAppointments(true);
+        try {
+            const [incRes, outRes] = await Promise.all([
+                fetch('http://localhost:5015/api/appointments/incoming', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                }),
+                fetch('http://localhost:5015/api/appointments/outgoing', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                })
+            ]);
+
+            const [incoming, outgoing] = await Promise.all([
+                incRes.ok ? incRes.json() : [],
+                outRes.ok ? outRes.json() : []
+            ]);
+
+            setAppointments({ incoming, outgoing });
+        } catch (error) {
+            console.error('Error fetching appointments:', error);
+        } finally {
+            setFetchingAppointments(false);
+        }
+    };
+
+    const handleUpdateAppointmentStatus = async (appointmentId, newStatus) => {
+        try {
+            const response = await fetch(`http://localhost:5015/api/appointments/${appointmentId}/status`, {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({ status: newStatus })
+            });
+
+            if (response.ok) {
+                fetchAppointments();
+            }
+        } catch (error) {
+            console.error('Error updating appointment:', error);
+        }
+    };
 
     const fetchReviews = async () => {
         try {
@@ -303,6 +352,14 @@ const Profile = () => {
                             >
                                 <Star size={18} /> {t('reviews.title')}
                             </button>
+                            {isOwnProfile && (
+                                <button
+                                    onClick={() => setActiveTab('appointments')}
+                                    className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${activeTab === 'appointments' ? 'text-primary dark:text-blue-400 border-b-2 border-primary dark:border-blue-400 bg-blue-50/50 dark:bg-blue-500/5' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                                >
+                                    <Calendar size={18} /> {t('appointments.title')}
+                                </button>
+                            )}
                         </div>
 
                         <div className="p-8 flex-1">

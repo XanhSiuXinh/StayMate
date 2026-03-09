@@ -1,17 +1,24 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import { Search, Home, Users, ArrowRight, ShieldCheck, Sparkles, Filter, X, ChevronDown, ChevronUp } from 'lucide-react';
 import Button from './ui/Button';
 import Card from './ui/Card';
 import RoomList from './RoomList';
+import MapView from './MapView';
 import { useTranslation } from 'react-i18next';
+import { Map, List } from 'lucide-react';
 
 const HomePage = () => {
     const { isAuthenticated, openAuthModal } = useAuth();
     const navigate = useNavigate();
     const { t } = useTranslation();
     
+    // Room state
+    const [rooms, setRooms] = useState([]);
+    const [loadingRooms, setLoadingRooms] = useState(true);
+    const [viewMode, setViewMode] = useState('list'); // 'list' or 'map'
+
     // Filter States
     const [showFilters, setShowFilters] = useState(false);
     const [filters, setFilters] = useState({
@@ -36,6 +43,30 @@ const HomePage = () => {
             maxArea: ''
         });
     };
+
+    const fetchRooms = async () => {
+        setLoadingRooms(true);
+        try {
+            const params = new URLSearchParams();
+            if (filters.searchTerm) params.append('city', filters.searchTerm);
+            if (filters.minPrice) params.append('minPrice', filters.minPrice);
+            if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
+            if (filters.minArea) params.append('minArea', filters.minArea);
+            if (filters.maxArea) params.append('maxArea', filters.maxArea);
+
+            const response = await fetch(`http://localhost:5015/api/rooms?${params.toString()}`);
+            const data = await response.json();
+            setRooms(data);
+        } catch (error) {
+            console.error('Error fetching rooms:', error);
+        } finally {
+            setLoadingRooms(false);
+        }
+    };
+
+    useEffect(() => {
+        fetchRooms();
+    }, [filters]);
 
     const handleCTA = () => {
         if (isAuthenticated) {
@@ -145,6 +176,21 @@ const HomePage = () => {
                                 <Filter size={20} />
                                 <span className="hidden sm:inline">Filters</span>
                             </button>
+
+                            <div className="flex bg-white dark:bg-gray-800 rounded-2xl p-1 border border-gray-200 dark:border-gray-700 shadow-sm ml-1">
+                                <button 
+                                    onClick={() => setViewMode('list')}
+                                    className={`p-2 rounded-xl transition-all ${viewMode === 'list' ? 'bg-primary text-white shadow-sm' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
+                                >
+                                    <List size={20} />
+                                </button>
+                                <button 
+                                    onClick={() => setViewMode('map')}
+                                    className={`p-2 rounded-xl transition-all ${viewMode === 'map' ? 'bg-primary text-white shadow-sm' : 'text-gray-400 hover:text-gray-600 dark:hover:text-gray-200'}`}
+                                >
+                                    <Map size={20} />
+                                </button>
+                            </div>
                         </div>
                     </div>
 
@@ -214,7 +260,12 @@ const HomePage = () => {
                     </div>
                 </div>
 
-                <RoomList filters={filters} />
+
+                {viewMode === 'list' ? (
+                    <RoomList rooms={rooms} loading={loadingRooms} />
+                ) : (
+                    <MapView rooms={rooms} />
+                )}
                 
                 <div className="mt-16 text-center">
                     <Button 

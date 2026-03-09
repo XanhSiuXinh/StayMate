@@ -45,15 +45,36 @@
         "addFirst": "Đăng phòng đầu tiên ngay!"
     },
     "reviews": {
-        "title": "Đánh giá & Nhận xét",
-        "averageRating": "Đánh giá trung bình",
-        "basedOn": "dựa trên {{count}} nhận xét",
-        "noReviews": "Chưa có đánh giá nào. Hãy là người đầu tiên!",
-        "writeReview": "Viết đánh giá",
-        "submit": "Gửi đánh giá",
-        "ratingLabel": "Số sao",
-        "commentPlaceholder": "Chia sẻ trải nghiệm của bạn...",
-        "success": "Đã gửi đánh giá thành công!",
-        "error": "Gửi đánh giá thất bại. Vui lòng thử lại."
+      "title": "Đánh giá nội dung",
+      "no_reviews": "Chưa có đánh giá nào.",
+      "add_review": "Thêm đánh giá",
+      "rating": "Xếp hạng",
+      "comment": "Nhận xét",
+      "submit": "Gửi đánh giá",
+      "room_reviews": "Đánh giá phòng",
+      "user_reviews": "Đánh giá người dùng",
+      "written_by": "Viết bởi"
+    },
+    "appointments": {
+      "title": "Lịch hẹn xem phòng",
+      "book_now": "Đặt lịch xem phòng",
+      "date": "Ngày hẹn",
+      "time": "Giờ hẹn",
+      "notes": "Ghi chú thêm",
+      "notes_placeholder": "Lời nhắn cho chủ nhà...",
+      "status_pending": "Đang chờ",
+      "status_approved": "Đã duyệt",
+      "status_rejected": "Từ chối",
+      "status_cancelled": "Đã hủy",
+      "incoming": "Yêu cầu nhận được",
+      "outgoing": "Lịch hẹn của tôi",
+      "no_appointments": "Không có lịch hẹn nào.",
+      "approve": "Phê duyệt",
+      "reject": "Từ chối",
+      "cancel": "Hủy hẹn",
+      "success": "Đặt lịch thành công!"
+    },
+    "rooms": {
+      "locations_found": "vị trí được tìm thấy"
     }
 }

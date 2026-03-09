@@ -44,6 +44,28 @@
     "noRooms": "You haven't posted any rooms yet.",
     "addFirst": "Post your first listing now!"
   },
+  "appointments": {
+    "title": "Room Viewings",
+    "book_now": "Book Viewing",
+    "date": "Appointment Date",
+    "time": "Appointment Time",
+    "notes": "Notes",
+    "notes_placeholder": "Message to host...",
+    "status_pending": "Pending",
+    "status_approved": "Approved",
+    "status_rejected": "Rejected",
+    "status_cancelled": "Cancelled",
+    "incoming": "Incoming Requests",
+    "outgoing": "My Appointments",
+    "no_appointments": "No appointments found.",
+    "approve": "Approve",
+    "reject": "Reject",
+    "cancel": "Cancel",
+    "success": "Booking successful!"
+  },
+  "rooms": {
+    "locations_found": "locations found"
+  },
   "reviews": {
     "title": "Reviews & Ratings",
     "averageRating": "Average Rating",

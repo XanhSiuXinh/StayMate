@@ -3,37 +3,8 @@ import { Search, Filter, Plus } from 'lucide-react';
 import RoomCard from './RoomCard';
 import { useNavigate } from 'react-router-dom';
 
-const RoomList = ({ filters = {} }) => {
+const RoomList = ({ rooms = [], loading = false }) => {
     const navigate = useNavigate();
-    const [rooms, setRooms] = useState([]);
-    const [loading, setLoading] = useState(true);
-
-    useEffect(() => {
-        fetchRooms();
-    }, [filters]);
-
-    const fetchRooms = async () => {
-        setLoading(true);
-        try {
-            const params = new URLSearchParams();
-            if (filters.searchTerm) params.append('city', filters.searchTerm);
-            if (filters.minPrice) params.append('minPrice', filters.minPrice);
-            if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
-            if (filters.minArea) params.append('minArea', filters.minArea);
-            if (filters.maxArea) params.append('maxArea', filters.maxArea);
-
-            const queryString = params.toString();
-            const url = `http://localhost:5015/api/rooms${queryString ? `?${queryString}` : ''}`;
-            
-            const response = await fetch(url);
-            const data = await response.json();
-            setRooms(data);
-        } catch (error) {
-            console.error('Error fetching rooms:', error);
-        } finally {
-            setLoading(false);
-        }
-    };
 
     if (loading) {
         return (
