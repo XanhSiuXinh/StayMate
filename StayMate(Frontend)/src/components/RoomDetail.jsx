@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { MapPin, User, Home, Maximize, ArrowLeft, Loader2, Phone, Mail, Share2, Heart } from 'lucide-react';
+import { MapPin, User, Home, Maximize, ArrowLeft, Loader2, Phone, Mail, Share2, Heart, Star, Send } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 
 const RoomDetail = () => {
@@ -11,10 +11,56 @@ const RoomDetail = () => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState('');
     const [activeImage, setActiveImage] = useState(0);
+    const [reviews, setReviews] = useState([]);
+    const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
+    const [submittingReview, setSubmittingReview] = useState(false);
+    const { t } = useTranslation();
 
     useEffect(() => {
         fetchRoomDetail();
+        fetchReviews();
     }, [id]);
+
+    const fetchReviews = async () => {
+        try {
+            const response = await fetch(`http://localhost:5015/api/reviews/room/${id}`);
+            if (response.ok) {
+                const data = await response.json();
+                setReviews(data);
+            }
+        } catch (error) {
+            console.error('Error fetching reviews:', error);
+        }
+    };
+
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        if (!user) return;
+        setSubmittingReview(true);
+        try {
+            const response = await fetch('http://localhost:5015/api/reviews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                },
+                body: JSON.stringify({
+                    targetRoomId: parseInt(id),
+                    rating: newReview.rating,
+                    comment: newReview.comment
+                })
+            });
+
+            if (response.ok) {
+                setNewReview({ rating: 5, comment: '' });
+                fetchReviews();
+            }
+        } catch (error) {
+            console.error('Error submitting review:', error);
+        } finally {
+            setSubmittingReview(false);
+        }
+    };
 
     const fetchRoomDetail = async () => {
         try {
@@ -147,10 +193,108 @@ const RoomDetail = () => {
                         </div>
 
                         {/* Description */}
-                        <div>
+                        <div className="mb-8">
                             <h2 className="text-lg font-bold text-gray-900 dark:text-white mb-4">About the Room</h2>
                             <div className="prose text-gray-600 dark:text-gray-300 whitespace-pre-line leading-relaxed">
                                 {room.description || "No description provided."}
+                            </div>
+                        </div>
+
+                        {/* Reviews Section */}
+                        <div className="border-t border-gray-100 dark:border-gray-700 pt-8">
+                            <div className="flex items-center justify-between mb-8">
+                                <div>
+                                    <h2 className="text-2xl font-bold text-gray-900 dark:text-white mb-1">{t('reviews.title')}</h2>
+                                    <div className="flex items-center gap-2">
+                                        <div className="flex text-yellow-500">
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <Star key={star} size={18} fill={star <= Math.round(reviews.reduce((acc, r) => acc + r.rating, 0) / (reviews.length || 1)) ? "currentColor" : "none"} />
+                                            ))}
+                                        </div>
+                                        <span className="font-bold text-gray-900 dark:text-white">
+                                            {(reviews.reduce((acc, r) => acc + r.rating, 0) / (reviews.length || 1)).toFixed(1)}
+                                        </span>
+                                        <span className="text-gray-500 dark:text-gray-400 text-sm">
+                                            ({t('reviews.basedOn', { count: reviews.length })})
+                                        </span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {/* Review Form */}
+                            {user && (
+                                <form onSubmit={handleReviewSubmit} className="bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl mb-12 border border-gray-100 dark:border-gray-800">
+                                    <h3 className="font-bold text-gray-900 dark:text-white mb-4">{t('reviews.writeReview')}</h3>
+                                    <div className="flex items-center gap-4 mb-4">
+                                        <span className="text-sm font-medium text-gray-700 dark:text-gray-300">{t('reviews.ratingLabel')}:</span>
+                                        <div className="flex gap-1">
+                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                <button
+                                                    key={star}
+                                                    type="button"
+                                                    onClick={() => setNewReview({ ...newReview, rating: star })}
+                                                    className={`transition-colors ${star <= newReview.rating ? 'text-yellow-500' : 'text-gray-300 dark:text-gray-600'}`}
+                                                >
+                                                    <Star size={24} fill={star <= newReview.rating ? "currentColor" : "none"} />
+                                                </button>
+                                            ))}
+                                        </div>
+                                    </div>
+                                    <textarea
+                                        value={newReview.comment}
+                                        onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                                        placeholder={t('reviews.commentPlaceholder')}
+                                        className="w-full p-4 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-700 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all mb-4 text-gray-700 dark:text-gray-200"
+                                        rows="3"
+                                        required
+                                    ></textarea>
+                                    <button
+                                        type="submit"
+                                        disabled={submittingReview}
+                                        className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all disabled:opacity-50"
+                                    >
+                                        {submittingReview ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                                        {t('reviews.submit')}
+                                    </button>
+                                </form>
+                            )}
+
+                            {/* Review List */}
+                            <div className="space-y-6">
+                                {reviews.length === 0 ? (
+                                    <p className="text-center text-gray-500 py-8 italic">{t('reviews.noReviews')}</p>
+                                ) : (
+                                    reviews.map((review) => (
+                                        <div key={review.reviewId} className="flex gap-4 group">
+                                            <img
+                                                src={review.reviewerAvatar || `https://ui-avatars.com/api/?name=${review.reviewerName}&background=random`}
+                                                alt={review.reviewerName}
+                                                className="w-12 h-12 rounded-full object-cover shrink-0"
+                                            />
+                                            <div className="flex-1">
+                                                <div className="flex items-center justify-between mb-1">
+                                                    <h4 className="font-bold text-gray-900 dark:text-white uppercase tracking-tight text-sm">
+                                                        {review.reviewerName}
+                                                        {review.reviewerId === room.hostUserId && (
+                                                            <span className="ml-2 text-[10px] bg-primary/10 text-primary px-1.5 py-0.5 rounded uppercase font-black">Host</span>
+                                                        )}
+                                                    </h4>
+                                                    <span className="text-xs text-gray-400 capitalize">
+                                                        {new Date(review.createdAt).toLocaleDateString()}
+                                                    </span>
+                                                </div>
+                                                <div className="flex text-yellow-500 mb-2 scale-75 origin-left">
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <Star key={star} size={16} fill={star <= review.rating ? "currentColor" : "none"} />
+                                                    ))}
+                                                </div>
+                                                <p className="text-gray-600 dark:text-gray-300 text-sm leading-relaxed">
+                                                    {review.comment}
+                                                </p>
+                                            </div>
+                                        </div>
+                                    ))
+                                )}
                             </div>
                         </div>
                     </div>

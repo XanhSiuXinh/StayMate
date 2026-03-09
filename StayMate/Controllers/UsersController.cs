@@ -20,6 +20,27 @@ public class UsersController : ControllerBase
         _context = context;
     }
 
+    [HttpGet("{id}")]
+    [Authorize]
+    public async Task<ActionResult<UserProfileDto>> GetPublicProfile(int id)
+    {
+        var user = await _context.Users.FindAsync(id);
+        if (user == null) return NotFound("User not found.");
+
+        // Return a subset of profile data (public info)
+        return Ok(new UserProfileDto
+        {
+            UserId = user.UserId,
+            FullName = user.FullName,
+            AvatarUrl = user.AvatarUrl,
+            Bio = user.Bio,
+            Occupation = user.Occupation,
+            School = user.School,
+            IsVerified = user.IsVerified,
+            // Hidden for privacy: Email, PhoneNumber, DateOfBirth, etc.
+        });
+    }
+
     [HttpGet("profile")]
     [Authorize]
     public async Task<ActionResult<UserProfileDto>> GetProfile()

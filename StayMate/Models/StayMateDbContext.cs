@@ -46,6 +46,8 @@ public partial class StayMateDbContext : DbContext
     public virtual DbSet<Room> Rooms { get; set; }
     
     public virtual DbSet<RoomPhoto> RoomPhotos { get; set; }
+    
+    public virtual DbSet<Review> Reviews { get; set; }
 
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Server=localhost;Database=StayMateDB;Trusted_Connection=True;TrustServerCertificate=True;");
@@ -306,6 +308,9 @@ public partial class StayMateDbContext : DbContext
             entity.Property(e => e.LastLoginAt).HasColumnType("datetime");
             entity.Property(e => e.Occupation).HasMaxLength(100);
             entity.Property(e => e.PhoneNumber).HasMaxLength(20);
+            entity.Property(e => e.Role)
+                .HasMaxLength(20)
+                .HasDefaultValue("Student");
             entity.Property(e => e.School).HasMaxLength(200);
             entity.Property(e => e.UpdatedAt)
                 .HasDefaultValueSql("(getdate())")
@@ -392,6 +397,30 @@ public partial class StayMateDbContext : DbContext
             entity.HasOne(d => d.User).WithMany()
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK_VerificationRequests_Users");
+        });
+
+        modelBuilder.Entity<Review>(entity =>
+        {
+            entity.HasKey(e => e.ReviewId);
+            entity.Property(e => e.ReviewId).HasColumnName("ReviewID");
+            entity.Property(e => e.ReviewerId).HasColumnName("ReviewerID");
+            entity.Property(e => e.TargetRoomId).HasColumnName("TargetRoomID");
+            entity.Property(e => e.TargetUserId).HasColumnName("TargetUserID");
+            entity.Property(e => e.Comment).HasMaxLength(1000);
+            entity.Property(e => e.Rating).IsRequired();
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime").HasDefaultValueSql("(getdate())");
+
+            entity.HasOne(d => d.Reviewer).WithMany()
+                .HasForeignKey(d => d.ReviewerId)
+                .OnDelete(DeleteBehavior.NoAction);
+
+            entity.HasOne(d => d.TargetRoom).WithMany()
+                .HasForeignKey(d => d.TargetRoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+
+            entity.HasOne(d => d.TargetUser).WithMany()
+                .HasForeignKey(d => d.TargetUserId)
+                .OnDelete(DeleteBehavior.NoAction);
         });
 
         OnModelCreatingPartial(modelBuilder);

@@ -4,7 +4,7 @@ import { Loader2, Save, Moon, Sun, Wind, VolumeX, Coffee, Home, Clock, Cat, Imag
 import Button from './ui/Button';
 import Input from './ui/Input';
 
-const Preferences = () => {
+const Preferences = ({ isReadOnly = false, profileData = null }) => {
     const { token } = useAuth();
 
     const [lifestyle, setLifestyle] = useState({
@@ -40,9 +40,38 @@ const Preferences = () => {
     const verificationFileRef = useRef(null);
 
     useEffect(() => {
-        fetchData();
-        fetchVerificationStatus();
-    }, []);
+        if (!isReadOnly) {
+            fetchData();
+            fetchVerificationStatus();
+        } else if (profileData) {
+            // If read-only, we might still want to fetch specific user data like interests/photos
+            // but for now let's assume lifestyle is in profileData if backend supports it.
+            // Actually, UsersController public profile doesn't include lifestyle/interests yet.
+            // Let's add them to the public profile if needed or fetch here.
+            fetchPublicData();
+        }
+    }, [isReadOnly, profileData]);
+
+    const fetchPublicData = async () => {
+        if (!profileData?.userId) return;
+        setLoading(true);
+        try {
+            const res = await fetch(`http://localhost:5015/api/preferences/lifestyle/${profileData.userId}`);
+            if (res.ok) {
+                const data = await res.json();
+                setLifestyle(data);
+            }
+            const photosRes = await fetch(`http://localhost:5015/api/users/${profileData.userId}/photos`);
+            if (photosRes.ok) {
+                const photosData = await photosRes.json();
+                setUserPhotos(photosData);
+            }
+        } catch (err) {
+            console.error("Error fetching public data:", err);
+        } finally {
+            setLoading(false);
+        }
+    };
 
     const fetchVerificationStatus = async () => {
         try {
@@ -540,16 +569,18 @@ const Preferences = () => {
                 </div>
             </div>
 
-            <div className="flex justify-end pt-6 border-t border-gray-100 dark:border-gray-700 mt-6">
-                <Button
-                    onClick={handleSave}
-                    isLoading={saving}
-                    icon={Save}
-                    className="px-8"
-                >
-                    Save Changes
-                </Button>
-            </div>
+            {!isReadOnly && (
+                <div className="flex justify-end pt-6 border-t border-gray-100 dark:border-gray-700 mt-6">
+                    <Button
+                        onClick={handleSave}
+                        isLoading={saving}
+                        icon={Save}
+                        className="px-8"
+                    >
+                        Save Changes
+                    </Button>
+                </div>
+            )}
 
         </div>
     );

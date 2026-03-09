@@ -25,12 +25,35 @@
     "messages": "Messages",
     "saved": "Saved",
     "findRooms": "Find Rooms",
-    "postRoom": "Post a Room",
-    "profileSettings": "Profile Settings",
-    "appSettings": "App Settings",
+    "myListings": "My Listings",
+    "postRoom": "New Listing",
+    "profileSettings": "Profile",
+    "appSettings": "Settings",
     "matchingPreferences": "Matching Preferences",
     "logOut": "Log Out",
     "logIn": "Log In",
     "signUp": "Sign Up"
+  },
+  "myRooms": {
+    "title": "My Listings Manager",
+    "stats": {
+      "total": "Total Listings",
+      "available": "Available",
+      "occupied": "Occupied"
+    },
+    "noRooms": "You haven't posted any rooms yet.",
+    "addFirst": "Post your first listing now!"
+  },
+  "reviews": {
+    "title": "Reviews & Ratings",
+    "averageRating": "Average Rating",
+    "basedOn": "based on {{count}} reviews",
+    "noReviews": "No reviews yet. Be the first to review!",
+    "writeReview": "Write a Review",
+    "submit": "Submit Review",
+    "ratingLabel": "Rating",
+    "commentPlaceholder": "Share your experience...",
+    "success": "Review submitted successfully!",
+    "error": "Failed to submit review. Please try again."
   }
 }

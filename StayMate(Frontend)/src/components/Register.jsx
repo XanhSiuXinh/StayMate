@@ -12,7 +12,8 @@ const Register = () => {
         fullName: '',
         email: '',
         password: '',
-        dateOfBirth: ''
+        dateOfBirth: '',
+        role: 'Student'
     });
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
@@ -181,6 +182,40 @@ const Register = () => {
                                     required
                                 />
                                 <p className="text-xs text-gray-500 dark:text-gray-400 mt-1 pl-1">Must be at least 6 characters.</p>
+                            </div>
+
+                            {/* Role Selection */}
+                            <div className="space-y-3">
+                                <label className="text-sm font-semibold text-gray-700 dark:text-gray-300 ml-1">I am a...</label>
+                                <div className="grid grid-cols-2 gap-4">
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, role: 'Student' })}
+                                        className={`p-4 rounded-xl border-2 text-left transition-all ${formData.role === 'Student' 
+                                            ? 'border-primary bg-blue-50/50 dark:bg-blue-500/10 ring-2 ring-primary/20' 
+                                            : 'border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700'}`}
+                                    >
+                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${formData.role === 'Student' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}`}>
+                                            <Heart size={20} />
+                                        </div>
+                                        <div className="font-bold text-gray-900 dark:text-white">Student</div>
+                                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">Looking for a room/roommate</div>
+                                    </button>
+
+                                    <button
+                                        type="button"
+                                        onClick={() => setFormData({ ...formData, role: 'Landlord' })}
+                                        className={`p-4 rounded-xl border-2 text-left transition-all ${formData.role === 'Landlord' 
+                                            ? 'border-primary bg-blue-50/50 dark:bg-blue-500/10 ring-2 ring-primary/20' 
+                                            : 'border-gray-100 dark:border-gray-800 hover:border-gray-200 dark:hover:border-gray-700'}`}
+                                    >
+                                        <div className={`w-10 h-10 rounded-lg flex items-center justify-center mb-3 ${formData.role === 'Landlord' ? 'bg-primary text-white' : 'bg-gray-100 dark:bg-gray-800 text-gray-500'}`}>
+                                            <Mail size={20} />
+                                        </div>
+                                        <div className="font-bold text-gray-900 dark:text-white">Landlord</div>
+                                        <div className="text-xs text-gray-500 dark:text-gray-400 mt-1">I have a room to list</div>
+                                    </button>
+                                </div>
                             </div>
 
                             {error && (

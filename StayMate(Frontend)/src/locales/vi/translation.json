@@ -25,12 +25,35 @@
         "messages": "Tin nhắn",
         "saved": "Đã lưu",
         "findRooms": "Tìm phòng",
-        "postRoom": "Đăng phòng",
-        "profileSettings": "Cài đặt hồ sơ",
+        "myListings": "Phòng của tôi",
+        "postRoom": "Đăng tin mới",
+        "profileSettings": "Hồ sơ",
         "appSettings": "Cài đặt ứng dụng",
-        "matchingPreferences": "Cài đặt sở thích",
+        "matchingPreferences": "Sở thích ghép đôi",
         "logOut": "Đăng xuất",
         "logIn": "Đăng nhập",
         "signUp": "Đăng ký"
+    },
+    "myRooms": {
+        "title": "Quản lý phòng của tôi",
+        "stats": {
+            "total": "Tổng bài đăng",
+            "available": "Đang trống",
+            "occupied": "Đã cho thuê"
+        },
+        "noRooms": "Bạn chưa có bài đăng nào.",
+        "addFirst": "Đăng phòng đầu tiên ngay!"
+    },
+    "reviews": {
+        "title": "Đánh giá & Nhận xét",
+        "averageRating": "Đánh giá trung bình",
+        "basedOn": "dựa trên {{count}} nhận xét",
+        "noReviews": "Chưa có đánh giá nào. Hãy là người đầu tiên!",
+        "writeReview": "Viết đánh giá",
+        "submit": "Gửi đánh giá",
+        "ratingLabel": "Số sao",
+        "commentPlaceholder": "Chia sẻ trải nghiệm của bạn...",
+        "success": "Đã gửi đánh giá thành công!",
+        "error": "Gửi đánh giá thất bại. Vui lòng thử lại."
     }
 }

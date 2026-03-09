@@ -13,6 +13,7 @@ import Messages from './components/Messages';
 import Preferences from './components/Preferences';
 import Settings from './components/Settings';
 import Saved from './components/Saved';
+import MyRooms from './components/MyRooms';
 
 function App() {
     const { isAuthenticated, authModalView } = useAuth();
@@ -36,10 +37,26 @@ function App() {
                     }
                 />
                 <Route
+                    path="/profile/:id"
+                    element={
+                        <ProtectedRoute>
+                            <Profile />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
                     path="/post-room"
                     element={
                         <ProtectedRoute>
                             <PostRoom />
+                        </ProtectedRoute>
+                    }
+                />
+                <Route
+                    path="/my-rooms"
+                    element={
+                        <ProtectedRoute>
+                            <MyRooms />
                         </ProtectedRoute>
                     }
                 />

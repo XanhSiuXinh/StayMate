@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 
 namespace StayMate.Models;
@@ -38,6 +38,8 @@ public partial class User
     public bool? IsVerified { get; set; }
 
     public string? AccountStatus { get; set; }
+
+    public string Role { get; set; } = "Student";
 
     public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
 

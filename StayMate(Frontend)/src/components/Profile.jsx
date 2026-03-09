@@ -1,12 +1,13 @@
-import { useState, useEffect, useRef } from 'react';
-import { useAuth } from '../context/AuthContext';
-import { User, Mail, Calendar, Briefcase, GraduationCap, Phone, Edit2, Save, X, Loader2, Award, Home, Activity } from 'lucide-react';
+import { User, Mail, Calendar, Briefcase, GraduationCap, Phone, Edit2, Save, X, Loader2, Award, Home, Activity, Star, Send } from 'lucide-react';
+import { useParams } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import Preferences from './Preferences';
 import Button from './ui/Button';
 import Input from './ui/Input';
 
 const Profile = () => {
-    const { token, logout, updateUser } = useAuth();
+    const { id } = useParams();
+    const { token, logout, updateUser, user: currentUser } = useAuth();
     const [profile, setProfile] = useState(null);
     const [loading, setLoading] = useState(true);
     const [updating, setUpdating] = useState(false);
@@ -17,14 +18,66 @@ const Profile = () => {
     const [activeTab, setActiveTab] = useState('about');
     const fileInputRef = useRef(null);
     const [uploadingAvatar, setUploadingAvatar] = useState(false);
+    const [reviews, setReviews] = useState([]);
+    const [newReview, setNewReview] = useState({ rating: 5, comment: '' });
+    const [submittingReview, setSubmittingReview] = useState(false);
+    const { t } = useTranslation();
+
+    const isOwnProfile = !id || parseInt(id) === currentUser?.userId;
+    const profileId = id || currentUser?.userId;
 
     useEffect(() => {
         fetchProfile();
-    }, []);
+        fetchReviews();
+    }, [id]);
+
+    const fetchReviews = async () => {
+        try {
+            const response = await fetch(`http://localhost:5015/api/reviews/user/${profileId}`);
+            if (response.ok) {
+                const data = await response.json();
+                setReviews(data);
+            }
+        } catch (error) {
+            console.error('Error fetching reviews:', error);
+        }
+    };
+
+    const handleReviewSubmit = async (e) => {
+        e.preventDefault();
+        setSubmittingReview(true);
+        try {
+            const response = await fetch('http://localhost:5015/api/reviews', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${token}`
+                },
+                body: JSON.stringify({
+                    targetUserId: parseInt(profileId),
+                    rating: newReview.rating,
+                    comment: newReview.comment
+                })
+            });
+
+            if (response.ok) {
+                setNewReview({ rating: 5, comment: '' });
+                fetchReviews();
+            }
+        } catch (error) {
+            console.error('Error submitting review:', error);
+        } finally {
+            setSubmittingReview(false);
+        }
+    };
 
     const fetchProfile = async () => {
+        setLoading(true);
         try {
-            const response = await fetch('http://localhost:5015/api/users/profile', {
+            const url = isOwnProfile 
+                ? 'http://localhost:5015/api/users/profile' 
+                : `http://localhost:5015/api/users/${id}`;
+            const response = await fetch(url, {
                 headers: {
                     'Authorization': `Bearer ${token}`
                 }
@@ -244,6 +297,12 @@ const Profile = () => {
                             >
                                 <Activity size={18} /> Matching Profile
                             </button>
+                            <button
+                                onClick={() => setActiveTab('reviews')}
+                                className={`flex-1 py-4 text-sm font-medium flex items-center justify-center gap-2 transition-colors ${activeTab === 'reviews' ? 'text-primary dark:text-blue-400 border-b-2 border-primary dark:border-blue-400 bg-blue-50/50 dark:bg-blue-500/5' : 'text-gray-500 dark:text-gray-400 hover:text-gray-700 dark:hover:text-gray-300'}`}
+                            >
+                                <Star size={18} /> {t('reviews.title')}
+                            </button>
                         </div>
 
                         <div className="p-8 flex-1">
@@ -257,7 +316,7 @@ const Profile = () => {
                                             Manage your personal information space.
                                         </p>
                                     </div>
-                                    {!isEditing ? (
+                                    {isOwnProfile && !isEditing ? (
                                         <Button
                                             onClick={() => setIsEditing(true)}
                                             icon={Edit2}
@@ -265,7 +324,7 @@ const Profile = () => {
                                         >
                                             Edit Profile
                                         </Button>
-                                    ) : (
+                                    ) : isOwnProfile && (
                                         <div className="flex gap-2">
                                             <Button
                                                 variant="outline"
@@ -386,7 +445,113 @@ const Profile = () => {
                             {/* LIFESTYLE TAB CONTENT */}
                             {activeTab === 'lifestyle' && (
                                 <div className="animate-in fade-in">
-                                    <Preferences />
+                                    <Preferences isReadOnly={!isOwnProfile} profileData={profile} />
+                                </div>
+                            )}
+
+                            {/* REVIEWS TAB CONTENT */}
+                            {activeTab === 'reviews' && (
+                                <div className="animate-in fade-in">
+                                    <div className="flex items-center gap-6 mb-8 bg-gray-50 dark:bg-gray-900/50 p-6 rounded-2xl">
+                                        <div className="text-center">
+                                            <div className="text-4xl font-bold text-gray-900 dark:text-white">
+                                                {(reviews.reduce((acc, r) => acc + r.rating, 0) / (reviews.length || 1)).toFixed(1)}
+                                            </div>
+                                            <div className="flex text-yellow-500 justify-center my-1">
+                                                {[1, 2, 3, 4, 5].map((star) => (
+                                                    <Star key={star} size={14} fill={star <= Math.round(reviews.reduce((acc, r) => acc + r.rating, 0) / (reviews.length || 1)) ? "currentColor" : "none"} />
+                                                ))}
+                                            </div>
+                                            <div className="text-xs text-gray-500">
+                                                {reviews.length} {t('reviews.basedOn', { count: reviews.length }).split(' ').pop()}
+                                            </div>
+                                        </div>
+                                        <div className="flex-1 space-y-2">
+                                            {[5, 4, 3, 2, 1].map(star => (
+                                                <div key={star} className="flex items-center gap-3">
+                                                    <span className="text-xs font-medium text-gray-500 w-3">{star}</span>
+                                                    <div className="flex-1 h-2 bg-gray-200 dark:bg-gray-700 rounded-full overflow-hidden">
+                                                        <div 
+                                                            className="h-full bg-yellow-400" 
+                                                            style={{ width: `${(reviews.filter(r => r.rating === star).length / (reviews.length || 1)) * 100}%` }}
+                                                        ></div>
+                                                    </div>
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+
+                                    {!isOwnProfile && (
+                                        <form onSubmit={handleReviewSubmit} className="mb-10 bg-white dark:bg-gray-800 p-6 rounded-2xl border border-gray-100 dark:border-gray-700 shadow-sm transition-colors">
+                                            <h3 className="font-bold text-gray-900 dark:text-white mb-4">Để lại lời nhận xét</h3>
+                                            <div className="flex items-center gap-4 mb-4">
+                                                <div className="flex gap-1">
+                                                    {[1, 2, 3, 4, 5].map((star) => (
+                                                        <button
+                                                            key={star}
+                                                            type="button"
+                                                            onClick={() => setNewReview({ ...newReview, rating: star })}
+                                                            className={`transition-colors ${star <= newReview.rating ? 'text-yellow-500' : 'text-gray-300 dark:text-gray-600'}`}
+                                                        >
+                                                            <Star size={24} fill={star <= newReview.rating ? "currentColor" : "none"} />
+                                                        </button>
+                                                    ))}
+                                                </div>
+                                            </div>
+                                            <textarea
+                                                value={newReview.comment}
+                                                onChange={(e) => setNewReview({ ...newReview, comment: e.target.value })}
+                                                placeholder="Nhận xét của bạn về người dùng này..."
+                                                className="w-full p-4 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-800 rounded-xl focus:ring-2 focus:ring-primary/20 outline-none transition-all mb-4 text-gray-700 dark:text-gray-200"
+                                                rows="3"
+                                                required
+                                            ></textarea>
+                                            <button
+                                                type="submit"
+                                                disabled={submittingReview}
+                                                className="flex items-center gap-2 px-6 py-2.5 bg-primary text-white font-bold rounded-xl hover:bg-primary-hover transition-all disabled:opacity-50"
+                                            >
+                                                {submittingReview ? <Loader2 size={18} className="animate-spin" /> : <Send size={18} />}
+                                                {t('reviews.submit')}
+                                            </button>
+                                        </form>
+                                    )}
+
+                                    <div className="space-y-6">
+                                        {reviews.length === 0 ? (
+                                            <div className="text-center py-12 px-4 bg-gray-50 dark:bg-gray-900/30 rounded-2xl italic text-gray-500">
+                                                {t('reviews.noReviews')}
+                                            </div>
+                                        ) : (
+                                            reviews.map((review) => (
+                                                <div key={review.reviewId} className="flex gap-4 p-4 border-b border-gray-50 dark:border-gray-800 last:border-0 hover:bg-gray-50/50 dark:hover:bg-gray-800/30 rounded-xl transition-colors">
+                                                    <img
+                                                        src={review.reviewerAvatar || `https://ui-avatars.com/api/?name=${review.reviewerName}&background=random`}
+                                                        alt={review.reviewerName}
+                                                        className="w-10 h-10 rounded-full object-cover shrink-0"
+                                                    />
+                                                    <div className="flex-1">
+                                                        <div className="flex items-center justify-between mb-1">
+                                                            <h4 className="font-bold text-gray-900 dark:text-white text-sm">
+                                                                {review.reviewerName}
+                                                            </h4>
+                                                            <span className="text-xs text-gray-400">
+                                                                {new Date(review.createdAt).toLocaleDateString()}
+                                                            </span>
+                                                        </div>
+                                                        <div className="flex text-yellow-500 mb-2 scale-75 origin-left">
+                                                            {[1, 2, 3, 4, 5].map((star) => (
+                                                                <Star key={star} size={14} fill={star <= review.rating ? "currentColor" : "none"} />
+                                                            ))}
+                                                        </div>
+                                                        <p className="text-gray-600 dark:text-gray-300 text-sm italic">
+                                                            "{review.comment}"
+                                                        </p>
+                                                    </div>
+                                                </div>
+                                            ))
+                                        )}
+                                    </div>
                                 </div>
                             )}
                         </div>

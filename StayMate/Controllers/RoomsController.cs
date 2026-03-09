@@ -22,6 +22,72 @@ namespace StayMate.Controllers
             _context = context;
         }
 
+        [HttpGet("my-rooms")]
+        [Authorize(Roles = "Landlord")]
+        public async Task<ActionResult<IEnumerable<RoomDto>>> GetMyRooms()
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            
+            var rooms = await _context.Rooms
+                .Include(r => r.Photos)
+                .Include(r => r.HostUser)
+                .Where(r => r.HostUserId == userId)
+                .OrderByDescending(r => r.CreatedAt)
+                .ToListAsync();
+
+            return rooms.Select(r => new RoomDto
+            {
+                RoomId = r.RoomId,
+                Title = r.Title,
+                Description = r.Description,
+                Price = r.Price,
+                Address = r.Address,
+                District = r.District,
+                City = r.City,
+                AreaSqm = r.AreaSqm,
+                IsAvailable = r.IsAvailable,
+                CreatedAt = r.CreatedAt,
+                PhotoUrls = r.Photos.Select(p => p.PhotoUrl).ToList(),
+                HostUserId = r.HostUserId,
+                HostName = r.HostUser.FullName,
+                HostAvatar = r.HostUser.AvatarUrl
+            }).ToList();
+        }
+
+        [HttpGet("landlord-stats")]
+        [Authorize(Roles = "Landlord")]
+        public async Task<ActionResult<object>> GetLandlordStats()
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            
+            var roomsCount = await _context.Rooms.CountAsync(r => r.HostUserId == userId);
+            var availableRooms = await _context.Rooms.CountAsync(r => r.HostUserId == userId && r.IsAvailable);
+
+            return new
+            {
+                TotalRooms = roomsCount,
+                AvailableRooms = availableRooms,
+                OccupiedRooms = roomsCount - availableRooms
+            };
+        }
+
+        [HttpPatch("{id}/toggle-availability")]
+        [Authorize(Roles = "Landlord")]
+        public async Task<IActionResult> ToggleAvailability(int id)
+        {
+            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            var room = await _context.Rooms.FindAsync(id);
+
+            if (room == null) return NotFound();
+            if (room.HostUserId != userId) return Forbid();
+
+            room.IsAvailable = !room.IsAvailable;
+            room.UpdatedAt = DateTime.Now;
+
+            await _context.SaveChangesAsync();
+            return Ok(new { isAvailable = room.IsAvailable });
+        }
+
 
         [HttpGet]
         public async Task<ActionResult<IEnumerable<RoomDto>>> GetRooms([FromQuery] string? city, [FromQuery] decimal? minPrice, [FromQuery] decimal? maxPrice, [FromQuery] int? minArea, [FromQuery] int? maxArea)
@@ -109,7 +175,7 @@ namespace StayMate.Controllers
 
 
         [HttpPost]
-        [Authorize]
+        [Authorize(Roles = "Landlord")]
         public async Task<ActionResult<RoomDto>> PostRoom([FromForm] CreateRoomDto createRoomDto)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
@@ -195,7 +261,7 @@ namespace StayMate.Controllers
 
 
         [HttpPut("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Landlord")]
         public async Task<IActionResult> PutRoom(int id, UpdateRoomDto updateRoomDto)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
@@ -226,7 +292,7 @@ namespace StayMate.Controllers
 
 
         [HttpDelete("{id}")]
-        [Authorize]
+        [Authorize(Roles = "Landlord")]
         public async Task<IActionResult> DeleteRoom(int id)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);

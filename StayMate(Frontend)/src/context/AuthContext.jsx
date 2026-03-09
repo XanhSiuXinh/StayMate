@@ -37,15 +37,15 @@ export const AuthProvider = ({ children }) => {
 
     // Login function
     const login = (authData) => {
-        const { token, email, fullName, avatarUrl } = authData;
+        const { token, email, fullName, avatarUrl, role } = authData;
 
         // Lưu vào state
         setToken(token);
-        setUser({ email, fullName, avatarUrl });
+        setUser({ email, fullName, avatarUrl, role });
 
         // Lưu vào localStorage
         localStorage.setItem('authToken', token);
-        localStorage.setItem('authUser', JSON.stringify({ email, fullName, avatarUrl }));
+        localStorage.setItem('authUser', JSON.stringify({ email, fullName, avatarUrl, role }));
         // Không tự đóng modal ở đây – để Register/Login tự quyết định dựa vào isNewUser
     };
 

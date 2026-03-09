@@ -43,6 +43,7 @@ namespace StayMate.Controllers
                 DateOfBirth = DateOnly.FromDateTime(request.DateOfBirth), // Convert DateTime to DateOnly
                 Gender = "Khác", 
                 PasswordHash = Convert.ToBase64String(passwordSalt) + "." + Convert.ToBase64String(passwordHash),
+                Role = request.Role,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
                 IsActive = true,
@@ -61,6 +62,7 @@ namespace StayMate.Controllers
                 Email = user.Email,
                 FullName = user.FullName,
                 AvatarUrl = user.AvatarUrl,
+                Role = user.Role,
                 IsNewUser = true
             });
         }
@@ -94,6 +96,7 @@ namespace StayMate.Controllers
                 Email = user.Email,
                 FullName = user.FullName,
                 AvatarUrl = user.AvatarUrl,
+                Role = user.Role,
                 IsNewUser = false
             });
         }
@@ -132,7 +135,8 @@ namespace StayMate.Controllers
                         UpdatedAt = DateTime.Now,
                         IsActive = true,
                         IsVerified = payload.EmailVerified, // Google đã verify email
-                        AccountStatus = "Active"
+                        AccountStatus = "Active",
+                        Role = "Student" // Mặc định Google login là Student, có thể đổi sau
                     };
 
                     _context.Users.Add(user);
@@ -157,6 +161,7 @@ namespace StayMate.Controllers
                     Email = user.Email,
                     FullName = user.FullName,
                     AvatarUrl = user.AvatarUrl,
+                    Role = user.Role,
                     IsNewUser = isNewUser
                 });
             }
@@ -172,7 +177,8 @@ namespace StayMate.Controllers
             {
                 new Claim(ClaimTypes.NameIdentifier, user.UserId.ToString()),
                 new Claim(ClaimTypes.Email, user.Email),
-                new Claim(ClaimTypes.Name, user.FullName)
+                new Claim(ClaimTypes.Name, user.FullName),
+                new Claim(ClaimTypes.Role, user.Role)
             };
 
             var key = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(

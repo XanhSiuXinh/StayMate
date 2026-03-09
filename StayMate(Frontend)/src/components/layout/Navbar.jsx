@@ -53,13 +53,23 @@ const Navbar = () => {
                             >
                                 {t('navbar.saved')}
                             </Link>
-                            <Link
-                                to="/post-room"
-                                className="flex items-center gap-1.5 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary dark:text-blue-400 rounded-xl text-sm font-bold transition-all"
-                            >
-                                <Plus size={18} />
-                                {t('navbar.postRoom')}
-                            </Link>
+                            {user?.role === 'Landlord' && (
+                                <Link
+                                    to="/my-rooms"
+                                    className={`text-sm font-bold transition-colors ${isActive('/my-rooms') ? 'text-primary dark:text-blue-400' : 'text-gray-500 dark:text-gray-400 hover:text-gray-900 dark:hover:text-gray-200'}`}
+                                >
+                                    {t('navbar.myListings')}
+                                </Link>
+                            )}
+                            {user?.role === 'Landlord' && (
+                                <Link
+                                    to="/post-room"
+                                    className="flex items-center gap-1.5 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary dark:text-blue-400 rounded-xl text-sm font-bold transition-all"
+                                >
+                                    <Plus size={18} />
+                                    {t('navbar.postRoom')}
+                                </Link>
+                            )}
 
                             <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2"></div>
 
@@ -143,13 +153,24 @@ const Navbar = () => {
                                 >
                                     {t('navbar.findRooms')}
                                 </Link>
-                                <Link
-                                    to="/post-room"
-                                    className="block px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg font-medium"
-                                    onClick={() => setIsMenuOpen(false)}
-                                >
-                                    {t('navbar.postRoom')}
-                                </Link>
+                                {user?.role === 'Landlord' && (
+                                    <Link
+                                        to="/my-rooms"
+                                        className="block px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg font-medium"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        {t('navbar.myListings')}
+                                    </Link>
+                                )}
+                                {user?.role === 'Landlord' && (
+                                    <Link
+                                        to="/post-room"
+                                        className="block px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg font-medium"
+                                        onClick={() => setIsMenuOpen(false)}
+                                    >
+                                        {t('navbar.postRoom')}
+                                    </Link>
+                                )}
                                 <Link
                                     to="/profile"
                                     className="block px-3 py-2 text-gray-700 dark:text-gray-300 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg font-medium"

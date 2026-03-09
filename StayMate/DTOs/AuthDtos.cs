@@ -17,6 +17,8 @@ namespace StayMate.DTOs
         
         // Mặc định sinh nhật để 18 tuổi nếu không nhập, frontend sẽ bắt buộc nhập
         public DateTime DateOfBirth { get; set; } = DateTime.Now.AddYears(-18);
+
+        public string Role { get; set; } = "Student";
     }
 
     public class LoginDto
@@ -34,6 +36,7 @@ namespace StayMate.DTOs
         public string FullName { get; set; } = string.Empty;
         public string Email { get; set; } = string.Empty;
         public string? AvatarUrl { get; set; }
+        public string Role { get; set; } = string.Empty;
         public bool IsNewUser { get; set; }
     }
 
