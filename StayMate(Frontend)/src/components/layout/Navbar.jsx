@@ -19,7 +19,7 @@ const Navbar = () => {
     const isActive = (path) => location.pathname === path;
 
     return (
-        <header className="bg-white dark:bg-gray-900 border-b border-gray-200 dark:border-gray-800 sticky top-0 z-50 transition-colors duration-200">
+        <header className="glass sticky top-0 z-50 transition-all duration-300 border-b-0">
             <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                 <div className="flex justify-between items-center h-16">
                     {/* Logo */}
@@ -88,13 +88,13 @@ const Navbar = () => {
                         <div className="hidden md:flex items-center gap-4">
                             <button
                                 onClick={() => openAuthModal('login')}
-                                className="text-gray-600 dark:text-gray-300 hover:text-gray-900 dark:hover:text-white font-medium text-sm px-4 py-2 hover:bg-gray-50 dark:hover:bg-gray-800 rounded-lg transition-colors cursor-pointer"
+                                className="text-gray-600 dark:text-gray-300 hover:text-primary dark:hover:text-blue-400 font-semibold text-sm px-4 py-2 hover:bg-white/50 dark:hover:bg-gray-800/50 rounded-xl transition-all"
                             >
                                 {t('navbar.logIn')}
                             </button>
                             <button
                                 onClick={() => openAuthModal('register')}
-                                className="bg-primary text-white font-medium text-sm px-4 py-2 rounded-lg hover:bg-blue-600 transition-colors shadow-sm hover:shadow-md cursor-pointer"
+                                className="bg-primary text-white font-semibold text-sm px-5 py-2.5 rounded-xl hover:bg-primary-hover transition-all shadow-md hover:shadow-lg hover:-translate-y-0.5"
                             >
                                 {t('navbar.signUp')}
                             </button>

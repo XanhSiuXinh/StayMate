@@ -1,6 +1,8 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
+using StayMate.Hubs;
 using StayMate.Models;
 using System.Security.Claims;
 
@@ -11,10 +13,12 @@ namespace StayMate.Controllers
     public class MessagesController : ControllerBase
     {
         private readonly StayMateDbContext _context;
+        private readonly IHubContext<ChatHub> _hubContext;
 
-        public MessagesController(StayMateDbContext context)
+        public MessagesController(StayMateDbContext context, IHubContext<ChatHub> hubContext)
         {
             _context = context;
+            _hubContext = hubContext;
         }
 
         [HttpGet("conversations")]
@@ -155,14 +159,18 @@ namespace StayMate.Controllers
 
             await _context.SaveChangesAsync();
 
-            return Ok(new
+            var messageResponse = new
             {
                 message.MessageId,
                 message.SenderId,
                 message.MessageContent,
                 message.SentAt,
                 message.IsRead
-            });
+            };
+
+            await _hubContext.Clients.Group(conversationId.ToString()).SendAsync("ReceiveMessage", messageResponse);
+
+            return Ok(messageResponse);
         }
     }
 

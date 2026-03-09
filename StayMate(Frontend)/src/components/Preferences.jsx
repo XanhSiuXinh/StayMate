@@ -1,6 +1,8 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { Loader2, Save, Moon, Sun, Wind, VolumeX, Coffee, Home, Clock, Cat, Image as ImageIcon, Plus, Trash2 } from 'lucide-react';
+import Button from './ui/Button';
+import Input from './ui/Input';
 
 const Preferences = () => {
     const { token } = useAuth();
@@ -333,14 +335,15 @@ const Preferences = () => {
                             <label htmlFor="hasPets" className="text-sm font-medium text-gray-700 dark:text-gray-300 flex items-center gap-1"><Cat size={16} /> Have pets</label>
                         </div>
                         {lifestyle.hasPets && (
-                            <input
-                                type="text"
-                                name="petType"
-                                placeholder="Pet type (Dog, Cat...)"
-                                value={lifestyle.petType}
-                                onChange={handleLifestyleChange}
-                                className="flex-1 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-xl px-4 py-2 focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/20 outline-none transition-colors"
-                            />
+                            <div className="flex-1">
+                                <Input
+                                    type="text"
+                                    name="petType"
+                                    placeholder="Pet type (Dog, Cat...)"
+                                    value={lifestyle.petType}
+                                    onChange={handleLifestyleChange}
+                                />
+                            </div>
                         )}
                     </div>
                 </div>
@@ -412,14 +415,14 @@ const Preferences = () => {
             </div>
 
             <div className="flex justify-end pt-6 border-t border-gray-100 dark:border-gray-700 mt-6">
-                <button
+                <Button
                     onClick={handleSave}
-                    disabled={saving}
-                    className="flex items-center gap-2 px-6 py-2 bg-primary dark:bg-blue-600 text-white font-medium rounded-xl hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors shadow-sm disabled:opacity-50"
+                    isLoading={saving}
+                    icon={Save}
+                    className="px-8"
                 >
-                    {saving ? <Loader2 className="w-5 h-5 animate-spin" /> : <Save className="w-5 h-5" />}
                     Save Changes
-                </button>
+                </Button>
             </div>
 
         </div>

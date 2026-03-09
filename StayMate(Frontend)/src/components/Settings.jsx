@@ -1,9 +1,11 @@
 import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useTheme } from '../context/ThemeContext';
-import { Shield, Key, Trash2, Monitor, Globe, Loader2, Check, AlertTriangle } from 'lucide-react';
+import { Shield, Key, Trash2, Monitor, Globe, Loader2, Check, AlertTriangle, Save } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import Input from './ui/Input';
+import Button from './ui/Button';
 
 const Settings = () => {
     const { token, logout, user } = useAuth();
@@ -164,48 +166,47 @@ const Settings = () => {
 
                                     <form onSubmit={submitPasswordChange} className="space-y-4 max-w-md">
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('settings.currentPassword')}</label>
-                                            <input
+                                            <Input
+                                                label={t('settings.currentPassword')}
                                                 type="password"
                                                 name="currentPassword"
                                                 value={passwordData.currentPassword}
                                                 onChange={handlePasswordChange}
                                                 required
-                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary outline-none transition-all dark:text-white"
                                                 placeholder={t('settings.currentPassword')}
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('settings.newPassword')}</label>
-                                            <input
+                                            <Input
+                                                label={t('settings.newPassword')}
                                                 type="password"
                                                 name="newPassword"
                                                 value={passwordData.newPassword}
                                                 onChange={handlePasswordChange}
                                                 required
-                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary outline-none transition-all dark:text-white"
                                                 placeholder={t('settings.newPassword')}
                                             />
                                         </div>
                                         <div>
-                                            <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1">{t('settings.confirmNewPassword')}</label>
-                                            <input
+                                            <Input
+                                                label={t('settings.confirmNewPassword')}
                                                 type="password"
                                                 name="confirmPassword"
                                                 value={passwordData.confirmPassword}
                                                 onChange={handlePasswordChange}
                                                 required
-                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary outline-none transition-all dark:text-white"
                                                 placeholder={t('settings.confirmNewPassword')}
                                             />
                                         </div>
-                                        <button
-                                            type="submit"
-                                            disabled={pwdLoading}
-                                            className="mt-2 flex items-center gap-2 px-6 py-2.5 bg-primary text-white rounded-lg hover:bg-blue-600 transition-colors shadow-sm font-medium text-sm disabled:opacity-70 w-full sm:w-auto justify-center"
-                                        >
-                                            {pwdLoading ? <Loader2 size={16} className="animate-spin" /> : t('settings.updatePassword')}
-                                        </button>
+                                        <div className="pt-2">
+                                            <Button
+                                                type="submit"
+                                                isLoading={pwdLoading}
+                                                className="w-full sm:w-auto"
+                                            >
+                                                {t('settings.updatePassword')}
+                                            </Button>
+                                        </div>
                                         <p className="text-xs text-gray-400 dark:text-gray-500 mt-2">Note: If you registered via Google, you cannot change your password here.</p>
                                     </form>
                                 </section>
@@ -226,14 +227,15 @@ const Settings = () => {
                                         <p className="text-sm text-gray-600 dark:text-gray-400 mb-6">
                                             {t('settings.deleteAccountWarning')}
                                         </p>
-                                        <button
+                                        <Button
                                             onClick={handleDeleteAccount}
-                                            disabled={deleteLoading}
-                                            className="flex items-center gap-2 px-6 py-2.5 bg-white dark:bg-gray-800 border-2 border-red-500 dark:border-red-400 text-red-600 dark:text-red-400 rounded-lg hover:bg-red-50 dark:hover:bg-red-500/10 transition-colors font-semibold text-sm disabled:opacity-70 w-full sm:w-auto justify-center"
+                                            isLoading={deleteLoading}
+                                            icon={Trash2}
+                                            variant="outline"
+                                            className="border-red-500 dark:border-red-400 text-red-600 dark:text-red-400 hover:bg-red-50 dark:hover:bg-red-500/10 w-full sm:w-auto justify-center text-sm"
                                         >
-                                            {deleteLoading ? <Loader2 size={18} className="animate-spin" /> : <Trash2 size={18} />}
                                             {t('settings.deleteMyAccount')}
-                                        </button>
+                                        </Button>
                                     </div>
                                 </section>
                             </div>

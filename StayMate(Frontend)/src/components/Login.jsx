@@ -3,6 +3,8 @@ import { Mail, Lock, Loader2, ArrowRight, X, Heart } from 'lucide-react';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import Input from './ui/Input';
+import Button from './ui/Button';
 
 const Login = () => {
     const { login, openAuthModal, closeAuthModal } = useAuth();
@@ -84,21 +86,20 @@ const Login = () => {
                             Would you like to create your <b>Matching Profile</b> now so we can suggest the best compatible roommates for you?
                         </p>
                         <div className="grid grid-cols-2 gap-4">
-                            <button
+                            <Button
                                 onClick={closeAuthModal}
-                                className="py-3 px-4 bg-gray-50 dark:bg-gray-800 text-gray-600 dark:text-gray-300 font-semibold rounded-xl hover:bg-gray-100 dark:hover:bg-gray-700/80 transition-colors border border-gray-200 dark:border-gray-700"
+                                variant="outline"
                             >
                                 Later
-                            </button>
-                            <button
+                            </Button>
+                            <Button
                                 onClick={() => {
                                     closeAuthModal();
                                     navigate('/profile');
                                 }}
-                                className="py-3 px-4 bg-primary dark:bg-blue-600 text-white font-semibold rounded-xl shadow-lg shadow-blue-200 dark:shadow-none hover:bg-blue-600 dark:hover:bg-blue-500 hover:-translate-y-0.5 transition-all"
                             >
                                 Create Now
-                            </button>
+                            </Button>
                         </div>
                     </div>
                 ) : (
@@ -116,36 +117,30 @@ const Login = () => {
 
                         <form onSubmit={handleLogin} className="space-y-6">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-1.5">Email Address</label>
-                                <div className="relative">
-                                    <Mail size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
-                                    <input
-                                        type="email"
-                                        value={email}
-                                        onChange={(e) => setEmail(e.target.value)}
-                                        placeholder="name@example.com"
-                                        className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-500 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                                        required
-                                    />
-                                </div>
+                                <Input
+                                    label="Email Address"
+                                    type="email"
+                                    value={email}
+                                    onChange={(e) => setEmail(e.target.value)}
+                                    placeholder="name@example.com"
+                                    icon={Mail}
+                                    required
+                                />
                             </div>
 
                             <div>
                                 <div className="flex justify-between items-center mb-1.5">
-                                    <label className="block text-sm font-medium text-gray-700 dark:text-gray-300">Password</label>
+                                    <label className="block text-sm font-semibold text-gray-700 dark:text-gray-300">Password</label>
                                     <a href="#" className="text-sm font-semibold text-primary dark:text-blue-400 hover:text-blue-700 dark:hover:text-blue-300">Forgot?</a>
                                 </div>
-                                <div className="relative">
-                                    <Lock size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 dark:text-gray-500" />
-                                    <input
-                                        type="password"
-                                        value={password}
-                                        onChange={(e) => setPassword(e.target.value)}
-                                        placeholder="••••••••"
-                                        className="w-full pl-10 pr-4 py-3 bg-gray-50 dark:bg-gray-800 border border-gray-200 dark:border-gray-700 text-gray-900 dark:text-white rounded-xl focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-primary/20 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-500 outline-none transition-all placeholder:text-gray-400 dark:placeholder:text-gray-500"
-                                        required
-                                    />
-                                </div>
+                                <Input
+                                    type="password"
+                                    value={password}
+                                    onChange={(e) => setPassword(e.target.value)}
+                                    placeholder="••••••••"
+                                    icon={Lock}
+                                    required
+                                />
                             </div>
 
                             {error && (
@@ -154,13 +149,15 @@ const Login = () => {
                                 </div>
                             )}
 
-                            <button
+                            <Button
                                 type="submit"
-                                disabled={loading}
-                                className="w-full py-3.5 bg-primary dark:bg-blue-600 text-white font-bold rounded-xl hover:bg-blue-600 dark:hover:bg-blue-500 transition-all shadow-lg hover:shadow-primary/30 dark:hover:shadow-none flex items-center justify-center gap-2 disabled:opacity-70 disabled:cursor-not-allowed"
+                                isLoading={loading}
+                                icon={loading ? undefined : ArrowRight}
+                                fullWidth
+                                size="lg"
                             >
-                                {loading ? <Loader2 className="animate-spin" size={20} /> : <>Sign In <ArrowRight size={20} /></>}
-                            </button>
+                                Sign In
+                            </Button>
                         </form>
 
                         <div className="relative my-8">

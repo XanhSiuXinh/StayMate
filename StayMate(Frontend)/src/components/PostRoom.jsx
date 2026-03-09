@@ -1,7 +1,9 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext';
-import { Upload, MapPin, DollarSign, Home, FileText, Loader2, Image as ImageIcon, X } from 'lucide-react';
+import { Upload, MapPin, DollarSign, Home, FileText, Loader2, Image as ImageIcon, X, Save } from 'lucide-react';
+import Input from './ui/Input';
+import Button from './ui/Button';
 
 const PostRoom = () => {
     const { token } = useAuth();
@@ -149,19 +151,16 @@ const PostRoom = () => {
                         <h2 className="text-lg font-semibold text-gray-800 border-b pb-2">Basic Information</h2>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Room Title</label>
-                            <div className="relative">
-                                <FileText size={18} className="absolute left-3 top-3 text-gray-400" />
-                                <input
-                                    type="text"
-                                    name="title"
-                                    required
-                                    value={formData.title}
-                                    onChange={handleChange}
-                                    placeholder="e.g. Spacious Master Bedroom in District 1"
-                                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                                />
-                            </div>
+                            <Input
+                                label="Room Title"
+                                type="text"
+                                name="title"
+                                required
+                                value={formData.title}
+                                onChange={handleChange}
+                                placeholder="e.g. Spacious Master Bedroom in District 1"
+                                icon={FileText}
+                            />
                         </div>
 
                         <div>
@@ -178,36 +177,30 @@ const PostRoom = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Monthly Rent (VND)</label>
-                                <div className="relative">
-                                    <DollarSign size={18} className="absolute left-3 top-3 text-gray-400" />
-                                    <input
-                                        type="number"
-                                        name="price"
-                                        required
-                                        min="0"
-                                        value={formData.price}
-                                        onChange={handleChange}
-                                        placeholder="e.g. 5000000"
-                                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                                    />
-                                </div>
+                                <Input
+                                    label="Monthly Rent (VND)"
+                                    type="number"
+                                    name="price"
+                                    required
+                                    min="0"
+                                    value={formData.price}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 5000000"
+                                    icon={DollarSign}
+                                />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">Room Area (m²)</label>
-                                <div className="relative">
-                                    <Home size={18} className="absolute left-3 top-3 text-gray-400" />
-                                    <input
-                                        type="number"
-                                        name="areaSqm"
-                                        min="0"
-                                        step="0.1"
-                                        value={formData.areaSqm}
-                                        onChange={handleChange}
-                                        placeholder="e.g. 25.5"
-                                        className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                                    />
-                                </div>
+                                <Input
+                                    label="Room Area (m²)"
+                                    type="number"
+                                    name="areaSqm"
+                                    min="0"
+                                    step="0.1"
+                                    value={formData.areaSqm}
+                                    onChange={handleChange}
+                                    placeholder="e.g. 25.5"
+                                    icon={Home}
+                                />
                             </div>
                         </div>
                     </div>
@@ -218,45 +211,40 @@ const PostRoom = () => {
 
                         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">City</label>
-                                <input
+                                <Input
+                                    label="City"
                                     type="text"
                                     name="city"
                                     required
                                     value={formData.city}
                                     onChange={handleChange}
                                     placeholder="e.g. Ho Chi Minh City"
-                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                 />
                             </div>
                             <div>
-                                <label className="block text-sm font-medium text-gray-700 mb-1">District</label>
-                                <input
+                                <Input
+                                    label="District"
                                     type="text"
                                     name="district"
                                     required
                                     value={formData.district}
                                     onChange={handleChange}
                                     placeholder="e.g. District 7"
-                                    className="w-full px-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label className="block text-sm font-medium text-gray-700 mb-1">Full Address</label>
-                            <div className="relative">
-                                <MapPin size={18} className="absolute left-3 top-3 text-gray-400" />
-                                <input
-                                    type="text"
-                                    name="address"
-                                    required
-                                    value={formData.address}
-                                    onChange={handleChange}
-                                    placeholder="e.g. 123 Nguyen Van Linh St."
-                                    className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                                />
-                            </div>
+                            <Input
+                                label="Full Address"
+                                type="text"
+                                name="address"
+                                required
+                                value={formData.address}
+                                onChange={handleChange}
+                                placeholder="e.g. 123 Nguyen Van Linh St."
+                                icon={MapPin}
+                            />
                         </div>
                     </div>
 
@@ -313,13 +301,15 @@ const PostRoom = () => {
 
                     {/* Submit */}
                     <div className="pt-6">
-                        <button
+                        <Button
                             type="submit"
-                            disabled={loading}
-                            className="w-full py-3 px-4 bg-primary text-white font-bold rounded-xl hover:bg-blue-600 transition-colors shadow-lg shadow-blue-100 disabled:opacity-70 flex items-center justify-center gap-2"
+                            isLoading={loading}
+                            icon={Save}
+                            fullWidth
+                            size="lg"
                         >
-                            {loading ? <Loader2 className="animate-spin" /> : 'Post Room'}
-                        </button>
+                            Post Room
+                        </Button>
                     </div>
                 </form>
             </div>

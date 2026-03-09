@@ -1,5 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { Search, Phone, Video, Info, Calendar, MapPin, FileText, Smile, Send, Paperclip, MoreHorizontal, CheckCircle2, ShieldCheck, Loader2, MessageSquare } from 'lucide-react';
+import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { useAuth } from '../context/AuthContext';
 
 const Messages = () => {
@@ -11,6 +12,7 @@ const Messages = () => {
     const [msgText, setMsgText] = useState('');
     const [loadingConversations, setLoadingConversations] = useState(true);
     const [loadingMessages, setLoadingMessages] = useState(false);
+    const [connection, setConnection] = useState(null);
     const messagesEndRef = useRef(null);
 
     const scrollToBottom = () => {
@@ -40,9 +42,60 @@ const Messages = () => {
 
     useEffect(() => {
         fetchConversations();
-        const interval = setInterval(fetchConversations, 10000); // Poll conversations every 10s
-        return () => clearInterval(interval);
     }, [token]);
+
+    // Initialize SignalR Connection
+    useEffect(() => {
+        if (!token) return;
+
+        const newConnection = new HubConnectionBuilder()
+            .withUrl('http://localhost:5015/chathub', {
+                accessTokenFactory: () => token
+            })
+            .withAutomaticReconnect()
+            .configureLogging(LogLevel.Information)
+            .build();
+
+        setConnection(newConnection);
+
+        return () => {
+            if (newConnection) {
+                newConnection.stop();
+            }
+        };
+    }, [token]);
+
+    // Start connection and setup listeners
+    useEffect(() => {
+        if (connection) {
+            connection.start()
+                .then(() => {
+                    console.log('Connected to SignalR ChatHub');
+
+                    connection.on('ReceiveMessage', (message) => {
+                        setMessages(prev => {
+                            // Avoid duplicates
+                            if (prev.some(m => m.messageId === message.messageId)) return prev;
+                            return [...prev, message];
+                        });
+                        
+                        // Update conversations list summary
+                        setConversations(prev => prev.map(c => {
+                            if (c.id === message.conversationId) {
+                                return {
+                                    ...c,
+                                    lastMessage: message.messageContent,
+                                    time: new Date(message.sentAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+                                    unread: message.senderId !== message.otherUserId // Simple unread logic
+                                };
+                            }
+                            return c;
+                        }));
+                    });
+                })
+                .catch(e => console.error('Connection failed: ', e));
+        }
+    }, [connection]);
 
     const fetchMessages = async () => {
         if (!activeChat || !token) return;
@@ -62,11 +115,25 @@ const Messages = () => {
     };
 
     useEffect(() => {
-        setLoadingMessages(true);
-        fetchMessages();
-        const interval = setInterval(fetchMessages, 3000); // Poll messages every 3s
-        return () => clearInterval(interval);
-    }, [activeChat, token]);
+        if (activeChat) {
+            setLoadingMessages(true);
+            fetchMessages();
+
+            // Join the specific conversation group
+            if (connection && connection.state === 'Connected') {
+                connection.invoke('JoinConversation', activeChat.id)
+                    .catch(err => console.error('JoinConversation failed: ', err));
+            }
+        }
+
+        return () => {
+            // Leave the group when switching or unmounting
+            if (activeChat && connection && connection.state === 'Connected') {
+                connection.invoke('LeaveConversation', activeChat.id)
+                    .catch(err => console.error('LeaveConversation failed: ', err));
+            }
+        };
+    }, [activeChat, connection]);
 
     useEffect(() => {
         scrollToBottom();

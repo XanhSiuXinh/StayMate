@@ -2,6 +2,8 @@ import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { User, Mail, Calendar, Briefcase, GraduationCap, Phone, Edit2, Save, X, Loader2, Award, Home, Activity } from 'lucide-react';
 import Preferences from './Preferences';
+import Button from './ui/Button';
+import Input from './ui/Input';
 
 const Profile = () => {
     const { token, logout, updateUser } = useAuth();
@@ -199,12 +201,13 @@ const Profile = () => {
                             </div>
                         </div>
 
-                        <button
+                        <Button
+                            variant="secondary"
+                            className="mt-8 w-full border-gray-200 dark:border-gray-600 hover:border-red-200 dark:hover:border-red-900/50 hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400"
                             onClick={logout}
-                            className="mt-8 w-full py-2.5 px-4 bg-gray-50 dark:bg-gray-700/50 hover:bg-red-50 dark:hover:bg-red-500/10 text-gray-600 dark:text-gray-300 hover:text-red-600 dark:hover:text-red-400 rounded-lg transition-colors text-sm font-medium border border-gray-200 dark:border-gray-600"
                         >
                             Log Out
-                        </button>
+                        </Button>
                     </div>
 
                     {/* Quick Stats (Placeholder for future features) */}
@@ -255,28 +258,30 @@ const Profile = () => {
                                         </p>
                                     </div>
                                     {!isEditing ? (
-                                        <button
+                                        <Button
                                             onClick={() => setIsEditing(true)}
-                                            className="flex items-center gap-2 px-4 py-2 bg-primary dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors shadow-sm font-medium text-sm"
+                                            icon={Edit2}
+                                            size="sm"
                                         >
-                                            <Edit2 size={16} /> Edit Profile
-                                        </button>
+                                            Edit Profile
+                                        </Button>
                                     ) : (
                                         <div className="flex gap-2">
-                                            <button
+                                            <Button
+                                                variant="outline"
+                                                size="sm"
                                                 onClick={() => { setIsEditing(false); setFormData(profile); setError(''); }}
-                                                className="px-4 py-2 bg-white dark:bg-gray-800 border border-gray-200 dark:border-gray-600 text-gray-600 dark:text-gray-300 rounded-lg hover:bg-gray-50 dark:hover:bg-gray-700 transition-colors font-medium text-sm"
                                             >
                                                 Cancel
-                                            </button>
-                                            <button
+                                            </Button>
+                                            <Button
                                                 onClick={handleUpdate}
-                                                disabled={updating}
-                                                className="flex items-center gap-2 px-4 py-2 bg-primary dark:bg-blue-600 text-white rounded-lg hover:bg-blue-600 dark:hover:bg-blue-500 transition-colors shadow-sm font-medium text-sm disabled:opacity-70"
+                                                isLoading={updating}
+                                                icon={Save}
+                                                size="sm"
                                             >
-                                                {updating ? <Loader2 size={16} className="animate-spin" /> : <Save size={16} />}
                                                 Save Changes
-                                            </button>
+                                            </Button>
                                         </div>
                                     )}
                                 </div>
@@ -290,26 +295,24 @@ const Profile = () => {
                                 <form className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-500">
                                     <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Full Name</label>
-                                            <input
+                                            <Input
+                                                label="Full Name"
                                                 type="text"
                                                 name="fullName"
                                                 value={formData.fullName || ''}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-400 outline-none transition-all disabled:text-gray-500 dark:disabled:text-gray-400 disabled:bg-gray-100/50 dark:disabled:bg-gray-800"
                                                 placeholder="e.g. John Doe"
                                             />
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Date of Birth</label>
-                                            <input
+                                            <Input
+                                                label="Date of Birth"
                                                 type="date"
                                                 name="dateOfBirth"
                                                 value={formData.dateOfBirth || ''}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-400 outline-none transition-all disabled:text-gray-500 dark:disabled:text-gray-400 disabled:bg-gray-100/50 dark:disabled:bg-gray-800"
                                             />
                                         </div>
                                         <div className="space-y-2">
@@ -328,40 +331,37 @@ const Profile = () => {
                                             </select>
                                         </div>
                                         <div className="space-y-2">
-                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Phone Number</label>
-                                            <input
+                                            <Input
+                                                label="Phone Number"
                                                 type="tel"
                                                 name="phoneNumber"
                                                 value={formData.phoneNumber || ''}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-400 outline-none transition-all disabled:text-gray-500 dark:disabled:text-gray-400 disabled:bg-gray-100/50 dark:disabled:bg-gray-800"
                                                 placeholder="+1 234 567 890"
                                             />
                                         </div>
 
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">Occupation / Major</label>
-                                            <input
+                                            <Input
+                                                label="Occupation / Major"
                                                 type="text"
                                                 name="occupation"
                                                 value={formData.occupation || ''}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-400 outline-none transition-all disabled:text-gray-500 dark:disabled:text-gray-400 disabled:bg-gray-100/50 dark:disabled:bg-gray-800"
                                                 placeholder="e.g. IT Student, Humanities, Accounting..."
                                             />
                                         </div>
 
                                         <div className="space-y-2 md:col-span-2">
-                                            <label className="text-sm font-medium text-gray-700 dark:text-gray-300">School / Workplace</label>
-                                            <input
+                                            <Input
+                                                label="School / Workplace"
                                                 type="text"
                                                 name="school"
                                                 value={formData.school || ''}
                                                 onChange={handleChange}
                                                 disabled={!isEditing}
-                                                className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-700/50 border border-gray-200 dark:border-gray-600 text-gray-900 dark:text-white rounded-lg focus:bg-white dark:focus:bg-gray-800 focus:ring-2 focus:ring-blue-100 dark:focus:ring-blue-500/20 focus:border-primary dark:focus:border-blue-400 outline-none transition-all disabled:text-gray-500 dark:disabled:text-gray-400 disabled:bg-gray-100/50 dark:disabled:bg-gray-800"
                                                 placeholder="e.g. FPT University, National University..."
                                             />
                                         </div>
