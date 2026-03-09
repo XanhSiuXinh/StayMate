@@ -1,6 +1,6 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import { LogOut, Home, User, Plus, Menu, X, Settings } from 'lucide-react';
+import { LogOut, Home, User, Plus, Menu, X, Settings, Shield } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import NotificationDropdown from '../ui/NotificationDropdown';
@@ -75,6 +75,18 @@ const Navbar = () => {
                             <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2"></div>
 
                             <div className="flex items-center gap-4">
+                                {user?.role === 'Admin' && (
+                                    <Link
+                                        to="/admin"
+                                        className={`p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors ${
+                                            isActive('/admin') ? 'bg-blue-100 dark:bg-blue-900 text-blue-600 dark:text-blue-400' : ''
+                                        }`}
+                                        title="Admin Dashboard"
+                                    >
+                                        <Shield size={20} />
+                                    </Link>
+                                )}
+                                
                                 <NotificationDropdown />
                                 
                                 <Link to="/settings" className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors bg-gray-100/50 dark:bg-gray-800/50">

@@ -15,6 +15,7 @@ import Preferences from './components/Preferences';
 import Settings from './components/Settings';
 import Saved from './components/Saved';
 import MyRooms from './components/MyRooms';
+import AdminDashboard from './components/AdminDashboard';
 
 function App() {
     const { isAuthenticated, authModalView } = useAuth();
@@ -107,6 +108,14 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <Settings />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/admin"
+                        element={
+                            <ProtectedRoute>
+                                <AdminDashboard />
                             </ProtectedRoute>
                         }
                     />

@@ -15,7 +15,6 @@ builder.Services.AddScoped<StayMate.Services.INotificationService, StayMate.Serv
 builder.Services.AddDbContext<StayMateDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("StayMateContext")));
 
-
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
@@ -30,6 +29,13 @@ builder.Services.AddAuthentication(options =>
         ValidateIssuer = false,
         ValidateAudience = false
     };
+});
+
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
+    options.AddPolicy("Student", policy => policy.RequireRole("Student"));
+    options.AddPolicy("Landlord", policy => policy.RequireRole("Landlord"));
 });
 
 
