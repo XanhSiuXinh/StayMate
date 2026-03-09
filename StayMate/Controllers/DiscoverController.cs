@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StayMate.Interfaces;
 using StayMate.Models;
+using StayMate.Services;
 using System.Security.Claims;
 
 namespace StayMate.Controllers
@@ -13,11 +14,13 @@ namespace StayMate.Controllers
     {
         private readonly StayMateDbContext _context;
         private readonly ICompatibilityService _compatibilityService;
+        private readonly INotificationService _notificationService;
 
-        public DiscoverController(StayMateDbContext context, ICompatibilityService compatibilityService)
+        public DiscoverController(StayMateDbContext context, ICompatibilityService compatibilityService, INotificationService notificationService)
         {
             _context = context;
             _compatibilityService = compatibilityService;
+            _notificationService = notificationService;
         }
 
         [HttpGet("recommendations")]
@@ -215,6 +218,24 @@ namespace StayMate.Controllers
                         };
                         _context.Conversations.Add(conversation);
                         isMatch = true;
+
+                        // Trigger Notifications for both users using the centralized service
+                        var user1 = await _context.Users.FindAsync(userId);
+                        var user2 = await _context.Users.FindAsync(targetUserId);
+
+                        await _notificationService.BroadcastNotificationAsync(
+                            userId, 
+                            "It's a Match!", 
+                            $"You matched with {user2?.FullName}!", 
+                            "Match"
+                        );
+
+                        await _notificationService.BroadcastNotificationAsync(
+                            targetUserId, 
+                            "It's a Match!", 
+                            $"You matched with {user1?.FullName}!", 
+                            "Match"
+                        );
                     }
                 }
             }

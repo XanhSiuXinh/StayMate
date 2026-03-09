@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.SignalR;
 using Microsoft.EntityFrameworkCore;
 using StayMate.Hubs;
 using StayMate.Models;
+using StayMate.Services;
 using System.Security.Claims;
 
 namespace StayMate.Controllers
@@ -14,11 +15,13 @@ namespace StayMate.Controllers
     {
         private readonly StayMateDbContext _context;
         private readonly IHubContext<ChatHub> _hubContext;
+        private readonly INotificationService _notificationService;
 
-        public MessagesController(StayMateDbContext context, IHubContext<ChatHub> hubContext)
+        public MessagesController(StayMateDbContext context, IHubContext<ChatHub> hubContext, INotificationService notificationService)
         {
             _context = context;
             _hubContext = hubContext;
+            _notificationService = notificationService;
         }
 
         [HttpGet("conversations")]
@@ -169,6 +172,17 @@ namespace StayMate.Controllers
             };
 
             await _hubContext.Clients.Group(conversationId.ToString()).SendAsync("ReceiveMessage", messageResponse);
+
+            // Trigger Notification for the recipient using the centralized service
+            var recipientId = conversation.Match.User1Id == userId ? conversation.Match.User2Id : conversation.Match.User1Id;
+            var senderName = _context.Users.Where(u => u.UserId == userId).Select(u => u.FullName).FirstOrDefault() ?? "Someone";
+
+            await _notificationService.BroadcastNotificationAsync(
+                recipientId, 
+                "New Message", 
+                $"{senderName} sent you a message: {request.Content}", 
+                "Message"
+            );
 
             return Ok(messageResponse);
         }

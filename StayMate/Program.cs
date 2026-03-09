@@ -9,6 +9,7 @@ builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<StayMate.Interfaces.ICompatibilityService, StayMate.Services.CompatibilityService>();
+builder.Services.AddScoped<StayMate.Services.INotificationService, StayMate.Services.NotificationService>();
 
 
 builder.Services.AddDbContext<StayMateDbContext>(options =>
@@ -66,5 +67,6 @@ app.UseAuthorization();
 
 app.MapControllers();
 app.MapHub<StayMate.Hubs.ChatHub>("/chathub");
+app.MapHub<StayMate.Hubs.NotificationHub>("/notificationhub");
 
 app.Run();

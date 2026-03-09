@@ -2,6 +2,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StayMate.Models;
+using StayMate.Hubs;
+using StayMate.Services;
 using System.Security.Claims;
 
 namespace StayMate.Controllers
@@ -12,11 +14,13 @@ namespace StayMate.Controllers
     {
         private readonly StayMateDbContext _context;
         private readonly IWebHostEnvironment _environment;
+        private readonly INotificationService _notificationService;
 
-        public VerificationsController(StayMateDbContext context, IWebHostEnvironment environment)
+        public VerificationsController(StayMateDbContext context, IWebHostEnvironment environment, INotificationService notificationService)
         {
             _context = context;
             _environment = environment;
+            _notificationService = notificationService;
         }
 
         [HttpGet("status")]
@@ -122,7 +126,14 @@ namespace StayMate.Controllers
                 user.UpdatedAt = DateTime.Now;
             }
 
-            await _context.SaveChangesAsync();
+            // Create and broadcast notification for verification approval using the centralized service
+            await _notificationService.BroadcastNotificationAsync(
+                request.UserId,
+                "Verification Approved! 🎉",
+                "Your profile has been verified. You now have the verified badge!",
+                "Verification"
+            );
+
             return Ok(new { success = true });
         }
 
@@ -143,7 +154,14 @@ namespace StayMate.Controllers
                 user.IsVerified = false;
             }
 
-            await _context.SaveChangesAsync();
+            // Create and broadcast notification for verification rejection using the centralized service
+            await _notificationService.BroadcastNotificationAsync(
+                request.UserId,
+                "Verification Rejected",
+                $"Your verification request was rejected. {(!string.IsNullOrEmpty(reject.Notes) ? $"Reason: {reject.Notes}" : "Please resubmit with correct documents.")}",
+                "Verification"
+            );
+
             return Ok(new { success = true });
         }
     }

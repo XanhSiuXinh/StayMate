@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { LogOut, Home, User, Plus, Menu, X, Settings } from 'lucide-react';
 import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import NotificationDropdown from '../ui/NotificationDropdown';
 
 const Navbar = () => {
     const { user, logout, isAuthenticated, openAuthModal } = useAuth();
@@ -74,6 +75,8 @@ const Navbar = () => {
                             <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2"></div>
 
                             <div className="flex items-center gap-4">
+                                <NotificationDropdown />
+                                
                                 <Link to="/settings" className="p-2 text-gray-600 dark:text-gray-300 hover:bg-gray-100 dark:hover:bg-gray-800 rounded-full transition-colors bg-gray-100/50 dark:bg-gray-800/50">
                                     <Settings size={20} />
                                 </Link>
