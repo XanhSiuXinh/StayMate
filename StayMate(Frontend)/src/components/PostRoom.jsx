@@ -18,8 +18,11 @@ const PostRoom = () => {
         district: '',
         city: '',
         areaSqm: '',
-        photoUrls: [''] // Start with one empty string for input
+        photos: [] // Store actual File objects
     });
+    
+    // Store preview URLs for UI
+    const [previewUrls, setPreviewUrls] = useState([]);
 
     const handleChange = (e) => {
         const { name, value } = e.target;
@@ -29,46 +32,88 @@ const PostRoom = () => {
         }));
     };
 
-    const handlePhotoChange = (index, value) => {
-        const newPhotos = [...formData.photoUrls];
-        newPhotos[index] = value;
-        setFormData(prev => ({ ...prev, photoUrls: newPhotos }));
+    const handleFileChange = (e) => {
+        const files = Array.from(e.target.files);
+        if (files.length === 0) return;
+
+        // Basic validation: Check file sizes and types
+        const validFiles = files.filter(file => {
+            if (!file.type.startsWith('image/')) {
+                setError('Vui lòng chỉ chọn các tệp hình ảnh.');
+                return false;
+            }
+            if (file.size > 5 * 1024 * 1024) { // 5MB limit
+                setError(`File ${file.name} vượt quá dung lượng cho phép (5MB).`);
+                return false;
+            }
+            return true;
+        });
+
+        if (validFiles.length > 0) {
+            setError(''); // Clear error if files are valid
+            
+            // Generate preview URLs
+            const newPreviewUrls = validFiles.map(file => URL.createObjectURL(file));
+            
+            setFormData(prev => ({ ...prev, photos: [...prev.photos, ...validFiles] }));
+            setPreviewUrls(prev => [...prev, ...newPreviewUrls]);
+        }
     };
 
-    const addPhotoField = () => {
-        setFormData(prev => ({ ...prev, photoUrls: [...prev.photoUrls, ''] }));
-    };
-
-    const removePhotoField = (index) => {
-        const newPhotos = formData.photoUrls.filter((_, i) => i !== index);
-        setFormData(prev => ({ ...prev, photoUrls: newPhotos }));
+    const removePhoto = (index) => {
+        const newPhotos = formData.photos.filter((_, i) => i !== index);
+        const newPreviews = previewUrls.filter((_, i) => i !== index);
+        
+        // Revoke the object URL to avoid memory leaks
+        URL.revokeObjectURL(previewUrls[index]);
+        
+        setFormData(prev => ({ ...prev, photos: newPhotos }));
+        setPreviewUrls(newPreviews);
     };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        
+        // Frontend Validations
+        if (formData.photos.length === 0) {
+            setError('Vui lòng tải lên ít nhất 1 hình ảnh của phòng.');
+            return;
+        }
+        if (parseFloat(formData.price) <= 0) {
+            setError('Giá thuê phải lớn hơn 0.');
+            return;
+        }
+        if (parseFloat(formData.areaSqm) <= 0) {
+            setError('Diện tích phòng phải lớn hơn 0.');
+            return;
+        }
+
         setLoading(true);
         setError('');
 
-
-        const payload = {
-            title: formData.title,
-            description: formData.description,
-            price: parseFloat(formData.price),
-            address: formData.address,
-            district: formData.district,
-            city: formData.city,
-            areaSqm: parseFloat(formData.areaSqm),
-            photoUrls: formData.photoUrls.filter(url => url.trim() !== '')
-        };
+        const submitData = new FormData();
+        submitData.append('title', formData.title);
+        submitData.append('description', formData.description);
+        submitData.append('price', formData.price);
+        submitData.append('address', formData.address);
+        submitData.append('district', formData.district);
+        submitData.append('city', formData.city);
+        submitData.append('areaSqm', formData.areaSqm);
+        
+        // Append all selected files
+        formData.photos.forEach(file => {
+            submitData.append('photos', file);
+        });
 
         try {
             const response = await fetch('http://localhost:5015/api/rooms', {
                 method: 'POST',
                 headers: {
-                    'Content-Type': 'application/json',
+                    // Do NOT set Content-Type header when using FormData
+                    // The browser will automatically set it to multipart/form-data with the correct boundary
                     'Authorization': `Bearer ${token}`
                 },
-                body: JSON.stringify(payload)
+                body: submitData
             });
 
             if (response.ok) {
@@ -219,37 +264,50 @@ const PostRoom = () => {
                     <div className="space-y-4">
                         <h2 className="text-lg font-semibold text-gray-800 border-b pb-2 pt-4">Photos</h2>
 
-                        <div className="space-y-3">
-                            {formData.photoUrls.map((url, index) => (
-                                <div key={index} className="flex gap-2">
-                                    <div className="relative flex-1">
-                                        <ImageIcon size={18} className="absolute left-3 top-3 text-gray-400" />
-                                        <input
-                                            type="url"
-                                            value={url}
-                                            onChange={(e) => handlePhotoChange(index, e.target.value)}
-                                            placeholder="Paste image URL here..."
-                                            className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all"
-                                        />
+                        <div className="space-y-4">
+                            {/* File Upload Input */}
+                            <div className="flex items-center justify-center w-full">
+                                <label htmlFor="dropzone-file" className="flex flex-col items-center justify-center w-full h-32 border-2 border-gray-300 border-dashed rounded-lg cursor-pointer bg-gray-50 hover:bg-gray-100 transition-colors">
+                                    <div className="flex flex-col items-center justify-center pt-5 pb-6">
+                                        <Upload className="w-8 h-8 mb-3 text-gray-400" />
+                                        <p className="mb-2 text-sm text-gray-500"><span className="font-semibold">Click to upload</span> or drag and drop</p>
+                                        <p className="text-xs text-gray-500">PNG, JPG, JPEG (Max 5MB)</p>
                                     </div>
-                                    {formData.photoUrls.length > 1 && (
-                                        <button
-                                            type="button"
-                                            onClick={() => removePhotoField(index)}
-                                            className="p-2.5 text-red-500 bg-red-50 hover:bg-red-100 rounded-lg transition-colors"
-                                        >
-                                            <X size={20} />
-                                        </button>
-                                    )}
+                                    <input 
+                                        id="dropzone-file" 
+                                        type="file" 
+                                        className="hidden" 
+                                        multiple 
+                                        accept="image/png, image/jpeg, image/jpg"
+                                        onChange={handleFileChange} 
+                                    />
+                                </label>
+                            </div>
+
+                            {/* Image Previews */}
+                            {previewUrls.length > 0 && (
+                                <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                                    {previewUrls.map((url, index) => (
+                                        <div key={index} className="relative group aspect-square rounded-lg overflow-hidden border border-gray-200">
+                                            <img 
+                                                src={url} 
+                                                alt={`Preview ${index}`} 
+                                                className="w-full h-full object-cover"
+                                            />
+                                            <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+                                                <button
+                                                    type="button"
+                                                    onClick={() => removePhoto(index)}
+                                                    className="p-2 bg-red-500 text-white rounded-full hover:bg-red-600 transition-colors transform hover:scale-110"
+                                                    title="Remove picture"
+                                                >
+                                                    <X size={18} />
+                                                </button>
+                                            </div>
+                                        </div>
+                                    ))}
                                 </div>
-                            ))}
-                            <button
-                                type="button"
-                                onClick={addPhotoField}
-                                className="flex items-center gap-2 text-primary font-medium text-sm hover:underline"
-                            >
-                                <Upload size={16} /> Add Another Photo URL
-                            </button>
+                            )}
                         </div>
                     </div>
 

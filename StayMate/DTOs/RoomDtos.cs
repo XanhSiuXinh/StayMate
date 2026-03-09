@@ -43,7 +43,7 @@ public class CreateRoomDto
     
     public double? AreaSqm { get; set; }
     
-    public List<string> PhotoUrls { get; set; } = new List<string>();
+    public List<IFormFile> Photos { get; set; } = new List<IFormFile>();
 }
 
 public class UpdateRoomDto

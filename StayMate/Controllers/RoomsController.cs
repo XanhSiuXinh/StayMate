@@ -100,7 +100,7 @@ namespace StayMate.Controllers
 
         [HttpPost]
         [Authorize]
-        public async Task<ActionResult<RoomDto>> PostRoom(CreateRoomDto createRoomDto)
+        public async Task<ActionResult<RoomDto>> PostRoom([FromForm] CreateRoomDto createRoomDto)
         {
             var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
             
@@ -124,16 +124,40 @@ namespace StayMate.Controllers
             _context.Rooms.Add(room);
             await _context.SaveChangesAsync();
 
+            var savedPhotoUrls = new List<string>();
 
-            if (createRoomDto.PhotoUrls != null && createRoomDto.PhotoUrls.Any())
+            if (createRoomDto.Photos != null && createRoomDto.Photos.Any())
             {
-                foreach (var url in createRoomDto.PhotoUrls)
+                var uploadsPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot", "uploads", "rooms");
+                if (!Directory.Exists(uploadsPath))
                 {
-                    _context.RoomPhotos.Add(new RoomPhoto
+                    Directory.CreateDirectory(uploadsPath);
+                }
+
+                var request = HttpContext.Request;
+                var baseUrl = $"{request.Scheme}://{request.Host}";
+
+                foreach (var file in createRoomDto.Photos)
+                {
+                    if (file.Length > 0)
                     {
-                        RoomId = room.RoomId,
-                        PhotoUrl = url
-                    });
+                        var fileName = Guid.NewGuid().ToString() + Path.GetExtension(file.FileName);
+                        var filePath = Path.Combine(uploadsPath, fileName);
+
+                        using (var stream = new FileStream(filePath, FileMode.Create))
+                        {
+                            await file.CopyToAsync(stream);
+                        }
+
+                        var photoUrl = $"{baseUrl}/uploads/rooms/{fileName}";
+                        savedPhotoUrls.Add(photoUrl);
+
+                        _context.RoomPhotos.Add(new RoomPhoto
+                        {
+                            RoomId = room.RoomId,
+                            PhotoUrl = photoUrl
+                        });
+                    }
                 }
                 await _context.SaveChangesAsync();
             }
@@ -150,7 +174,7 @@ namespace StayMate.Controllers
                 AreaSqm = room.AreaSqm,
                 IsAvailable = room.IsAvailable,
                 CreatedAt = room.CreatedAt,
-                PhotoUrls = createRoomDto.PhotoUrls ?? new List<string>(),
+                PhotoUrls = savedPhotoUrls,
                 HostUserId = userId,
                 HostName = user.FullName,
                 HostAvatar = user.AvatarUrl

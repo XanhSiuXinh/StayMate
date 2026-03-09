@@ -18,9 +18,21 @@ const Discover = () => {
     const [selectedPassedProfile, setSelectedPassedProfile] = useState(null);
     const [swipeCount, setSwipeCount] = useState(0); // Add swipeCount for animation key
 
+    const [filters, setFilters] = useState({ maxPrice: '', district: '', city: '' });
+    const [isFiltering, setIsFiltering] = useState(false); // To show loading during filter change
+
     const fetchRecommendations = async () => {
+        setIsFiltering(true);
         try {
-            const response = await fetch('http://localhost:5015/api/discover/recommendations', {
+            // Build query params
+            const queryParams = new URLSearchParams();
+            if (filters.maxPrice) queryParams.append('maxPrice', filters.maxPrice);
+            if (filters.district) queryParams.append('district', filters.district);
+            if (filters.city) queryParams.append('city', filters.city);
+            
+            const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
+
+            const response = await fetch(`http://localhost:5015/api/discover/recommendations${queryString}`, {
                 headers: { 'Authorization': `Bearer ${token}` }
             });
             if (response.ok) {
@@ -30,6 +42,8 @@ const Discover = () => {
             }
         } catch (error) {
             console.error("Error fetching recommendations:", error);
+        } finally {
+            setIsFiltering(false);
         }
     };
 
@@ -178,7 +192,40 @@ const Discover = () => {
 
 
     return (
-        <div className="flex-1 min-h-[calc(100vh-64px)] bg-gray-50 dark:bg-gray-900 flex py-8 relative px-4 transition-colors">
+        <div className="flex-1 min-h-[calc(100vh-64px)] bg-gray-50 dark:bg-gray-900 flex flex-col items-center py-6 px-4 transition-colors">
+            
+            {/* Filter Bar */}
+            <div className="max-w-md w-full mb-6 bg-white dark:bg-gray-800 p-4 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-700 flex flex-col sm:flex-row gap-3">
+                <div className="flex-1">
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">Max Price (VND)</label>
+                    <input 
+                        type="number" 
+                        value={filters.maxPrice}
+                        onChange={e => setFilters(prev => ({...prev, maxPrice: e.target.value}))}
+                        placeholder="e.g. 5000000"
+                        className="w-full text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary outline-none"
+                    />
+                </div>
+                <div className="flex-1">
+                    <label className="block text-xs font-semibold text-gray-500 mb-1">District</label>
+                    <input 
+                        type="text" 
+                        value={filters.district}
+                        onChange={e => setFilters(prev => ({...prev, district: e.target.value}))}
+                        placeholder="e.g. District 1"
+                        className="w-full text-sm bg-gray-50 dark:bg-gray-900 border border-gray-200 dark:border-gray-700 rounded-lg px-3 py-2 text-gray-900 dark:text-gray-100 focus:ring-primary focus:border-primary outline-none"
+                    />
+                </div>
+                <div className="flex items-end">
+                    <button 
+                        onClick={() => fetchRecommendations()}
+                        disabled={isFiltering}
+                        className="w-full sm:w-auto bg-primary hover:bg-blue-600 text-white px-4 py-2 text-sm font-semibold rounded-lg transition-colors flex items-center justify-center h-[38px] disabled:opacity-50"
+                    >
+                        {isFiltering ? <Loader2 size={16} className="animate-spin" /> : 'Apply'}
+                    </button>
+                </div>
+            </div>
 
             <div className="max-w-md w-full mx-auto flex flex-col items-center">
 
@@ -196,7 +243,9 @@ const Discover = () => {
 
                     {/* Top Match Badge */}
                     <div className="absolute top-6 left-6 z-10">
-                        <div className="flex items-center gap-1.5 bg-[#8b5cf6] text-white px-3 py-1.5 rounded-full font-bold text-sm shadow-lg">
+                        <div className={`flex items-center gap-1.5 text-white px-3 py-1.5 rounded-full font-bold text-sm shadow-lg
+                            ${currentProfile.matchPercentage >= 80 ? 'bg-green-500' : 
+                              currentProfile.matchPercentage >= 50 ? 'bg-orange-500' : 'bg-gray-500'}`}>
                             <ShieldCheck size={16} />
                             {currentProfile.matchPercentage}% MATCH
                         </div>
@@ -482,7 +531,10 @@ const Discover = () => {
                                     <p className="text-primary dark:text-blue-400 font-medium mt-1 flex gap-2"><Coffee size={20} className="text-primary/70 dark:text-blue-400/70" /> {currentProfile.occupation}</p>
                                 </div>
                                 <div className="text-center">
-                                    <div className="w-16 h-16 rounded-full bg-gradient-to-br from-primary to-blue-400 dark:from-blue-600 dark:to-blue-400 flex items-center justify-center text-white font-bold text-xl shadow-lg shadow-blue-200 dark:shadow-none">
+                                    <div className={`w-16 h-16 rounded-full flex items-center justify-center text-white font-bold text-xl shadow-lg
+                                        ${currentProfile.matchPercentage >= 80 ? 'bg-gradient-to-br from-green-400 to-green-600 shadow-green-200 dark:shadow-none' : 
+                                          currentProfile.matchPercentage >= 50 ? 'bg-gradient-to-br from-orange-400 to-orange-600 shadow-orange-200 dark:shadow-none' : 
+                                          'bg-gradient-to-br from-gray-400 to-gray-600 shadow-gray-200 dark:shadow-none'}`}>
                                         {currentProfile.matchPercentage}%
                                     </div>
                                     <span className="text-xs font-semibold text-gray-500 dark:text-gray-400 mt-2 block uppercase tracking-wider">Match</span>

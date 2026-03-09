@@ -19,7 +19,10 @@ namespace StayMate.Controllers
 
         [HttpGet("recommendations")]
         [Authorize]
-        public async Task<IActionResult> GetRecommendations()
+        public async Task<IActionResult> GetRecommendations(
+            [FromQuery] decimal? maxPrice, 
+            [FromQuery] string? district, 
+            [FromQuery] string? city)
         {
             var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
             if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out int userId))
@@ -27,28 +30,33 @@ namespace StayMate.Controllers
                 return Unauthorized();
             }
 
-
             var currentUserLifestyle = await _context.LifestylePreferences
                 .FirstOrDefaultAsync(lp => lp.UserId == userId);
-
+                
+            var currentUserInterests = await _context.UserInterests
+                .Where(ui => ui.UserId == userId)
+                .Select(ui => ui.InterestId)
+                .ToListAsync();
 
             var swipedUserIds = await _context.Swipes
                 .Where(s => s.UserId == userId)
                 .Select(s => s.TargetUserId)
                 .ToListAsync();
 
-
-            var otherUsersInfo = await _context.Users
-                .Where(u => u.UserId != userId && u.IsActive == true && !swipedUserIds.Contains(u.UserId))
+            var otherUsersQuery = _context.Users
+                .Where(u => u.UserId != userId && u.IsActive == true && !swipedUserIds.Contains(u.UserId));
+                
+            var otherUsersInfo = await otherUsersQuery
                 .Select(u => new
                 {
                     User = u,
                     Lifestyle = _context.LifestylePreferences.FirstOrDefault(lp => lp.UserId == u.UserId),
                     Interests = _context.UserInterests
                         .Where(ui => ui.UserId == u.UserId)
-                        .Select(ui => new { ui.Interest.InterestName, ui.Interest.IconUrl })
+                        .Select(ui => new { ui.InterestId, ui.Interest.InterestName, ui.Interest.IconUrl })
                         .ToList(),
-                    Photos = _context.UserPhotos.Where(up => up.UserId == u.UserId).Select(up => up.PhotoUrl).ToList()
+                    Photos = _context.UserPhotos.Where(up => up.UserId == u.UserId).Select(up => up.PhotoUrl).ToList(),
+                    Rooms = _context.Rooms.Where(r => r.HostUserId == u.UserId && r.IsAvailable).ToList()
                 })
                 .ToListAsync();
 
@@ -56,35 +64,73 @@ namespace StayMate.Controllers
 
             foreach (var other in otherUsersInfo)
             {
+                // Apply Filters if provided
+                if (maxPrice.HasValue || !string.IsNullOrEmpty(district) || !string.IsNullOrEmpty(city))
+                {
+                    // If the other user has rooms, filter by their rooms.
+                    // If they don't have rooms, we might want to skip them if filters are Strict.
+                    // Let's assume the user is looking for a room.
+                    if (other.Rooms.Any())
+                    {
+                        var matchingRooms = other.Rooms.AsEnumerable();
+                        
+                        if (maxPrice.HasValue)
+                            matchingRooms = matchingRooms.Where(r => r.Price <= maxPrice.Value);
+                            
+                        if (!string.IsNullOrEmpty(district))
+                            matchingRooms = matchingRooms.Where(r => r.District.Contains(district, StringComparison.OrdinalIgnoreCase));
+                            
+                        if (!string.IsNullOrEmpty(city))
+                            matchingRooms = matchingRooms.Where(r => r.City.Contains(city, StringComparison.OrdinalIgnoreCase));
+                            
+                        // If all rooms got filtered out, skip this user
+                        if (!matchingRooms.Any()) continue;
+                    }
+                    else
+                    {
+                        // If they don't have a room and standard filters were applied, usually they might be looking too. 
+                        // You can choose to skip or keep them. For a stricter roommate finding, skip them if they don't have the desired room.
+                        continue; 
+                    }
+                }
 
                 int matchScore = 0;
                 int maxScore = 0;
 
-
+                // 1. Lifestyle Matching (Base 40 pts)
                 if (currentUserLifestyle != null && other.Lifestyle != null)
                 {
-                    maxScore += 40; // Total weight for lifestyle
-
+                    maxScore += 40; 
                     if (currentUserLifestyle.WakeUpTime == other.Lifestyle.WakeUpTime) matchScore += 10;
                     if (currentUserLifestyle.SleepTime == other.Lifestyle.SleepTime) matchScore += 10;
                     if (Math.Abs((currentUserLifestyle.CleanlinessLevel ?? 3) - (other.Lifestyle.CleanlinessLevel ?? 3)) <= 1) matchScore += 10;
                     if (currentUserLifestyle.SmokingStatus == other.Lifestyle.SmokingStatus) matchScore += 10;
                 }
+                
+                // 2. Interests Matching (Base 20 pts)
+                if (currentUserInterests.Any() && other.Interests.Any())
+                {
+                    maxScore += 20;
+                    int commonInterests = currentUserInterests.Intersect(other.Interests.Select(i => i.InterestId)).Count();
+                    if (commonInterests > 0)
+                    {
+                        matchScore += Math.Min(20, commonInterests * 5); // 5 pts per common interest up to 20
+                    }
+                }
 
+                // If no profile info available to calculate, give a base generic score to keep them in flow
+                int matchPercentage = maxScore > 0 ? (int)((double)matchScore / maxScore * 100) : 60;
 
-                int matchPercentage = maxScore > 0 ? (int)((double)matchScore / maxScore * 100) : new Random().Next(60, 95);
-
-
-                if (matchPercentage > 95) matchPercentage = new Random().Next(90, 98);
-
+                // Bump baseline score purely for aesthetic/UX purposes if it's too low but they met the criteria
+                if (matchPercentage < 40) matchPercentage = new Random().Next(40, 55);
 
                 var traits = new List<object>();
                 
                 if (other.Lifestyle != null)
                 {
-                    if (other.Lifestyle.SleepTime != null && other.Lifestyle.SleepTime.Contains("Sớm"))
+                    if (other.Lifestyle.SleepTime != null && other.Lifestyle.SleepTime.Contains("Sớm", StringComparison.OrdinalIgnoreCase))
                          traits.Add(new { icon = "Sun", text = "Early Bird" });
-                    else if (other.Lifestyle.SleepTime != null && other.Lifestyle.SleepTime.Contains("Cú đêm"))
+                    else if (other.Lifestyle.SleepTime != null && other.Lifestyle.SleepTime.Contains("Cú đêm", StringComparison.OrdinalIgnoreCase))
                          traits.Add(new { icon = "Moon", text = "Night Owl" });
 
                     if (other.Lifestyle.CleanlinessLevel >= 4)
@@ -94,14 +140,12 @@ namespace StayMate.Controllers
                         traits.Add(new { icon = "Dog", text = "Pet Friendly" });
                 }
 
-
                 foreach (var interest in other.Interests.Take(2))
                 {
                      if(traits.Count < 3) {
-                         traits.Add(new { icon = "Heart", text = interest.InterestName }); // Using Heart as fallback icon for interests for now
+                         traits.Add(new { icon = "Heart", text = interest.InterestName });
                      }
                 }
-
 
                 int age = DateTime.Now.Year - other.User.DateOfBirth.Year;
                 if (DateTime.Now.DayOfYear < other.User.DateOfBirth.DayOfYear) age--;
@@ -110,14 +154,14 @@ namespace StayMate.Controllers
                 {
                     id = other.User.UserId,
                     name = other.User.FullName,
-                    age = age > 0 ? age : 20, // fallback
+                    age = age > 0 ? age : 20, 
                     university = !string.IsNullOrEmpty(other.User.School) ? other.User.School : "Student",
                     occupation = !string.IsNullOrEmpty(other.User.Occupation) ? other.User.Occupation : "Không có thông tin nghề nghiệp",
                     bio = !string.IsNullOrEmpty(other.User.Bio) ? other.User.Bio : "Xin chào, mình đang tìm bạn cùng phòng!",
                     matchPercentage = matchPercentage,
                     image = !string.IsNullOrEmpty(other.User.AvatarUrl) 
                             ? other.User.AvatarUrl 
-                            : $"https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", // Keep dummy image fallback for empty avatars
+                            : $"https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80", 
                     photos = other.Photos,
                     traits = traits,
                     lifestyle = other.Lifestyle != null ? new {
@@ -136,8 +180,8 @@ namespace StayMate.Controllers
                 });
             }
 
-
-            return Ok(recommendations.OrderByDescending(r => r.GetType().GetProperty("matchPercentage").GetValue(r)));
+            // Sort by absolute highest match percentage
+            return Ok(recommendations.OrderByDescending(r => r.GetType().GetProperty("matchPercentage")!.GetValue(r)));
         }
 
         [HttpPost("swipe/{targetUserId}")]
