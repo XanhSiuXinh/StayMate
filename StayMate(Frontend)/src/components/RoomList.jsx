@@ -3,18 +3,29 @@ import { Search, Filter, Plus } from 'lucide-react';
 import RoomCard from './RoomCard';
 import { useNavigate } from 'react-router-dom';
 
-const RoomList = ({ searchTerm = '' }) => {
+const RoomList = ({ filters = {} }) => {
     const navigate = useNavigate();
     const [rooms, setRooms] = useState([]);
     const [loading, setLoading] = useState(true);
 
     useEffect(() => {
         fetchRooms();
-    }, []);
+    }, [filters]);
 
     const fetchRooms = async () => {
+        setLoading(true);
         try {
-            const response = await fetch('http://localhost:5015/api/rooms');
+            const params = new URLSearchParams();
+            if (filters.searchTerm) params.append('city', filters.searchTerm);
+            if (filters.minPrice) params.append('minPrice', filters.minPrice);
+            if (filters.maxPrice) params.append('maxPrice', filters.maxPrice);
+            if (filters.minArea) params.append('minArea', filters.minArea);
+            if (filters.maxArea) params.append('maxArea', filters.maxArea);
+
+            const queryString = params.toString();
+            const url = `http://localhost:5015/api/rooms${queryString ? `?${queryString}` : ''}`;
+            
+            const response = await fetch(url);
             const data = await response.json();
             setRooms(data);
         } catch (error) {
@@ -24,35 +35,25 @@ const RoomList = ({ searchTerm = '' }) => {
         }
     };
 
-    const filteredRooms = rooms.filter(room => {
-        if (!searchTerm) return true;
-        const term = searchTerm.toLowerCase();
-        return (
-            room.title?.toLowerCase().includes(term) ||
-            room.city?.toLowerCase().includes(term) ||
-            room.district?.toLowerCase().includes(term)
-        );
-    });
-
     if (loading) {
         return (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
                 {[1, 2, 3, 4].map((i) => (
-                    <div key={i} className="h-80 bg-gray-100 rounded-xl animate-pulse"></div>
+                    <div key={i} className="h-80 bg-gray-100 dark:bg-gray-800 rounded-xl animate-pulse"></div>
                 ))}
             </div>
         );
     }
 
-    if (filteredRooms.length === 0) {
+    if (rooms.length === 0) {
         return (
-            <div className="text-center py-20 bg-white rounded-2xl border border-dashed border-gray-200">
-                <div className="bg-gray-50 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
+            <div className="text-center py-20 bg-white dark:bg-gray-800 rounded-2xl border border-dashed border-gray-200 dark:border-gray-700 transition-colors">
+                <div className="bg-gray-50 dark:bg-gray-900 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-4">
                     <Search className="text-gray-400" size={24} />
                 </div>
-                <h3 className="text-lg font-semibold text-gray-900">No rooms found</h3>
-                <p className="text-gray-500 max-w-sm mx-auto mt-2">
-                    We couldn't find any rooms matching "{searchTerm}". Try adjusting your search.
+                <h3 className="text-lg font-semibold text-gray-900 dark:text-white">No rooms found</h3>
+                <p className="text-gray-500 dark:text-gray-400 max-w-sm mx-auto mt-2">
+                    We couldn't find any rooms matching your criteria. Try adjusting your filters.
                 </p>
             </div>
         );
@@ -60,7 +61,7 @@ const RoomList = ({ searchTerm = '' }) => {
 
     return (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-            {filteredRooms.map(room => (
+            {rooms.map(room => (
                 <RoomCard key={room.roomId} room={room} />
             ))}
         </div>

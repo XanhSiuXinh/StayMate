@@ -1,5 +1,5 @@
 import React from 'react';
-import { Info, Sun, Moon, Sparkles, Dog, Heart } from 'lucide-react';
+import { Info, Sun, Moon, Sparkles, Dog, Heart, ShieldCheck } from 'lucide-react';
 
 const MatchCard = ({ profile, swipeCount, onShowInfo }) => {
     if (!profile) return null;
@@ -31,6 +31,9 @@ const MatchCard = ({ profile, swipeCount, onShowInfo }) => {
             <div className="absolute inset-x-0 bottom-0 h-2/3 bg-gradient-to-t from-black/90 via-black/40 to-transparent flex flex-col justify-end p-6 md:p-8">
                 <h2 className="text-white text-3xl font-bold mb-1 flex items-center gap-2">
                     {profile.name}, {profile.age}
+                    {profile.isVerified && (
+                        <ShieldCheck className="text-blue-400 fill-blue-400/20" size={24} />
+                    )}
                 </h2>
                 <p className="text-gray-200 text-lg mb-1 font-medium">
                     {profile.university}

@@ -71,9 +71,11 @@ const ProfileDetailsModal = ({
                         <div>
                             <h2 className="text-3xl font-bold text-gray-900 dark:text-white mb-2 flex flex-wrap items-center gap-3">
                                 {profile.name}, {profile.age}
-                                <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-bold border border-green-200 dark:border-green-500/20 uppercase tracking-wide">
-                                    <ShieldCheck size={14} /> Verified
-                                </div>
+                                {profile.isVerified && (
+                                    <div className="flex items-center gap-1.5 bg-green-50 dark:bg-green-500/10 text-green-700 dark:text-green-400 px-3 py-1 rounded-full text-xs font-bold border border-green-200 dark:border-green-500/20 uppercase tracking-wide">
+                                        <ShieldCheck size={14} /> Verified
+                                    </div>
+                                )}
                             </h2>
                             <div className="space-y-2 mt-3">
                                 <p className="text-gray-600 dark:text-gray-300 text-lg flex items-center gap-3">

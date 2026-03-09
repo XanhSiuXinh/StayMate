@@ -1,14 +1,41 @@
+import { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
-import { Search, Home, Users, ArrowRight, ShieldCheck, Sparkles } from 'lucide-react';
+import { Search, Home, Users, ArrowRight, ShieldCheck, Sparkles, Filter, X, ChevronDown, ChevronUp } from 'lucide-react';
 import Button from './ui/Button';
 import Card from './ui/Card';
+import RoomList from './RoomList';
 import { useTranslation } from 'react-i18next';
 
 const HomePage = () => {
     const { isAuthenticated, openAuthModal } = useAuth();
     const navigate = useNavigate();
     const { t } = useTranslation();
+    
+    // Filter States
+    const [showFilters, setShowFilters] = useState(false);
+    const [filters, setFilters] = useState({
+        searchTerm: '',
+        minPrice: '',
+        maxPrice: '',
+        minArea: '',
+        maxArea: ''
+    });
+
+    const handleFilterChange = (e) => {
+        const { name, value } = e.target;
+        setFilters(prev => ({ ...prev, [name]: value }));
+    };
+
+    const clearFilters = () => {
+        setFilters({
+            searchTerm: '',
+            minPrice: '',
+            maxPrice: '',
+            minArea: '',
+            maxArea: ''
+        });
+    };
 
     const handleCTA = () => {
         if (isAuthenticated) {
@@ -19,7 +46,7 @@ const HomePage = () => {
     };
 
     return (
-        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden">
+        <div className="min-h-screen bg-gray-50 dark:bg-gray-900 overflow-hidden transition-colors">
             {/* Hero Section */}
             <div className="relative pt-20 pb-32 flex items-center justify-center min-h-[85vh]">
                 {/* Background Decoration */}
@@ -51,7 +78,7 @@ const HomePage = () => {
                             size="xl" 
                             onClick={handleCTA}
                             icon={ArrowRight}
-                            className="w-full sm:w-auto"
+                            className="w-full sm:w-auto shadow-lg shadow-blue-500/25"
                         >
                             Start Matching Now
                         </Button>
@@ -60,7 +87,7 @@ const HomePage = () => {
                             size="xl" 
                             onClick={() => navigate('/post-room')}
                             icon={Home}
-                            className="w-full sm:w-auto"
+                            className="w-full sm:w-auto shadow-sm"
                         >
                             I have a room
                         </Button>
@@ -84,11 +111,128 @@ const HomePage = () => {
                 </div>
             </div>
 
+            {/* Rooms Section */}
+            <div id="rooms-section" className="py-24 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex flex-col mb-12">
+                    <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 mb-8">
+                        <div className="max-w-xl text-center md:text-left">
+                            <h2 className="text-3xl md:text-5xl font-extrabold text-gray-900 dark:text-white mb-4">
+                                Available Rooms
+                            </h2>
+                            <p className="text-gray-500 dark:text-gray-400 text-lg">
+                                Browse recently posted rooms from our community. Find your next home today.
+                            </p>
+                        </div>
+                        
+                        <div className="flex items-center gap-3 self-center md:self-end">
+                            <div className="relative w-full md:w-80">
+                                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
+                                    <Search className="h-5 w-5 text-gray-400" />
+                                </div>
+                                <input
+                                    type="text"
+                                    name="searchTerm"
+                                    placeholder="Search by city, district..."
+                                    className="block w-full pl-10 pr-3 py-3 border border-gray-200 dark:border-gray-700 rounded-2xl bg-white dark:bg-gray-800 text-gray-900 dark:text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary transition-all shadow-sm"
+                                    value={filters.searchTerm}
+                                    onChange={handleFilterChange}
+                                />
+                            </div>
+                            <button 
+                                onClick={() => setShowFilters(!showFilters)}
+                                className={`p-3 rounded-2xl border transition-all flex items-center gap-2 font-semibold ${showFilters ? 'bg-primary text-white border-primary shadow-lg shadow-blue-500/20' : 'bg-white dark:bg-gray-800 text-gray-600 dark:text-gray-300 border-gray-200 dark:border-gray-700 hover:border-primary'}`}
+                            >
+                                <Filter size={20} />
+                                <span className="hidden sm:inline">Filters</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Expandable Filter Panel */}
+                    <div className={`overflow-hidden transition-all duration-300 ${showFilters ? 'max-h-[400px] mb-12 opacity-100' : 'max-h-0 opacity-0'}`}>
+                        <div className="p-6 bg-white dark:bg-gray-800 rounded-3xl border border-gray-100 dark:border-gray-700 shadow-xl shadow-gray-200/50 dark:shadow-none">
+                            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                                {/* Price Range */}
+                                <div className="space-y-3">
+                                    <label className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Price Range (VND)</label>
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="number"
+                                            name="minPrice"
+                                            placeholder="Min"
+                                            className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                            value={filters.minPrice}
+                                            onChange={handleFilterChange}
+                                        />
+                                        <span className="text-gray-300">/</span>
+                                        <input
+                                            type="number"
+                                            name="maxPrice"
+                                            placeholder="Max"
+                                            className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                            value={filters.maxPrice}
+                                            onChange={handleFilterChange}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Area Range */}
+                                <div className="space-y-3">
+                                    <label className="text-xs font-bold uppercase tracking-wider text-gray-400 dark:text-gray-500">Area (m²)</label>
+                                    <div className="flex items-center gap-2">
+                                        <input
+                                            type="number"
+                                            name="minArea"
+                                            placeholder="Min"
+                                            className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                            value={filters.minArea}
+                                            onChange={handleFilterChange}
+                                        />
+                                        <span className="text-gray-300">/</span>
+                                        <input
+                                            type="number"
+                                            name="maxArea"
+                                            placeholder="Max"
+                                            className="w-full px-4 py-2.5 bg-gray-50 dark:bg-gray-900 border border-gray-100 dark:border-gray-700 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-primary/20"
+                                            value={filters.maxArea}
+                                            onChange={handleFilterChange}
+                                        />
+                                    </div>
+                                </div>
+
+                                {/* Reset Button */}
+                                <div className="flex items-end lg:col-span-2">
+                                    <button 
+                                        onClick={clearFilters}
+                                        className="flex items-center gap-2 px-6 py-2.5 text-sm font-bold text-gray-500 dark:text-gray-400 hover:text-red-500 transition-colors"
+                                    >
+                                        <X size={16} /> Reset All
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <RoomList filters={filters} />
+                
+                <div className="mt-16 text-center">
+                    <Button 
+                        variant="outline" 
+                        size="lg"
+                        onClick={() => navigate('/discover')}
+                        icon={ArrowRight}
+                    >
+                        View More Shared Spaces
+                    </Button>
+                </div>
+            </div>
+
             {/* How it works */}
-            <div className="py-24 bg-white dark:bg-gray-800">
+            <div className="py-24 bg-white dark:bg-gray-800 transition-colors">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="text-center mb-16">
-                        <h2 className="text-3xl md:text-4xl font-bold mb-4">How StayMate Works</h2>
+                        <h2 className="text-3xl md:text-4xl font-bold mb-4 text-gray-900 dark:text-white">How StayMate Works</h2>
                         <p className="text-gray-500 dark:text-gray-400 max-w-2xl mx-auto text-lg">
                             We use advanced matchmaking to ensure you find a living situation that actually works for you.
                         </p>
@@ -101,7 +245,7 @@ const HomePage = () => {
                             { 
                                 title: 'Create your Profile', 
                                 desc: 'Tell us about your lifestyle, habits, and what you looking for in a roommate.',
-                                icon: UserIcon
+                                icon: Users
                             },
                             { 
                                 title: 'Get Matched', 
@@ -114,12 +258,12 @@ const HomePage = () => {
                                 icon: Home
                             }
                         ].map((step, i) => (
-                            <div key={i} className="text-center bg-white dark:bg-gray-900 p-6 rounded-2xl shadow-sm border border-gray-100 dark:border-gray-800">
-                                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-6">
-                                    <step.icon className="text-primary" size={32} />
+                            <div key={i} className="text-center bg-white dark:bg-gray-900 p-8 rounded-3xl shadow-sm border border-gray-100 dark:border-gray-800 hover:shadow-md transition-shadow">
+                                <div className="w-16 h-16 bg-primary/10 dark:bg-blue-500/10 rounded-2xl flex items-center justify-center mx-auto mb-6">
+                                    <step.icon className="text-primary dark:text-blue-400" size={32} />
                                 </div>
-                                <h3 className="text-xl font-bold mb-2">{step.title}</h3>
-                                <p className="text-gray-500 dark:text-gray-400">{step.desc}</p>
+                                <h3 className="text-xl font-bold mb-3 text-gray-900 dark:text-white">{step.title}</h3>
+                                <p className="text-gray-500 dark:text-gray-400 leading-relaxed">{step.desc}</p>
                             </div>
                         ))}
                     </div>
@@ -128,10 +272,5 @@ const HomePage = () => {
         </div>
     );
 };
-
-// Temp icon component while fixing imports
-function UserIcon(props) {
-  return <Users {...props} />;
-}
 
 export default HomePage;

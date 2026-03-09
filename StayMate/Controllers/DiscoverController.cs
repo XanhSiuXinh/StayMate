@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using StayMate.Interfaces;
 using StayMate.Models;
 using System.Security.Claims;
 
@@ -11,10 +12,12 @@ namespace StayMate.Controllers
     public class DiscoverController : ControllerBase
     {
         private readonly StayMateDbContext _context;
+        private readonly ICompatibilityService _compatibilityService;
 
-        public DiscoverController(StayMateDbContext context)
+        public DiscoverController(StayMateDbContext context, ICompatibilityService compatibilityService)
         {
             _context = context;
+            _compatibilityService = compatibilityService;
         }
 
         [HttpGet("recommendations")]
@@ -29,14 +32,6 @@ namespace StayMate.Controllers
             {
                 return Unauthorized();
             }
-
-            var currentUserLifestyle = await _context.LifestylePreferences
-                .FirstOrDefaultAsync(lp => lp.UserId == userId);
-                
-            var currentUserInterests = await _context.UserInterests
-                .Where(ui => ui.UserId == userId)
-                .Select(ui => ui.InterestId)
-                .ToListAsync();
 
             var swipedUserIds = await _context.Swipes
                 .Where(s => s.UserId == userId)
@@ -94,35 +89,7 @@ namespace StayMate.Controllers
                     }
                 }
 
-                int matchScore = 0;
-                int maxScore = 0;
-
-                // 1. Lifestyle Matching (Base 40 pts)
-                if (currentUserLifestyle != null && other.Lifestyle != null)
-                {
-                    maxScore += 40; 
-                    if (currentUserLifestyle.WakeUpTime == other.Lifestyle.WakeUpTime) matchScore += 10;
-                    if (currentUserLifestyle.SleepTime == other.Lifestyle.SleepTime) matchScore += 10;
-                    if (Math.Abs((currentUserLifestyle.CleanlinessLevel ?? 3) - (other.Lifestyle.CleanlinessLevel ?? 3)) <= 1) matchScore += 10;
-                    if (currentUserLifestyle.SmokingStatus == other.Lifestyle.SmokingStatus) matchScore += 10;
-                }
-                
-                // 2. Interests Matching (Base 20 pts)
-                if (currentUserInterests.Any() && other.Interests.Any())
-                {
-                    maxScore += 20;
-                    int commonInterests = currentUserInterests.Intersect(other.Interests.Select(i => i.InterestId)).Count();
-                    if (commonInterests > 0)
-                    {
-                        matchScore += Math.Min(20, commonInterests * 5); // 5 pts per common interest up to 20
-                    }
-                }
-
-                // If no profile info available to calculate, give a base generic score to keep them in flow
-                int matchPercentage = maxScore > 0 ? (int)((double)matchScore / maxScore * 100) : 60;
-
-                // Bump baseline score purely for aesthetic/UX purposes if it's too low but they met the criteria
-                if (matchPercentage < 40) matchPercentage = new Random().Next(40, 55);
+                int matchPercentage = await _compatibilityService.CalculateCompatibilityAsync(userId, other.User.UserId);
 
                 var traits = new List<object>();
                 
@@ -158,6 +125,7 @@ namespace StayMate.Controllers
                     university = !string.IsNullOrEmpty(other.User.School) ? other.User.School : "Student",
                     occupation = !string.IsNullOrEmpty(other.User.Occupation) ? other.User.Occupation : "Không có thông tin nghề nghiệp",
                     bio = !string.IsNullOrEmpty(other.User.Bio) ? other.User.Bio : "Xin chào, mình đang tìm bạn cùng phòng!",
+                    isVerified = other.User.IsVerified ?? false,
                     matchPercentage = matchPercentage,
                     image = !string.IsNullOrEmpty(other.User.AvatarUrl) 
                             ? other.User.AvatarUrl 

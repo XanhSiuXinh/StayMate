@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef } from 'react';
 import { useAuth } from '../context/AuthContext';
-import { Loader2, Save, Moon, Sun, Wind, VolumeX, Coffee, Home, Clock, Cat, Image as ImageIcon, Plus, Trash2 } from 'lucide-react';
+import { Loader2, Save, Moon, Sun, Wind, VolumeX, Coffee, Home, Clock, Cat, Image as ImageIcon, Plus, Trash2, ShieldCheck, AlertCircle, CheckCircle2 } from 'lucide-react';
 import Button from './ui/Button';
 import Input from './ui/Input';
 
@@ -34,9 +34,29 @@ const Preferences = () => {
     const [error, setError] = useState(null);
     const [successMessage, setSuccessMessage] = useState('');
 
+    // Verification state
+    const [verificationStatus, setVerificationStatus] = useState({ isVerified: false, currentRequest: null });
+    const [verifying, setVerifying] = useState(false);
+    const verificationFileRef = useRef(null);
+
     useEffect(() => {
         fetchData();
+        fetchVerificationStatus();
     }, []);
+
+    const fetchVerificationStatus = async () => {
+        try {
+            const res = await fetch('http://localhost:5015/api/verifications/status', {
+                headers: { 'Authorization': `Bearer ${token}` }
+            });
+            if (res.ok) {
+                const data = await res.json();
+                setVerificationStatus(data);
+            }
+        } catch (err) {
+            console.error("Error fetching verification status:", err);
+        }
+    };
 
     const fetchData = async () => {
         setLoading(true);
@@ -217,6 +237,40 @@ const Preferences = () => {
         } catch (err) {
             setError('Connection error.');
             setTimeout(() => setError(null), 3000);
+        }
+    };
+
+    const handleVerificationUpload = async (e) => {
+        const file = e.target.files[0];
+        if (!file) return;
+
+        setVerifying(true);
+        setError(null);
+        
+        const formData = new FormData();
+        formData.append('file', file);
+        formData.append('documentType', 'StudentCard'); // Default
+
+        try {
+            const res = await fetch('http://localhost:5015/api/verifications/request', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${token}` },
+                body: formData
+            });
+            
+            if (res.ok) {
+                setSuccessMessage('Verification request submitted successfully!');
+                fetchVerificationStatus();
+                setTimeout(() => setSuccessMessage(''), 3000);
+            } else {
+                const data = await res.json();
+                setError(data || 'Failed to submit verification request.');
+            }
+        } catch (err) {
+            setError('Connection error.');
+        } finally {
+            setVerifying(false);
+            if (verificationFileRef.current) verificationFileRef.current.value = "";
         }
     };
 
@@ -412,6 +466,78 @@ const Preferences = () => {
                     accept="image/*"
                     className="hidden"
                 />
+            </div>
+
+            {/* Verification Section */}
+            <div className="pt-6 border-t border-gray-100 dark:border-gray-700">
+                <div className="flex items-center justify-between mb-6">
+                    <div>
+                        <h2 className="text-xl font-bold text-gray-900 dark:text-white flex items-center gap-2">
+                            <ShieldCheck className="text-primary dark:text-blue-400" /> Identity Verification
+                        </h2>
+                        <p className="text-sm text-gray-500 dark:text-gray-400 mt-1">Verify your student or personal ID to earn a blue tick and build trust.</p>
+                    </div>
+                </div>
+
+                <div className="bg-gray-50 dark:bg-gray-800/50 rounded-2xl p-6 border border-gray-100 dark:border-gray-700">
+                    {verificationStatus.isVerified ? (
+                        <div className="flex items-center gap-4 text-blue-600 dark:text-blue-400">
+                            <div className="bg-blue-100 dark:bg-blue-500/20 p-3 rounded-full">
+                                <ShieldCheck size={32} />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-lg">Your account is verified!</h3>
+                                <p className="text-sm opacity-90">A blue checkmark is now visible on your profile.</p>
+                            </div>
+                        </div>
+                    ) : verificationStatus.currentRequest?.status === 'Pending' ? (
+                        <div className="flex items-center gap-4 text-orange-600 dark:text-orange-400">
+                            <div className="bg-orange-100 dark:bg-orange-500/20 p-3 rounded-full">
+                                <Clock size={32} />
+                            </div>
+                            <div>
+                                <h3 className="font-bold text-lg">Verification Pending</h3>
+                                <p className="text-sm opacity-90">We are reviewing your {verificationStatus.currentRequest.documentType}. This usually takes 24h.</p>
+                            </div>
+                        </div>
+                    ) : (
+                        <div className="flex flex-col md:flex-row items-center gap-6">
+                            <div className="flex-1">
+                                {verificationStatus.currentRequest?.status === 'Rejected' && (
+                                    <div className="flex items-start gap-3 text-red-600 dark:text-red-400 mb-4 bg-red-50 dark:bg-red-500/10 p-3 rounded-xl border border-red-100 dark:border-red-500/20">
+                                        <AlertCircle size={20} className="shrink-0 mt-0.5" />
+                                        <div>
+                                            <p className="font-bold text-sm">Verification Rejected</p>
+                                            <p className="text-xs opacity-90">Reason: {verificationStatus.currentRequest.adminNotes || 'Invalid document.'}</p>
+                                        </div>
+                                    </div>
+                                )}
+                                <h3 className="font-bold text-gray-900 dark:text-white mb-2">Get your Blue Tick</h3>
+                                <p className="text-sm text-gray-500 dark:text-gray-400 mb-4">
+                                    Upload a clear photo of your Student ID or Personal ID card. Our team will verify it manually.
+                                </p>
+                                <input
+                                    type="file"
+                                    ref={verificationFileRef}
+                                    onChange={handleVerificationUpload}
+                                    accept="image/*"
+                                    className="hidden"
+                                />
+                                <Button
+                                    variant="outline"
+                                    onClick={() => verificationFileRef.current?.click()}
+                                    isLoading={verifying}
+                                    icon={ShieldCheck}
+                                >
+                                    Upload Document
+                                </Button>
+                            </div>
+                            <div className="w-32 h-32 bg-white dark:bg-gray-700 rounded-2xl flex items-center justify-center border-2 border-dashed border-gray-200 dark:border-gray-600">
+                                <ImageIcon className="text-gray-300 dark:text-gray-500" size={48} />
+                            </div>
+                        </div>
+                    )}
+                </div>
             </div>
 
             <div className="flex justify-end pt-6 border-t border-gray-100 dark:border-gray-700 mt-6">

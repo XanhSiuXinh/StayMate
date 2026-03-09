@@ -53,6 +53,13 @@ const Navbar = () => {
                             >
                                 {t('navbar.saved')}
                             </Link>
+                            <Link
+                                to="/post-room"
+                                className="flex items-center gap-1.5 px-4 py-2 bg-primary/10 hover:bg-primary/20 text-primary dark:text-blue-400 rounded-xl text-sm font-bold transition-all"
+                            >
+                                <Plus size={18} />
+                                {t('navbar.postRoom')}
+                            </Link>
 
                             <div className="h-6 w-px bg-gray-200 dark:bg-gray-700 mx-2"></div>
 

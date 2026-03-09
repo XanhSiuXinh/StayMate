@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 
@@ -40,6 +40,8 @@ public partial class StayMateDbContext : DbContext
     public virtual DbSet<UserLocation> UserLocations { get; set; }
 
     public virtual DbSet<UserPhoto> UserPhotos { get; set; }
+    
+    public virtual DbSet<VerificationRequest> VerificationRequests { get; set; }
     
     public virtual DbSet<Room> Rooms { get; set; }
     
@@ -374,6 +376,22 @@ public partial class StayMateDbContext : DbContext
             entity.HasOne(d => d.User).WithMany(p => p.UserPhotos)
                 .HasForeignKey(d => d.UserId)
                 .HasConstraintName("FK__UserPhoto__UserI__48CFD27E");
+        });
+
+        modelBuilder.Entity<VerificationRequest>(entity =>
+        {
+            entity.HasKey(e => e.RequestId);
+            entity.Property(e => e.RequestId).HasColumnName("RequestID");
+            entity.Property(e => e.UserId).HasColumnName("UserID");
+            entity.Property(e => e.DocumentType).HasMaxLength(50);
+            entity.Property(e => e.DocumentImageUrl).HasMaxLength(500);
+            entity.Property(e => e.Status).HasMaxLength(20).HasDefaultValue("Pending");
+            entity.Property(e => e.CreatedAt).HasColumnType("datetime").HasDefaultValueSql("(getdate())");
+            entity.Property(e => e.UpdatedAt).HasColumnType("datetime").HasDefaultValueSql("(getdate())");
+
+            entity.HasOne(d => d.User).WithMany()
+                .HasForeignKey(d => d.UserId)
+                .HasConstraintName("FK_VerificationRequests_Users");
         });
 
         OnModelCreatingPartial(modelBuilder);

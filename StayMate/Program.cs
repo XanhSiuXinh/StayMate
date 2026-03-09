@@ -8,6 +8,7 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
+builder.Services.AddScoped<StayMate.Interfaces.ICompatibilityService, StayMate.Services.CompatibilityService>();
 
 
 builder.Services.AddDbContext<StayMateDbContext>(options =>

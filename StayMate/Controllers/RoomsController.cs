@@ -24,7 +24,7 @@ namespace StayMate.Controllers
 
 
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<RoomDto>>> GetRooms([FromQuery] string? city, [FromQuery] decimal? minPrice, [FromQuery] decimal? maxPrice)
+        public async Task<ActionResult<IEnumerable<RoomDto>>> GetRooms([FromQuery] string? city, [FromQuery] decimal? minPrice, [FromQuery] decimal? maxPrice, [FromQuery] int? minArea, [FromQuery] int? maxArea)
         {
             var query = _context.Rooms.Include(r => r.Photos).Include(r => r.HostUser).AsQueryable();
 
@@ -41,6 +41,16 @@ namespace StayMate.Controllers
             if (maxPrice.HasValue)
             {
                 query = query.Where(r => r.Price <= maxPrice.Value);
+            }
+
+            if (minArea.HasValue)
+            {
+                query = query.Where(r => r.AreaSqm >= minArea.Value);
+            }
+
+            if (maxArea.HasValue)
+            {
+                query = query.Where(r => r.AreaSqm <= maxArea.Value);
             }
 
             var rooms = await query.ToListAsync();
