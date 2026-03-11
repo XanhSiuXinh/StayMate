@@ -305,5 +305,44 @@ namespace StayMate.Controllers
 
             return Ok(passedUsers);
         }
+        [HttpGet("who-liked-me")]
+        [Authorize]
+        public async Task<IActionResult> GetWhoLikedMe()
+        {
+            var userIdStr = User.FindFirstValue(ClaimTypes.NameIdentifier);
+            if (string.IsNullOrEmpty(userIdStr) || !int.TryParse(userIdStr, out int userId))
+            {
+                return Unauthorized();
+            }
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return NotFound();
+
+            // Lấy danh sách những người đã Like user này
+            var whoLikedMeQuery = _context.Swipes
+                .Include(s => s.User)
+                .Where(s => s.TargetUserId == userId && s.SwipeType == "Like");
+
+            var likedUsers = await whoLikedMeQuery
+                .Select(s => new {
+                    id = s.User.UserId,
+                    name = user.IsPremium ? s.User.FullName : "Someone",
+                    age = DateTime.Now.Year - s.User.DateOfBirth.Year - (DateTime.Now.DayOfYear < s.User.DateOfBirth.DayOfYear ? 1 : 0),
+                    university = user.IsPremium ? (!string.IsNullOrEmpty(s.User.School) ? s.User.School : "Student") : "Hidden",
+                    occupation = user.IsPremium ? (!string.IsNullOrEmpty(s.User.Occupation) ? s.User.Occupation : "Không có thông tin") : "Hidden",
+                    image = user.IsPremium ? (!string.IsNullOrEmpty(s.User.AvatarUrl)
+                        ? s.User.AvatarUrl
+                        : "https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?ixlib=rb-4.0.3&auto=format&fit=crop&w=800&q=80") : null, // send null or blurred image if not premium
+                    likedAt = s.CreatedAt
+                })
+                .OrderByDescending(s => s.likedAt)
+                .ToListAsync();
+
+            return Ok(new {
+                isPremium = user.IsPremium,
+                count = likedUsers.Count,
+                users = likedUsers
+            });
+        }
     }
 }

@@ -24,6 +24,8 @@ public class RoomDto
     public double? Longitude { get; set; }
     public double AverageRating { get; set; }
     public int ReviewsCount { get; set; }
+    public bool IsBoosted { get; set; }
+    public DateTime? BoostExpiryDate { get; set; }
 }
 
 public class CreateRoomDto

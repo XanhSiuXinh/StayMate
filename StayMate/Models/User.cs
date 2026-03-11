@@ -41,6 +41,10 @@ public partial class User
 
     public string Role { get; set; } = "Student";
 
+    public bool IsPremium { get; set; } = false;
+
+    public DateTime? PremiumExpiryDate { get; set; }
+
     public virtual ICollection<Room> Rooms { get; set; } = new List<Room>();
 
     public virtual ICollection<CompatibilityScore> CompatibilityScoreUser1s { get; set; } = new List<CompatibilityScore>();

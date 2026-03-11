@@ -4,6 +4,7 @@ import { Plus, Home, CheckCircle, XCircle, Trash2, Loader2, MapPin, LayoutGrid, 
 import { Link } from 'react-router-dom';
 import Button from './ui/Button';
 import { useAuth } from '../context/AuthContext';
+import api from '../services/api';
 
 const MyRooms = () => {
     const { t } = useTranslation();
@@ -86,6 +87,24 @@ const MyRooms = () => {
             }
         } catch (error) {
             console.error('Error deleting room:', error);
+        } finally {
+            setActionLoading(null);
+        }
+    };
+
+    const handleBoostRoom = async (roomId) => {
+        setActionLoading(roomId + '_boost');
+        try {
+            const response = await api.post('/payments/boost-room', {
+                roomId: roomId,
+                amount: 100000 // 100,000 VND / tuần
+            });
+            if (response.data && response.data.paymentUrl) {
+                window.location.href = response.data.paymentUrl;
+            }
+        } catch (error) {
+            console.error('Error boosting room:', error);
+            alert('Không thể tạo thanh toán Đẩy phòng lúc này.');
         } finally {
             setActionLoading(null);
         }
@@ -248,6 +267,19 @@ const MyRooms = () => {
                                         {room.isAvailable ? 'Mark Occupied' : 'Mark Available'}
                                     </Button>
                                     <div className="flex gap-2">
+                                        <Button 
+                                            variant="secondary" 
+                                            size="sm" 
+                                            fullWidth 
+                                            className="rounded-xl border-orange-200 text-orange-600 hover:bg-orange-50 hover:border-orange-300" 
+                                            title="Đẩy phòng"
+                                            onClick={() => handleBoostRoom(room.roomId)}
+                                            isLoading={actionLoading === room.roomId + '_boost'}
+                                        >
+                                            🔥 Boost
+                                        </Button>
+                                    </div>
+                                    <div className="flex gap-2 col-span-2">
                                         <Link to={`/rooms/${room.roomId}`} className="flex-1">
                                             <Button variant="secondary" size="sm" fullWidth className="rounded-xl" title="View Detail">
                                                 Detail

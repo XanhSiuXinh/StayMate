@@ -8,6 +8,7 @@ import MatchCard from './discover/MatchCard';
 import ActionButtons from './discover/ActionButtons';
 import PassedProfilesModal from './discover/PassedProfilesModal';
 import ProfileDetailsModal from './discover/ProfileDetailsModal';
+import WhoLikedMeModal from './discover/WhoLikedMeModal';
 import Button from './ui/Button';
 
 const Discover = () => {
@@ -31,6 +32,10 @@ const Discover = () => {
     const [showPassed, setShowPassed] = useState(false);
     const [passedProfiles, setPassedProfiles] = useState([]);
     const [loadingPassed, setLoadingPassed] = useState(false);
+
+    const [showWhoLikedMe, setShowWhoLikedMe] = useState(false);
+    const [whoLikedMeData, setWhoLikedMeData] = useState(null);
+    const [loadingWhoLikedMe, setLoadingWhoLikedMe] = useState(false);
 
     const fetchRecommendations = async () => {
         setIsFiltering(true);
@@ -140,6 +145,23 @@ const Discover = () => {
         }
     };
 
+    const fetchWhoLikedMe = async () => {
+        setShowWhoLikedMe(true);
+        if (!whoLikedMeData) {
+            setLoadingWhoLikedMe(true);
+            try {
+                const res = await fetch('http://localhost:5015/api/discover/who-liked-me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                if (res.ok) setWhoLikedMeData(await res.json());
+            } catch (e) {
+                console.error(e);
+            } finally {
+                setLoadingWhoLikedMe(false);
+            }
+        }
+    };
+
     if (loading) {
         return (
             <div className="flex-1 min-h-[calc(100vh-64px)] flex flex-col items-center justify-center bg-gray-50 dark:bg-gray-900 gap-4 transition-colors">
@@ -223,6 +245,14 @@ const Discover = () => {
                         <History size={18} className="group-hover:scale-110 transition-transform" />
                         Passed Profiles
                     </button>
+                    <span className="text-gray-200 dark:text-gray-700">|</span>
+                    <button
+                        onClick={fetchWhoLikedMe}
+                        className="flex items-center gap-2 text-sm text-gray-400 hover:text-pink-500 transition-colors font-medium group"
+                    >
+                        <Heart size={18} className="group-hover:scale-110 transition-transform" />
+                        Ai Đã Thích Tôi
+                    </button>
                 </div>
             </div>
 
@@ -241,6 +271,13 @@ const Discover = () => {
                 onClose={() => setShowPassed(false)}
                 passedProfiles={passedProfiles}
                 loadingPassed={loadingPassed}
+            />
+
+            <WhoLikedMeModal
+                show={showWhoLikedMe}
+                onClose={() => setShowWhoLikedMe(false)}
+                data={whoLikedMeData}
+                loading={loadingWhoLikedMe}
             />
 
             <ProfileDetailsModal 

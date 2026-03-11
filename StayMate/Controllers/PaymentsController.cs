@@ -61,14 +61,40 @@ namespace StayMate.Controllers
         public async Task<IActionResult> VnPayReturn([FromQuery] int transactionId, [FromQuery] string vnp_SecureHash, [FromQuery] string vnp_TransactionStatus)
         {
             // Note: Secure hash validation would logically happen here
-            var transaction = await _context.PaymentTransactions.FindAsync(transactionId);
+            var transaction = await _context.PaymentTransactions
+                .Include(t => t.Tenant)
+                .Include(t => t.Landlord)
+                .Include(t => t.Room)
+                .FirstOrDefaultAsync(t => t.Id == transactionId);
             if (transaction == null)
                 return NotFound("Transaction not found.");
 
             if (vnp_TransactionStatus == "00")
             {
-                transaction.Status = "Held";
                 transaction.VnPayTransactionId = Request.Query["vnp_TransactionNo"];
+                
+                if (transaction.TransactionType == "Deposit")
+                {
+                    transaction.Status = "Held";
+                }
+                else if (transaction.TransactionType == "Premium")
+                {
+                    transaction.Status = "Released";
+                    if (transaction.Tenant != null)
+                    {
+                        transaction.Tenant.IsPremium = true;
+                        transaction.Tenant.PremiumExpiryDate = DateTime.UtcNow.AddDays(30);
+                    }
+                }
+                else if (transaction.TransactionType == "Boost")
+                {
+                    transaction.Status = "Released";
+                    if (transaction.Room != null)
+                    {
+                        transaction.Room.IsBoosted = true;
+                        transaction.Room.BoostExpiryDate = DateTime.UtcNow.AddDays(7);
+                    }
+                }
             }
             else
             {
@@ -159,6 +185,63 @@ namespace StayMate.Controllers
                     .ToListAsync();
                 return Ok(transactions);
             }
+        }
+        [HttpPost("buy-premium")]
+        public async Task<IActionResult> BuyPremium([FromBody] PremiumRequestDto request)
+        {
+            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(userIdStr, out int userId))
+                return Unauthorized();
+
+            var user = await _context.Users.FindAsync(userId);
+            if (user == null) return NotFound("User not found");
+
+            var transaction = new PaymentTransaction
+            {
+                TenantId = userId,
+                Amount = request.Amount,
+                Status = "Processing",
+                TransactionType = "Premium"
+            };
+
+            _context.PaymentTransactions.Add(transaction);
+            await _context.SaveChangesAsync();
+
+            var returnUrl = $"{Request.Scheme}://{Request.Host}/api/payments/vnpay-return?transactionId={transaction.Id}";
+            var paymentRequest = new PaymentRequestDto { Amount = request.Amount };
+            var paymentUrl = _paymentService.CreatePaymentUrl(paymentRequest, userId, returnUrl);
+
+            return Ok(new { paymentUrl, transactionId = transaction.Id });
+        }
+
+        [HttpPost("boost-room")]
+        public async Task<IActionResult> BoostRoom([FromBody] BoostRequestDto request)
+        {
+            var landlordIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
+            if (!int.TryParse(landlordIdStr, out int landlordId))
+                return Unauthorized();
+
+            var room = await _context.Rooms.FindAsync(request.RoomId);
+            if (room == null || room.HostUserId != landlordId)
+                return BadRequest("Invalid room or landlord.");
+
+            var transaction = new PaymentTransaction
+            {
+                LandlordId = landlordId,
+                RoomId = request.RoomId,
+                Amount = request.Amount,
+                Status = "Processing",
+                TransactionType = "Boost"
+            };
+
+            _context.PaymentTransactions.Add(transaction);
+            await _context.SaveChangesAsync();
+
+            var returnUrl = $"{Request.Scheme}://{Request.Host}/api/payments/vnpay-return?transactionId={transaction.Id}";
+            var paymentRequest = new PaymentRequestDto { Amount = request.Amount };
+            var paymentUrl = _paymentService.CreatePaymentUrl(paymentRequest, landlordId, returnUrl);
+
+            return Ok(new { paymentUrl, transactionId = transaction.Id });
         }
     }
 }

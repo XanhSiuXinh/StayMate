@@ -18,6 +18,7 @@ import MyRooms from './components/MyRooms';
 import AdminDashboard from './components/AdminDashboard';
 import PaymentStatus from './components/PaymentStatus';
 import MyDeposits from './components/MyDeposits';
+import PremiumSubscription from './components/PremiumSubscription';
 
 function App() {
     const { isAuthenticated, authModalView } = useAuth();
@@ -134,6 +135,14 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <MyDeposits />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/premium"
+                        element={
+                            <ProtectedRoute>
+                                <PremiumSubscription />
                             </ProtectedRoute>
                         }
                     />

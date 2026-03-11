@@ -32,7 +32,8 @@ namespace StayMate.Controllers
                 .Include(r => r.Photos)
                 .Include(r => r.HostUser)
                 .Where(r => r.HostUserId == userId)
-                .OrderByDescending(r => r.CreatedAt)
+                .OrderByDescending(r => r.IsBoosted && r.BoostExpiryDate >= DateTime.UtcNow)
+                .ThenByDescending(r => r.CreatedAt)
                 .ToListAsync();
 
             return rooms.Select(r => new RoomDto
@@ -58,7 +59,9 @@ namespace StayMate.Controllers
                 AverageRating = _context.Reviews.Where(rev => rev.TargetRoomId == r.RoomId).Any() 
                     ? _context.Reviews.Where(rev => rev.TargetRoomId == r.RoomId).Average(rev => rev.Rating) 
                     : 0,
-                ReviewsCount = _context.Reviews.Count(rev => rev.TargetRoomId == r.RoomId)
+                ReviewsCount = _context.Reviews.Count(rev => rev.TargetRoomId == r.RoomId),
+                IsBoosted = r.IsBoosted,
+                BoostExpiryDate = r.BoostExpiryDate
             }).ToList();
         }
 
@@ -127,6 +130,10 @@ namespace StayMate.Controllers
                 query = query.Where(r => r.AreaSqm <= maxArea.Value);
             }
 
+            query = query
+                .OrderByDescending(r => r.IsBoosted && r.BoostExpiryDate >= DateTime.UtcNow)
+                .ThenByDescending(r => r.CreatedAt);
+
             var rooms = await query.ToListAsync();
 
             return rooms.Select(r => new RoomDto
@@ -152,7 +159,9 @@ namespace StayMate.Controllers
                 AverageRating = _context.Reviews.Where(rev => rev.TargetRoomId == r.RoomId).Any() 
                     ? _context.Reviews.Where(rev => rev.TargetRoomId == r.RoomId).Average(rev => rev.Rating) 
                     : 0,
-                ReviewsCount = _context.Reviews.Count(rev => rev.TargetRoomId == r.RoomId)
+                ReviewsCount = _context.Reviews.Count(rev => rev.TargetRoomId == r.RoomId),
+                IsBoosted = r.IsBoosted,
+                BoostExpiryDate = r.BoostExpiryDate
             }).ToList();
         }
 
@@ -193,7 +202,9 @@ namespace StayMate.Controllers
                 AverageRating = _context.Reviews.Where(rev => rev.TargetRoomId == room.RoomId).Any() 
                     ? _context.Reviews.Where(rev => rev.TargetRoomId == room.RoomId).Average(rev => rev.Rating) 
                     : 0,
-                ReviewsCount = _context.Reviews.Count(rev => rev.TargetRoomId == room.RoomId)
+                ReviewsCount = _context.Reviews.Count(rev => rev.TargetRoomId == room.RoomId),
+                IsBoosted = room.IsBoosted,
+                BoostExpiryDate = room.BoostExpiryDate
             };
         }
 
@@ -287,7 +298,9 @@ namespace StayMate.Controllers
                 HostName = user.FullName,
                 HostAvatar = user.AvatarUrl,
                 AverageRating = 0,
-                ReviewsCount = 0
+                ReviewsCount = 0,
+                IsBoosted = false,
+                BoostExpiryDate = null
             };
 
             return CreatedAtAction("GetRoom", new { id = room.RoomId }, roomDto);

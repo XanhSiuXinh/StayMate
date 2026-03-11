@@ -9,20 +9,17 @@ namespace StayMate.Models
         [Key]
         public int Id { get; set; }
 
-        [Required]
-        public int TenantId { get; set; }
+        public int? TenantId { get; set; }
 
         [ForeignKey("TenantId")]
         public virtual User Tenant { get; set; }
 
-        [Required]
-        public int LandlordId { get; set; }
+        public int? LandlordId { get; set; }
 
         [ForeignKey("LandlordId")]
         public virtual User Landlord { get; set; }
 
-        [Required]
-        public int RoomId { get; set; }
+        public int? RoomId { get; set; }
 
         [ForeignKey("RoomId")]
         public virtual Room Room { get; set; }
@@ -41,6 +38,10 @@ namespace StayMate.Models
         [Required]
         [StringLength(50)]
         public string Status { get; set; } = "Processing";
+
+        [Required]
+        [StringLength(50)]
+        public string TransactionType { get; set; } = "Deposit"; // Deposit, Premium, Boost
 
         [StringLength(255)]
         public string VnPayTransactionId { get; set; }

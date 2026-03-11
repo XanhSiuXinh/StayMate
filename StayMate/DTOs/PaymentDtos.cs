@@ -9,6 +9,17 @@ namespace StayMate.DTOs
         public decimal Amount { get; set; }
     }
 
+    public class PremiumRequestDto
+    {
+        public decimal Amount { get; set; }
+    }
+
+    public class BoostRequestDto
+    {
+        public int RoomId { get; set; }
+        public decimal Amount { get; set; }
+    }
+
     public class VnPayCallbackDto
     {
         public string vnp_Amount { get; set; }
