@@ -16,6 +16,8 @@ import Settings from './components/Settings';
 import Saved from './components/Saved';
 import MyRooms from './components/MyRooms';
 import AdminDashboard from './components/AdminDashboard';
+import PaymentStatus from './components/PaymentStatus';
+import MyDeposits from './components/MyDeposits';
 
 function App() {
     const { isAuthenticated, authModalView } = useAuth();
@@ -116,6 +118,22 @@ function App() {
                         element={
                             <ProtectedRoute>
                                 <AdminDashboard />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/payment/status"
+                        element={
+                            <ProtectedRoute>
+                                <PaymentStatus />
+                            </ProtectedRoute>
+                        }
+                    />
+                    <Route
+                        path="/my-deposits"
+                        element={
+                            <ProtectedRoute>
+                                <MyDeposits />
                             </ProtectedRoute>
                         }
                     />

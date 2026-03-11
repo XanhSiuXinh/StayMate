@@ -310,6 +310,20 @@ const Profile = () => {
                         >
                             Log Out
                         </Button>
+                        
+                        {isOwnProfile && (
+                            <div className="w-full mt-4 pt-4 border-t border-gray-100 dark:border-gray-700">
+                                <a
+                                    href="/my-deposits"
+                                    className="w-full flex items-center justify-center gap-2 py-2.5 px-4 bg-gray-50 dark:bg-gray-700/50 hover:bg-blue-50 hover:text-blue-600 dark:hover:bg-blue-500/10 dark:hover:text-blue-400 text-gray-700 dark:text-gray-300 rounded-xl font-medium transition-all"
+                                >
+                                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                        <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    </svg>
+                                    Quản lý Tiền cọc
+                                </a>
+                            </div>
+                        )}
                     </div>
 
                     {/* Quick Stats (Placeholder for future features) */}

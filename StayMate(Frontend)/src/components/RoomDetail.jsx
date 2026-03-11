@@ -379,7 +379,7 @@ const RoomDetail = () => {
                             </div>
                         </div>
 
-                        <div className="space-y-3">
+                            <div className="space-y-3">
                                 <button 
                                     className="w-full py-3 px-4 bg-primary hover:bg-primary-dark text-white rounded-xl font-bold transition-all shadow-lg shadow-primary/20 flex items-center justify-center gap-2 mb-3"
                                     onClick={() => setIsBookingModalOpen(true)}
@@ -387,6 +387,42 @@ const RoomDetail = () => {
                                     <Calendar size={18} />
                                     {t('appointments.book_now')}
                                 </button>
+                                
+                                {user && room.hostUserId !== user.id && (
+                                    <button 
+                                        onClick={async () => {
+                                            try {
+                                                const res = await fetch('http://localhost:5015/api/payments/create-deposit', {
+                                                    method: 'POST',
+                                                    headers: { 
+                                                        'Content-Type': 'application/json',
+                                                        'Authorization': `Bearer ${localStorage.getItem('token')}`
+                                                    },
+                                                    body: JSON.stringify({
+                                                        roomId: room.roomId,
+                                                        landlordId: room.hostUserId,
+                                                        amount: room.price // 1 tháng tiền cọc
+                                                    })
+                                                });
+                                                if (res.ok) {
+                                                    const data = await res.json();
+                                                    window.location.href = data.paymentUrl;
+                                                } else {
+                                                    alert("Lỗi tạo thanh toán!");
+                                                }
+                                            } catch (e) {
+                                                console.error(e);
+                                            }
+                                        }}
+                                        className="w-full py-3 px-4 bg-blue-600 hover:bg-blue-700 text-white rounded-xl font-bold transition-all shadow-lg shadow-blue-600/20 flex items-center justify-center gap-2 mb-3"
+                                    >
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+                                            <path strokeLinecap="round" strokeLinejoin="round" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                        </svg>
+                                        Đặt cọc ngay (VNPay)
+                                    </button>
+                                )}
+
                                 <button className="w-full py-3 px-4 bg-white dark:bg-gray-800 border-2 border-primary/20 dark:border-blue-500/20 text-primary dark:text-blue-400 rounded-xl font-bold hover:bg-primary/5 dark:hover:bg-blue-500/5 transition-all flex items-center justify-center gap-2">
                                     <Mail size={18} />
                                     {t('rooms.contact_host')}

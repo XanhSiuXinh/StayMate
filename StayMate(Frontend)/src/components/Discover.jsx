@@ -193,13 +193,6 @@ const Discover = () => {
     return (
         <div className="flex-1 min-h-[calc(100vh-64px)] bg-gray-50 dark:bg-gray-900 flex flex-col items-center py-6 px-4 transition-colors">
             
-            <FilterBar 
-                filters={filters} 
-                setFilters={setFilters} 
-                onApply={fetchRecommendations} 
-                isFiltering={isFiltering} 
-            />
-
             <div className="max-w-md w-full mx-auto flex flex-col items-center">
                 <MatchCard 
                     profile={currentProfile} 

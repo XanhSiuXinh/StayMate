@@ -70,4 +70,10 @@ public partial class User
     public virtual ICollection<UserLocation> UserLocations { get; set; } = new List<UserLocation>();
 
     public virtual ICollection<UserPhoto> UserPhotos { get; set; } = new List<UserPhoto>();
+
+    public virtual ICollection<PaymentTransaction> TenantTransactions { get; set; } = new List<PaymentTransaction>();
+
+    public virtual ICollection<PaymentTransaction> LandlordTransactions { get; set; } = new List<PaymentTransaction>();
+
+    public decimal Balance { get; set; } = 0;
 }

@@ -51,4 +51,6 @@ public class Room
     public DateTime? UpdatedAt { get; set; }
 
     public virtual ICollection<RoomPhoto> Photos { get; set; } = new List<RoomPhoto>();
+
+    public virtual ICollection<PaymentTransaction> PaymentTransactions { get; set; } = new List<PaymentTransaction>();
 }

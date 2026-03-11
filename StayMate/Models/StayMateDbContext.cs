@@ -51,6 +51,8 @@ public partial class StayMateDbContext : DbContext
     
     public virtual DbSet<Appointment> Appointments { get; set; }
 
+    public virtual DbSet<PaymentTransaction> PaymentTransactions { get; set; }
+
     protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         => optionsBuilder.UseSqlServer("Server=localhost;Database=StayMateDB;Trusted_Connection=True;TrustServerCertificate=True;");
 
@@ -446,6 +448,29 @@ public partial class StayMateDbContext : DbContext
 
             entity.HasOne(d => d.Room)
                 .WithMany()
+                .HasForeignKey(d => d.RoomId)
+                .OnDelete(DeleteBehavior.Cascade);
+        });
+
+        modelBuilder.Entity<PaymentTransaction>(entity =>
+        {
+            entity.HasKey(e => e.Id);
+            
+            // Relate to Tenant
+            entity.HasOne(d => d.Tenant)
+                .WithMany(p => p.TenantTransactions)
+                .HasForeignKey(d => d.TenantId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relate to Landlord
+            entity.HasOne(d => d.Landlord)
+                .WithMany(p => p.LandlordTransactions)
+                .HasForeignKey(d => d.LandlordId)
+                .OnDelete(DeleteBehavior.Restrict);
+
+            // Relate to Room
+            entity.HasOne(d => d.Room)
+                .WithMany(p => p.PaymentTransactions)
                 .HasForeignKey(d => d.RoomId)
                 .OnDelete(DeleteBehavior.Cascade);
         });

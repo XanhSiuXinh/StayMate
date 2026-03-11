@@ -10,6 +10,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
 builder.Services.AddScoped<StayMate.Interfaces.ICompatibilityService, StayMate.Services.CompatibilityService>();
 builder.Services.AddScoped<StayMate.Services.INotificationService, StayMate.Services.NotificationService>();
+builder.Services.AddScoped<StayMate.Services.PaymentService.IPaymentService, StayMate.Services.PaymentService.VnPayService>();
 
 
 builder.Services.AddDbContext<StayMateDbContext>(options =>
