@@ -71,7 +71,7 @@ namespace StayMate.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("Appointments");
+                    b.ToTable("Appointments", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.CompatibilityScore", b =>
@@ -117,7 +117,7 @@ namespace StayMate.Migrations
                     b.HasIndex(new[] { "User1Id", "User2Id" }, "UQ_CompatibilityScore")
                         .IsUnique();
 
-                    b.ToTable("CompatibilityScores");
+                    b.ToTable("CompatibilityScores", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.Conversation", b =>
@@ -147,7 +147,7 @@ namespace StayMate.Migrations
                     b.HasIndex(new[] { "MatchId" }, "UQ__Conversa__4218C836290942BB")
                         .IsUnique();
 
-                    b.ToTable("Conversations");
+                    b.ToTable("Conversations", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.Interest", b =>
@@ -179,7 +179,7 @@ namespace StayMate.Migrations
                     b.HasIndex(new[] { "InterestName" }, "UQ__Interest__D2704B36E4131C3E")
                         .IsUnique();
 
-                    b.ToTable("Interests");
+                    b.ToTable("Interests", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.LifestylePreference", b =>
@@ -255,7 +255,7 @@ namespace StayMate.Migrations
                     b.HasIndex(new[] { "UserId" }, "UQ__Lifestyl__1788CCAD6DFEE750")
                         .IsUnique();
 
-                    b.ToTable("LifestylePreferences");
+                    b.ToTable("LifestylePreferences", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.Match", b =>
@@ -303,7 +303,7 @@ namespace StayMate.Migrations
                     b.HasIndex(new[] { "User1Id", "User2Id" }, "UQ_Match")
                         .IsUnique();
 
-                    b.ToTable("Matches", t =>
+                    b.ToTable("Matches", null, t =>
                         {
                             t.HasTrigger("TR_Matches_AutoChat");
                         });
@@ -366,7 +366,7 @@ namespace StayMate.Migrations
 
                     b.HasIndex(new[] { "ConversationId" }, "IX_Messages_Conversation");
 
-                    b.ToTable("Messages", t =>
+                    b.ToTable("Messages", null, t =>
                         {
                             t.HasTrigger("TR_Messages_UpdateChatTime");
                         });
@@ -415,7 +415,7 @@ namespace StayMate.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("Notifications");
+                    b.ToTable("Notifications", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.PaymentTransaction", b =>
@@ -467,7 +467,7 @@ namespace StayMate.Migrations
 
                     b.HasIndex("TenantId");
 
-                    b.ToTable("PaymentTransactions");
+                    b.ToTable("PaymentTransactions", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.Review", b =>
@@ -511,7 +511,7 @@ namespace StayMate.Migrations
 
                     b.HasIndex("TargetUserId");
 
-                    b.ToTable("Reviews");
+                    b.ToTable("Reviews", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.Room", b =>
@@ -583,7 +583,7 @@ namespace StayMate.Migrations
 
                     b.HasIndex("HostUserId");
 
-                    b.ToTable("Rooms");
+                    b.ToTable("Rooms", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.RoomPhoto", b =>
@@ -608,7 +608,7 @@ namespace StayMate.Migrations
 
                     b.HasIndex("RoomId");
 
-                    b.ToTable("RoomPhotos");
+                    b.ToTable("RoomPhotos", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.RoomPreference", b =>
@@ -658,7 +658,7 @@ namespace StayMate.Migrations
                     b.HasIndex(new[] { "UserId" }, "UQ__RoomPref__1788CCAD1BC6D05B")
                         .IsUnique();
 
-                    b.ToTable("RoomPreferences");
+                    b.ToTable("RoomPreferences", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.Swipe", b =>
@@ -697,7 +697,7 @@ namespace StayMate.Migrations
                     b.HasIndex(new[] { "UserId", "TargetUserId" }, "UQ_Swipe")
                         .IsUnique();
 
-                    b.ToTable("Swipes");
+                    b.ToTable("Swipes", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.User", b =>
@@ -804,7 +804,7 @@ namespace StayMate.Migrations
                     b.HasIndex(new[] { "Email" }, "UQ__Users__A9D10534423390EE")
                         .IsUnique();
 
-                    b.ToTable("Users", t =>
+                    b.ToTable("Users", null, t =>
                         {
                             t.HasTrigger("TR_Users_Timestamp");
                         });
@@ -842,7 +842,7 @@ namespace StayMate.Migrations
                     b.HasIndex(new[] { "UserId", "InterestId" }, "UQ_UserInterest")
                         .IsUnique();
 
-                    b.ToTable("UserInterests");
+                    b.ToTable("UserInterests", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.UserLocation", b =>
@@ -899,7 +899,7 @@ namespace StayMate.Migrations
 
                     b.HasIndex(new[] { "City", "District" }, "IX_UserLocations_City");
 
-                    b.ToTable("UserLocations");
+                    b.ToTable("UserLocations", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.UserPhoto", b =>
@@ -941,7 +941,7 @@ namespace StayMate.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("UserPhotos");
+                    b.ToTable("UserPhotos", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.VerificationRequest", b =>
@@ -991,7 +991,7 @@ namespace StayMate.Migrations
 
                     b.HasIndex("UserId");
 
-                    b.ToTable("VerificationRequests");
+                    b.ToTable("VerificationRequests", (string)null);
                 });
 
             modelBuilder.Entity("StayMate.Models.Appointment", b =>

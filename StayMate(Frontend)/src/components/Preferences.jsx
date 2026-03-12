@@ -3,6 +3,7 @@ import { useAuth } from '../context/AuthContext';
 import { Loader2, Save, Moon, Sun, Wind, VolumeX, Coffee, Home, Clock, Cat, Image as ImageIcon, Plus, Trash2, ShieldCheck, AlertCircle, CheckCircle2 } from 'lucide-react';
 import Button from './ui/Button';
 import Input from './ui/Input';
+import { authApiRequest } from '../utils/apiHelpers';
 
 const Preferences = ({ isReadOnly = false, profileData = null }) => {
     const { token } = useAuth();
@@ -56,16 +57,11 @@ const Preferences = ({ isReadOnly = false, profileData = null }) => {
         if (!profileData?.userId) return;
         setLoading(true);
         try {
-            const res = await fetch(`http://localhost:5015/api/preferences/lifestyle/${profileData.userId}`);
-            if (res.ok) {
-                const data = await res.json();
-                setLifestyle(data);
-            }
-            const photosRes = await fetch(`http://localhost:5015/api/users/${profileData.userId}/photos`);
-            if (photosRes.ok) {
-                const photosData = await photosRes.json();
-                setUserPhotos(photosData);
-            }
+            const data = await authApiRequest(`/api/preferences/lifestyle/${profileData.userId}`);
+            setLifestyle(data);
+            
+            const photosData = await authApiRequest(`/api/users/${profileData.userId}/photos`);
+            setUserPhotos(photosData);
         } catch (err) {
             console.error("Error fetching public data:", err);
         } finally {
@@ -75,13 +71,8 @@ const Preferences = ({ isReadOnly = false, profileData = null }) => {
 
     const fetchVerificationStatus = async () => {
         try {
-            const res = await fetch('http://localhost:5015/api/verifications/status', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setVerificationStatus(data);
-            }
+            const data = await authApiRequest('/api/verifications/status');
+            setVerificationStatus(data);
         } catch (err) {
             console.error("Error fetching verification status:", err);
         }
@@ -92,51 +83,29 @@ const Preferences = ({ isReadOnly = false, profileData = null }) => {
         setError(null);
         try {
 
-            const interestsRes = await fetch('http://localhost:5015/api/preferences/interests');
-            if (!interestsRes.ok) throw new Error('Failed to load interests list');
-            const interestsData = await interestsRes.json();
+            const [interestsData, userInterestsData, photosData, lifestyleData] = await Promise.all([
+                authApiRequest('/api/preferences/interests'),
+                authApiRequest('/api/preferences/user-interests'),
+                authApiRequest('/api/users/photos'),
+                authApiRequest('/api/preferences/lifestyle')
+            ]);
+            
             setAllInterests(interestsData);
-
-
-            const userInterestsRes = await fetch('http://localhost:5015/api/preferences/user-interests', {
-                headers: { 'Authorization': `Bearer ${token}` }
+            setSelectedInterestIds(userInterestsData || []);
+            setUserPhotos(photosData || []);
+            setLifestyle({
+                wakeUpTime: lifestyleData.wakeUpTime || '',
+                sleepTime: lifestyleData.sleepTime || '',
+                cleanlinessLevel: lifestyleData.cleanlinessLevel || 3,
+                noiseLevel: lifestyleData.noiseLevel || 3,
+                smokingStatus: lifestyleData.smokingStatus || 'Non-smoking',
+                drinkingStatus: lifestyleData.drinkingStatus || 'Occasionally',
+                hasPets: lifestyleData.hasPets || false,
+                petType: lifestyleData.petType || '',
+                workFromHome: lifestyleData.workFromHome || false,
+                guestFrequency: lifestyleData.guestFrequency || 'Occasionally',
+                cookingFrequency: lifestyleData.cookingFrequency || 'Regularly'
             });
-            if (userInterestsRes.ok) {
-                const userInterestsData = await userInterestsRes.json();
-                setSelectedInterestIds(userInterestsData.map(i => i.interestId));
-            }
-
-
-            const photosRes = await fetch('http://localhost:5015/api/users/photos', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (photosRes.ok) {
-                const photosData = await photosRes.json();
-                setUserPhotos(photosData);
-            }
-
-
-            const lifestyleRes = await fetch('http://localhost:5015/api/preferences/lifestyle', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (lifestyleRes.ok) {
-                const lifestyleData = await lifestyleRes.json();
-                setLifestyle({
-                    wakeUpTime: lifestyleData.wakeUpTime || '',
-                    sleepTime: lifestyleData.sleepTime || '',
-                    cleanlinessLevel: lifestyleData.cleanlinessLevel || 3,
-                    noiseLevel: lifestyleData.noiseLevel || 3,
-                    smokingStatus: lifestyleData.smokingStatus || 'Non-smoking',
-                    drinkingStatus: lifestyleData.drinkingStatus || 'Occasionally',
-                    hasPets: lifestyleData.hasPets || false,
-                    petType: lifestyleData.petType || '',
-                    workFromHome: lifestyleData.workFromHome || false,
-                    guestFrequency: lifestyleData.guestFrequency || 'Occasionally',
-                    cookingFrequency: lifestyleData.cookingFrequency || 'Regularly'
-                });
-            } else if (lifestyleRes.status !== 404) {
-                throw new Error('Failed to load lifestyle information');
-            }
         } catch (err) {
             setError(err.message);
         } finally {
@@ -165,27 +134,16 @@ const Preferences = ({ isReadOnly = false, profileData = null }) => {
         setError(null);
         setSuccessMessage('');
         try {
-            const p1 = fetch('http://localhost:5015/api/preferences/lifestyle', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify(lifestyle)
-            });
-
-            const p2 = fetch('http://localhost:5015/api/preferences/user-interests', {
-                method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({ interestIds: selectedInterestIds })
-            });
-
-            const [res1, res2] = await Promise.all([p1, p2]);
-
-            if (!res1.ok || !res2.ok) throw new Error('Error saving information');
+            await Promise.all([
+                authApiRequest('/api/preferences/lifestyle', {
+                    method: 'PUT',
+                    body: JSON.stringify(lifestyle)
+                }),
+                authApiRequest('/api/preferences/user-interests', {
+                    method: 'PUT',
+                    body: JSON.stringify({ interestIds: selectedInterestIds })
+                })
+            ]);
 
             setSuccessMessage('Saved successfully!');
             setTimeout(() => setSuccessMessage(''), 3000);
@@ -217,22 +175,13 @@ const Preferences = ({ isReadOnly = false, profileData = null }) => {
         formData.append('file', file);
 
         try {
-            const res = await fetch('http://localhost:5015/api/users/photos', {
+            const data = await authApiRequest('/api/users/photos', {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                },
                 body: formData
             });
-            const data = await res.json();
-            if (res.ok) {
-                setUserPhotos([...userPhotos, data.photo]);
-                setSuccessMessage('Photo added successfully!');
-                setTimeout(() => setSuccessMessage(''), 3000);
-            } else {
-                setError(data.message || 'Error adding photo.');
-                setTimeout(() => setError(null), 3000);
-            }
+            setUserPhotos([...userPhotos, data.photo]);
+            setSuccessMessage('Photo added successfully!');
+            setTimeout(() => setSuccessMessage(''), 3000);
         } catch (err) {
             setError('Connection error.');
             setTimeout(() => setError(null), 3000);
@@ -248,21 +197,12 @@ const Preferences = ({ isReadOnly = false, profileData = null }) => {
         if (!window.confirm("Are you sure you want to delete this photo?")) return;
 
         try {
-            const res = await fetch(`http://localhost:5015/api/users/photos/${photoId}`, {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+            await authApiRequest(`/api/users/photos/${photoId}`, {
+                method: 'DELETE'
             });
-            if (res.ok) {
-                setUserPhotos(userPhotos.filter(p => p.photoId !== photoId));
-                setSuccessMessage('Photo deleted successfully!');
-                setTimeout(() => setSuccessMessage(''), 3000);
-            } else {
-                const data = await res.json();
-                setError(data.message || 'Error deleting photo.');
-                setTimeout(() => setError(null), 3000);
-            }
+            setUserPhotos(userPhotos.filter(p => p.photoId !== photoId));
+            setSuccessMessage('Photo deleted successfully!');
+            setTimeout(() => setSuccessMessage(''), 3000);
         } catch (err) {
             setError('Connection error.');
             setTimeout(() => setError(null), 3000);
@@ -281,25 +221,20 @@ const Preferences = ({ isReadOnly = false, profileData = null }) => {
         formData.append('documentType', 'StudentCard'); // Default
 
         try {
-            const res = await fetch('http://localhost:5015/api/verifications/request', {
+            await authApiRequest('/api/verifications/request', {
                 method: 'POST',
-                headers: { 'Authorization': `Bearer ${token}` },
                 body: formData
             });
-            
-            if (res.ok) {
-                setSuccessMessage('Verification request submitted successfully!');
-                fetchVerificationStatus();
-                setTimeout(() => setSuccessMessage(''), 3000);
-            } else {
-                const data = await res.json();
-                setError(data || 'Failed to submit verification request.');
-            }
+            setSuccessMessage('Verification request submitted successfully!');
+            fetchVerificationStatus();
+            setTimeout(() => setSuccessMessage(''), 3000);
         } catch (err) {
             setError('Connection error.');
         } finally {
             setVerifying(false);
-            if (verificationFileRef.current) verificationFileRef.current.value = "";
+            if (verificationFileRef.current) {
+                verificationFileRef.current.value = "";
+            }
         }
     };
 

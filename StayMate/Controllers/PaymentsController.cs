@@ -4,6 +4,7 @@ using Microsoft.EntityFrameworkCore;
 using StayMate.DTOs;
 using StayMate.Models;
 using StayMate.Services.PaymentService;
+using StayMate.Helpers;
 using System;
 using System.Linq;
 using System.Security.Claims;
@@ -28,9 +29,7 @@ namespace StayMate.Controllers
         [HttpPost("create-deposit")]
         public async Task<IActionResult> CreateDeposit([FromBody] PaymentRequestDto request)
         {
-            var userIdStr = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-            if (!int.TryParse(userIdStr, out int userId))
-                return Unauthorized();
+            var userId = ControllerHelper.GetCurrentUserId(User);
 
             var room = await _context.Rooms.FindAsync(request.RoomId);
             if (room == null || room.HostUserId != request.LandlordId)

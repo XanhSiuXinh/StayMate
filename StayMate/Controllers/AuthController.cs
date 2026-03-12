@@ -3,9 +3,9 @@ using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
 using StayMate.DTOs;
 using StayMate.Models;
+using StayMate.Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
-using System.Security.Cryptography;
 using System.Text;
 
 namespace StayMate.Controllers
@@ -33,7 +33,7 @@ namespace StayMate.Controllers
             }
 
 
-            CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
+            PasswordService.CreatePasswordHash(request.Password, out byte[] passwordHash, out byte[] passwordSalt);
 
 
             var user = new User
@@ -42,7 +42,7 @@ namespace StayMate.Controllers
                 FullName = request.FullName,
                 DateOfBirth = DateOnly.FromDateTime(request.DateOfBirth), // Convert DateTime to DateOnly
                 Gender = "Khác", 
-                PasswordHash = Convert.ToBase64String(passwordSalt) + "." + Convert.ToBase64String(passwordHash),
+                PasswordHash = PasswordService.CreatePasswordHashString(request.Password),
                 Role = request.Role,
                 CreatedAt = DateTime.Now,
                 UpdatedAt = DateTime.Now,
@@ -77,13 +77,7 @@ namespace StayMate.Controllers
             }
 
        
-            var parts = user.PasswordHash.Split('.');
-            if (parts.Length != 2) return BadRequest(new { message = "Invalid password format in DB." });
-
-            var salt = Convert.FromBase64String(parts[0]);
-            var storedHash = Convert.FromBase64String(parts[1]);
-
-            if (!VerifyPasswordHash(request.Password, storedHash, salt))
+                 if (!PasswordService.VerifyPasswordHashString(request.Password, user.PasswordHash))
             {
                 return BadRequest(new { message = "Wrong password." });
             }
@@ -195,22 +189,5 @@ namespace StayMate.Controllers
             return new JwtSecurityTokenHandler().WriteToken(token);
         }
 
-        private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-        {
-            using (var hmac = new HMACSHA512())
-            {
-                passwordSalt = hmac.Key;
-                passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-            }
-        }
-
-        private bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
-        {
-            using (var hmac = new HMACSHA512(storedSalt))
-            {
-                var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-                return computedHash.SequenceEqual(storedHash);
-            }
-        }
     }
 }

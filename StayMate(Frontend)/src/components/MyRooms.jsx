@@ -4,7 +4,7 @@ import { Plus, Home, CheckCircle, XCircle, Trash2, Loader2, MapPin, LayoutGrid, 
 import { Link } from 'react-router-dom';
 import Button from './ui/Button';
 import { useAuth } from '../context/AuthContext';
-import api from '../services/api';
+import { authApiRequest } from '../utils/apiHelpers';
 
 const MyRooms = () => {
     const { t } = useTranslation();
@@ -17,21 +17,13 @@ const MyRooms = () => {
     const fetchAllData = async () => {
         setLoading(true);
         try {
-            const [roomsRes, statsRes] = await Promise.all([
-                fetch('http://localhost:5015/api/rooms/my-rooms', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                }),
-                fetch('http://localhost:5015/api/rooms/landlord-stats', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                })
+            const [roomsData, statsData] = await Promise.all([
+                authApiRequest('/api/rooms/my-rooms'),
+                authApiRequest('/api/rooms/landlord-stats')
             ]);
-
-            if (roomsRes.ok && statsRes.ok) {
-                const roomsData = await roomsRes.json();
-                const statsData = await statsRes.json();
-                setRooms(roomsData);
-                setStats(statsData);
-            }
+            
+            setRooms(roomsData || []);
+            setStats(statsData || { totalRooms: 0, availableRooms: 0, occupiedRooms: 0 });
         } catch (error) {
             console.error('Error fetching landlord data:', error);
         } finally {

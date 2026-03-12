@@ -2,6 +2,7 @@ import { useState, useEffect } from 'react';
 import { UserCircle2, Heart, History, MessageSquare, Loader2 } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { authApiRequest } from '../utils/apiHelpers';
 
 import FilterBar from './discover/FilterBar';
 import MatchCard from './discover/MatchCard';
@@ -47,14 +48,9 @@ const Discover = () => {
             
             const queryString = queryParams.toString() ? `?${queryParams.toString()}` : '';
 
-            const response = await fetch(`http://localhost:5015/api/discover/recommendations${queryString}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (response.ok) {
-                const data = await response.json();
-                setProfiles(data);
-                setCurrentIndex(0);
-            }
+            const data = await authApiRequest(`/api/discover/recommendations${queryString}`);
+            setProfiles(data);
+            setCurrentIndex(0);
         } catch (error) {
             console.error("Error fetching recommendations:", error);
         } finally {

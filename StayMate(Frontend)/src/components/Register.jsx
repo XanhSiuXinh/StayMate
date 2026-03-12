@@ -3,6 +3,7 @@ import { Mail, Lock, User, Calendar, Loader2, ArrowRight, X, Heart } from 'lucid
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../context/AuthContext';
 import { useNavigate } from 'react-router-dom';
+import { createApiUrl } from '../config/api';
 import Input from './ui/Input';
 import Button from './ui/Button';
 
@@ -30,7 +31,7 @@ const Register = () => {
         setError('');
 
         try {
-            const response = await fetch('http://localhost:5015/api/auth/register', {
+            const response = await fetch(createApiUrl('/api/auth/register'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(formData),
@@ -58,7 +59,7 @@ const Register = () => {
 
     const handleGoogleSuccess = async (credentialResponse) => {
         try {
-            const response = await fetch('http://localhost:5015/api/auth/google', {
+            const response = await fetch(createApiUrl('/api/auth/google'), {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ idToken: credentialResponse.credential }),

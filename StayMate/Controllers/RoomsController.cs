@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using StayMate.DTOs;
 using StayMate.Models;
+using StayMate.Helpers;
 
 namespace StayMate.Controllers
 {
@@ -26,7 +27,7 @@ namespace StayMate.Controllers
         [Authorize(Roles = "Landlord")]
         public async Task<ActionResult<IEnumerable<RoomDto>>> GetMyRooms()
         {
-            var userId = int.Parse(User.FindFirst(ClaimTypes.NameIdentifier)?.Value!);
+            var userId = ControllerHelper.GetCurrentUserId(User);
             
             var rooms = await _context.Rooms
                 .Include(r => r.Photos)

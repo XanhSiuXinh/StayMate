@@ -3,19 +3,22 @@ using StayMate.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-
+// Add services to the container.
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 builder.Services.AddSignalR();
+
+// Register custom services
 builder.Services.AddScoped<StayMate.Interfaces.ICompatibilityService, StayMate.Services.CompatibilityService>();
 builder.Services.AddScoped<StayMate.Services.INotificationService, StayMate.Services.NotificationService>();
 builder.Services.AddScoped<StayMate.Services.PaymentService.IPaymentService, StayMate.Services.PaymentService.VnPayService>();
 
-
+// Database context
 builder.Services.AddDbContext<StayMateDbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("StayMateContext")));
 
+// Authentication
 builder.Services.AddAuthentication(options =>
 {
     options.DefaultAuthenticateScheme = Microsoft.AspNetCore.Authentication.JwtBearer.JwtBearerDefaults.AuthenticationScheme;
@@ -32,6 +35,7 @@ builder.Services.AddAuthentication(options =>
     };
 });
 
+// Authorization policies
 builder.Services.AddAuthorization(options =>
 {
     options.AddPolicy("Admin", policy => policy.RequireRole("Admin"));
@@ -39,7 +43,7 @@ builder.Services.AddAuthorization(options =>
     options.AddPolicy("Landlord", policy => policy.RequireRole("Landlord"));
 });
 
-
+// CORS configuration
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowReactApp",
@@ -52,7 +56,7 @@ builder.Services.AddCors(options =>
 
 var app = builder.Build();
 
-
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
@@ -60,18 +64,20 @@ if (app.Environment.IsDevelopment())
 }
 else
 {
-
     app.UseHttpsRedirection();
 }
 
-
+// Enable CORS
 app.UseCors("AllowReactApp");
 
-
+// Enable static files
 app.UseStaticFiles();
 
+// Enable authentication and authorization
+app.UseAuthentication();
 app.UseAuthorization();
 
+// Map endpoints
 app.MapControllers();
 app.MapHub<StayMate.Hubs.ChatHub>("/chathub");
 app.MapHub<StayMate.Hubs.NotificationHub>("/notificationhub");

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useParams, useNavigate } from 'react-router-dom';
 import { MapPin, User, Home, Maximize, ArrowLeft, Loader2, Phone, Mail, Share2, Heart, Star, Send, Calendar, X } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
+import { authApiRequest } from '../utils/apiHelpers';
 
 const RoomDetail = () => {
     const { id } = useParams();
@@ -36,12 +37,8 @@ const RoomDetail = () => {
 
         setBookingStatus('loading');
         try {
-            const response = await fetch('http://localhost:5015/api/appointments', {
+            await authApiRequest('/api/appointments', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
                 body: JSON.stringify({
                     roomId: parseInt(id),
                     appointmentDate: bookingDate,
@@ -49,17 +46,13 @@ const RoomDetail = () => {
                 })
             });
 
-            if (response.ok) {
-                setBookingStatus('success');
-                setBookingDate('');
-                setBookingNotes('');
-                setTimeout(() => {
-                    setIsBookingModalOpen(false);
-                    setBookingStatus(null);
-                }, 2000);
-            } else {
-                setBookingStatus('error');
-            }
+            setBookingStatus('success');
+            setBookingDate('');
+            setBookingNotes('');
+            setTimeout(() => {
+                setIsBookingModalOpen(false);
+                setBookingStatus(null);
+            }, 2000);
         } catch (err) {
             setBookingStatus('error');
         }
@@ -67,11 +60,8 @@ const RoomDetail = () => {
 
     const fetchReviews = async () => {
         try {
-            const response = await fetch(`http://localhost:5015/api/reviews/room/${id}`);
-            if (response.ok) {
-                const data = await response.json();
-                setReviews(data);
-            }
+            const data = await authApiRequest(`/api/reviews/room/${id}`);
+            setReviews(data);
         } catch (error) {
             console.error('Error fetching reviews:', error);
         }
@@ -82,23 +72,17 @@ const RoomDetail = () => {
         if (!user) return;
         setSubmittingReview(true);
         try {
-            const response = await fetch('http://localhost:5015/api/reviews', {
+            await authApiRequest('/api/reviews', {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${localStorage.getItem('token')}`
-                },
                 body: JSON.stringify({
-                    targetRoomId: parseInt(id),
+                    roomId: parseInt(id),
                     rating: newReview.rating,
                     comment: newReview.comment
                 })
             });
 
-            if (response.ok) {
-                setNewReview({ rating: 5, comment: '' });
-                fetchReviews();
-            }
+            setNewReview({ rating: 5, comment: '' });
+            fetchReviews();
         } catch (error) {
             console.error('Error submitting review:', error);
         } finally {
@@ -108,9 +92,7 @@ const RoomDetail = () => {
 
     const fetchRoomDetail = async () => {
         try {
-            const response = await fetch(`http://localhost:5015/api/rooms/${id}`);
-            if (!response.ok) throw new Error('Room not found');
-            const data = await response.json();
+            const data = await authApiRequest(`/api/rooms/${id}`);
             setRoom(data);
         } catch (err) {
             setError(err.message);

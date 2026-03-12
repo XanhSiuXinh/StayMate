@@ -8,6 +8,7 @@ import RoomList from './RoomList';
 import MapView from './MapView';
 import { useTranslation } from 'react-i18next';
 import { Map, List } from 'lucide-react';
+import { createApiUrl } from '../config/api';
 
 const HomePage = () => {
     const { isAuthenticated, openAuthModal } = useAuth();
@@ -54,7 +55,7 @@ const HomePage = () => {
             if (filters.minArea) params.append('minArea', filters.minArea);
             if (filters.maxArea) params.append('maxArea', filters.maxArea);
 
-            const response = await fetch(`http://localhost:5015/api/rooms?${params.toString()}`);
+            const response = await fetch(createApiUrl('/api/rooms') + `?${params.toString()}`);
             const data = await response.json();
             setRooms(data);
         } catch (error) {

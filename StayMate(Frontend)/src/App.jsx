@@ -1,14 +1,14 @@
 import { Routes, Route, Navigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { NotificationProvider } from './context/NotificationContext';
+
+// Page Components
 import Login from './components/Login';
 import Register from './components/Register';
 import HomePage from './components/HomePage';
 import Profile from './components/Profile';
 import PostRoom from './components/PostRoom';
 import RoomDetail from './components/RoomDetail';
-import ProtectedRoute from './components/ProtectedRoute';
-import Layout from './components/layout/Layout';
 import Discover from './components/Discover';
 import Messages from './components/Messages';
 import Preferences from './components/Preferences';
@@ -20,20 +20,26 @@ import PaymentStatus from './components/PaymentStatus';
 import MyDeposits from './components/MyDeposits';
 import PremiumSubscription from './components/PremiumSubscription';
 
+// Layout Components
+import Layout from './components/layout/Layout';
+import ProtectedRoute from './components/ProtectedRoute';
+
 function App() {
     const { isAuthenticated, authModalView } = useAuth();
 
     return (
         <NotificationProvider>
             <Layout>
+                {/* Auth Modals */}
                 {authModalView === 'login' && <Login />}
                 {authModalView === 'register' && <Register />}
+                
+                {/* App Routes */}
                 <Routes>
+                    {/* Public Routes */}
+                    <Route path="/" element={<HomePage />} />
+                    
                     {/* Protected Routes */}
-                    <Route
-                        path="/"
-                        element={<HomePage />}
-                    />
                     <Route
                         path="/profile"
                         element={
@@ -146,7 +152,8 @@ function App() {
                             </ProtectedRoute>
                         }
                     />
-                    {/* Fallback */}
+                    
+                    {/* Fallback Route */}
                     <Route path="*" element={<Navigate to="/" replace />} />
                 </Routes>
             </Layout>

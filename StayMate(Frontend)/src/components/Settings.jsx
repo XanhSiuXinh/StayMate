@@ -6,6 +6,7 @@ import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import Input from './ui/Input';
 import Button from './ui/Button';
+import { authApiRequest } from '../utils/apiHelpers';
 
 const Settings = () => {
     const { token, logout, user } = useAuth();
@@ -51,27 +52,15 @@ const Settings = () => {
 
         setPwdLoading(true);
         try {
-            const res = await fetch('http://localhost:5015/api/users/change-password', {
+            await authApiRequest('/api/users/change-password', {
                 method: 'PUT',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
-                body: JSON.stringify({
-                    currentPassword: passwordData.currentPassword,
-                    newPassword: passwordData.newPassword
-                })
+                body: JSON.stringify(passwordData)
             });
 
-            const data = await res.json();
-            if (res.ok) {
-                setPwdSuccess('Password changed successfully.');
-                setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
-                // Hide success message after 3 seconds
-                setTimeout(() => setPwdSuccess(''), 3000);
-            } else {
-                setPwdError(data.message || 'Failed to change password.');
-            }
+            setPwdSuccess('Password changed successfully.');
+            setPasswordData({ currentPassword: '', newPassword: '', confirmPassword: '' });
+            // Hide success message after 3 seconds
+            setTimeout(() => setPwdSuccess(''), 3000);
         } catch (err) {
             setPwdError('Connection error. Please try again.');
         } finally {
@@ -90,21 +79,13 @@ const Settings = () => {
         setDeleteError('');
 
         try {
-            const res = await fetch('http://localhost:5015/api/users/account', {
-                method: 'DELETE',
-                headers: {
-                    'Authorization': `Bearer ${token}`
-                }
+            await authApiRequest('/api/users/account', {
+                method: 'DELETE'
             });
 
-            if (res.ok) {
-                // If successful, log them out and redirect
-                logout();
-                navigate('/');
-            } else {
-                const data = await res.json();
-                setDeleteError(data.message || 'Failed to delete account.');
-            }
+            // If successful, log them out and redirect
+            logout();
+            navigate('/');
         } catch (err) {
             setDeleteError('Connection error. Please try again.');
         } finally {

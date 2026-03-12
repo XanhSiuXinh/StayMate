@@ -2,10 +2,9 @@ using System.Security.Claims;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using System.Security.Cryptography;
-using System.Text;
 using StayMate.DTOs;
 using StayMate.Models;
+using StayMate.Services;
 
 namespace StayMate.Controllers;
 
@@ -243,17 +242,10 @@ public class UsersController : ControllerBase
         if (string.IsNullOrEmpty(user.PasswordHash))
             return BadRequest(new { message = "Accounts created via Google cannot change password here." });
 
-        var parts = user.PasswordHash.Split('.');
-        if (parts.Length != 2) return BadRequest(new { message = "Invalid password format in DB." });
-
-        var salt = Convert.FromBase64String(parts[0]);
-        var storedHash = Convert.FromBase64String(parts[1]);
-
-        if (!VerifyPasswordHash(request.CurrentPassword, storedHash, salt))
+        if (!PasswordService.VerifyPasswordHashString(request.CurrentPassword, user.PasswordHash))
             return BadRequest(new { message = "Wrong current password." });
 
-        CreatePasswordHash(request.NewPassword, out byte[] newHash, out byte[] newSalt);
-        user.PasswordHash = Convert.ToBase64String(newSalt) + "." + Convert.ToBase64String(newHash);
+        user.PasswordHash = PasswordService.CreatePasswordHashString(request.NewPassword);
         user.UpdatedAt = DateTime.Now;
 
         await _context.SaveChangesAsync();
@@ -280,21 +272,4 @@ public class UsersController : ControllerBase
         return Ok(new { message = "Account deleted successfully." });
     }
 
-    private void CreatePasswordHash(string password, out byte[] passwordHash, out byte[] passwordSalt)
-    {
-        using (var hmac = new HMACSHA512())
-        {
-            passwordSalt = hmac.Key;
-            passwordHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-        }
-    }
-
-    private bool VerifyPasswordHash(string password, byte[] storedHash, byte[] storedSalt)
-    {
-        using (var hmac = new HMACSHA512(storedSalt))
-        {
-            var computedHash = hmac.ComputeHash(Encoding.UTF8.GetBytes(password));
-            return computedHash.SequenceEqual(storedHash);
-        }
-    }
 }

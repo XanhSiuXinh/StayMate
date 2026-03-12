@@ -2,6 +2,7 @@ import { useState, useEffect, useRef } from 'react';
 import { Search, Phone, Video, Info, Calendar, MapPin, FileText, Smile, Send, Paperclip, MoreHorizontal, CheckCircle2, ShieldCheck, Loader2, MessageSquare } from 'lucide-react';
 import { HubConnectionBuilder, LogLevel } from '@microsoft/signalr';
 import { useAuth } from '../context/AuthContext';
+import { authApiRequest } from '../utils/apiHelpers';
 
 const Messages = () => {
     const { token } = useAuth();
@@ -22,16 +23,11 @@ const Messages = () => {
     const fetchConversations = async () => {
         if (!token) return;
         try {
-            const res = await fetch('http://localhost:5015/api/messages/conversations', {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setConversations(data);
+            const data = await authApiRequest('/api/messages/conversations');
+            setConversations(data);
 
-                if (data.length > 0 && !activeChat) {
-                    setActiveChat(data[0]);
-                }
+            if (data.length > 0 && !activeChat) {
+                setActiveChat(data[0]);
             }
         } catch (error) {
             console.error("Failed to load conversations:", error);
@@ -100,13 +96,8 @@ const Messages = () => {
     const fetchMessages = async () => {
         if (!activeChat || !token) return;
         try {
-            const res = await fetch(`http://localhost:5015/api/messages/${activeChat.id}`, {
-                headers: { 'Authorization': `Bearer ${token}` }
-            });
-            if (res.ok) {
-                const data = await res.json();
-                setMessages(data);
-            }
+            const data = await authApiRequest(`/api/messages/${activeChat.id}`);
+            setMessages(data);
         } catch (error) {
             console.error("Failed to load messages:", error);
         } finally {
@@ -147,19 +138,11 @@ const Messages = () => {
         setMsgText('');
 
         try {
-            const res = await fetch(`http://localhost:5015/api/messages/${activeChat.id}`, {
+            await authApiRequest(`/api/messages/${activeChat.id}`, {
                 method: 'POST',
-                headers: {
-                    'Authorization': `Bearer ${token}`,
-                    'Content-Type': 'application/json'
-                },
                 body: JSON.stringify({ content })
             });
-            if (res.ok) {
-                await fetchMessages(); // refresh immediately after send
-            } else {
-                console.error("Failed to send message");
-            }
+            await fetchMessages(); // refresh immediately after send
         } catch (error) {
             console.error("Error sending message:", error);
         }

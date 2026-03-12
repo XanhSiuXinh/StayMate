@@ -1,6 +1,9 @@
+import { useState, useEffect, useRef } from 'react';
 import { User, Mail, Calendar, Briefcase, GraduationCap, Phone, Edit2, Save, X, Loader2, Award, Home, Activity, Star, Send, Crown } from 'lucide-react';
 import { useParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useAuth } from '../context/AuthContext';
+import { authApiRequest } from '../utils/apiHelpers';
 import Preferences from './Preferences';
 import Button from './ui/Button';
 import Input from './ui/Input';
@@ -39,21 +42,15 @@ const Profile = () => {
     const fetchAppointments = async () => {
         setFetchingAppointments(true);
         try {
-            const [incRes, outRes] = await Promise.all([
-                fetch('http://localhost:5015/api/appointments/incoming', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                }),
-                fetch('http://localhost:5015/api/appointments/outgoing', {
-                    headers: { 'Authorization': `Bearer ${token}` }
-                })
+            const [incomingData, outgoingData] = await Promise.all([
+                authApiRequest('/api/appointments/incoming'),
+                authApiRequest('/api/appointments/outgoing')
             ]);
-
-            const [incoming, outgoing] = await Promise.all([
-                incRes.ok ? incRes.json() : [],
-                outRes.ok ? outRes.json() : []
-            ]);
-
-            setAppointments({ incoming, outgoing });
+            
+            setAppointments({
+                incoming: incomingData || [],
+                outgoing: outgoingData || []
+            });
         } catch (error) {
             console.error('Error fetching appointments:', error);
         } finally {
@@ -63,18 +60,12 @@ const Profile = () => {
 
     const handleUpdateAppointmentStatus = async (appointmentId, newStatus) => {
         try {
-            const response = await fetch(`http://localhost:5015/api/appointments/${appointmentId}/status`, {
+            const response = await authApiRequest(`/api/appointments/${appointmentId}/status`, {
                 method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${token}`
-                },
                 body: JSON.stringify({ status: newStatus })
             });
 
-            if (response.ok) {
-                fetchAppointments();
-            }
+            fetchAppointments();
         } catch (error) {
             console.error('Error updating appointment:', error);
         }
